@@ -169,6 +169,12 @@ Plagger.
 
 WARNING: *ALL* APIs are still subject to change.
 
+=head1 STRUCTURE
+
+Gungho is comprised of three parts. A Provider, which provides Gungho with
+requests to process, a Handler, which handles the fetched page, and an
+Engine, which controls the entire process.
+
 =head1 METHODS
 
 =head2 new($config)
