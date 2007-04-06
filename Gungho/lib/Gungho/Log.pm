@@ -98,7 +98,7 @@ __END__
 
 =head1 NAME
 
-Catalyst::Log - Catalyst Log Class
+Gungho::Log - Gungho Log Class
 
 =head1 SYNOPSIS
 
@@ -114,11 +114,11 @@ Catalyst::Log - Catalyst Log Class
     }
 
 
-See L<Catalyst>.
+See L<Gungho>.
 
 =head1 DESCRIPTION
 
-This module provides the default, simple logging functionality for Catalyst.
+This module provides the default, simple logging functionality for Gungho.
 If you want something different set C<< $c->log >> in your application module,
 e.g.:
 
@@ -169,8 +169,8 @@ Don't say we didn't warn you.
 Constructor. Defaults to enable all levels unless levels are provided in
 arguments.
 
-    $log = Catalyst::Log->new;
-    $log = Catalyst::Log->new( 'warn', 'error' );
+    $log = Gungho::Log->new;
+    $log = Gungho::Log->new( 'warn', 'error' );
 
 =head2 levels
 
@@ -204,7 +204,7 @@ Is the log level active?
 
 =head2 abort
 
-Should Catalyst emit logs for this request? Will be reset at the end of 
+Should Gungho emit logs for this request? Will be reset at the end of 
 each request. 
 
 *NOTE* This method is not compatible with other log apis, so if you plan
@@ -220,11 +220,9 @@ This protected method is what actually sends the log information to STDERR.
 You may subclass this module and override this method to get finer control
 over the log output.
 
-=head1 SEE ALSO
-
-L<Catalyst>.
-
 =head1 AUTHOR
+
+This moduule is ripped right out of Catalyst. No, I'm not ashamed of it!
 
 Sebastian Riedel, C<sri@cpan.org>
 Marcus Ramberg, C<mramberg@cpan.org>
