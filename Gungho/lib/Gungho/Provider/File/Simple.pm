@@ -55,6 +55,18 @@ __END__
 
 Gungho::Provider::File::Simple - Provide Requests From A Simple File
 
+=head1 SYNOPSIS
+
+  provider:
+    module: File::Simple
+    config:
+      filename: /path/to/filename
+
+  # in file
+  http://foo.com
+  http://bar.com
+  http://baz.com
+
 =head1 METHODS
 
 =head2 new

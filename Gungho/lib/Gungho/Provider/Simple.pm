@@ -1,10 +1,11 @@
 # $Id$
 #
-# 
-#
+# Copyright (c) 2007 Daisuke Maki <daisuke@endeworks.jp>
+# All rights reserved.
 
 package Gungho::Provider::Simple;
 use strict;
+use warnings;
 use base qw(Gungho::Provider);
 
 __PACKAGE__->mk_accessors($_) for qw(requests);

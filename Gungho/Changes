@@ -1,6 +1,10 @@
 Changes
 =======
 
+0.01_03 Fri 06 Apr 2007
+  - Fix embarassing documentation whoopla. As stated, no,
+    I'm not ashamed of stealing good code. 
+
 0.01_02 Fri 06 Apr 2007
   - Add a new provider and small set of changes so that we can
     use this in Plagger
