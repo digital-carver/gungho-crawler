@@ -223,6 +223,12 @@ Loads a Gungho component. Compliments the module name with 'Gungho::$prefix::',
 unless the name is prefixed with a '+'. In that case, no transformation is
 performed, and the module name is used as-is.
 
+=head1 CODE
+
+You can obtain the current code base from
+
+  http://gungho-crawler.googlecode.com/svn/trunk
+
 =head1 AUTHOR
 
 Copyright (c) 2007 Daisuke Maki E<lt>daisuke@endeworks.jpE<gt>
