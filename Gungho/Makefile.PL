@@ -6,6 +6,7 @@ all_from("lib/Gungho.pm");
 
 requires("Class::Accessor::Fast");
 requires("Class::C3");
+requires("Class::Inspector");
 requires("Config::Any");
 requires("UNIVERSAL::require");
 

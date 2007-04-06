@@ -9,6 +9,7 @@ use warnings;
 use base qw(Class::Accessor::Fast);
 use Carp qw(croak);
 use Config::Any;
+use Class::Inspector;
 use UNIVERSAL::require;
 
 use Gungho::Log;
@@ -120,10 +121,11 @@ sub load_gungho_module
     my $pkg    = shift;
     my $prefix = shift;
 
-    unless ($pkg =~ /^\+/) {
+    unless ($pkg =~ s/^\+//) {
         $pkg = ($prefix ? "Gungho::${prefix}::" : "Gungho::") . $pkg;
     }
-    $pkg->require or die;
+
+    Class::Inspector->loaded($pkg) or $pkg->require or die;
     return $pkg;
 }
 

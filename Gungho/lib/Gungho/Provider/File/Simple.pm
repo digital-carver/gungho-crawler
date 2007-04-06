@@ -57,6 +57,10 @@ Gungho::Provider::File::Simple - Provide Requests From A Simple File
 
 =head1 METHODS
 
+=head2 new
+
+Creates a new instance.
+
 =head2 get_requests
 
 Opens the filename specified in the config file, and reads each line in the
