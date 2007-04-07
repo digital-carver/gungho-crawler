@@ -67,9 +67,6 @@ sub setup_engine
     my $self = shift;
     my $config = $self->config->{engine} || {
         module => 'POE',
-        config => {
-            http_comp_args => {}
-        }
     };
     if (! $config) {
         croak("Gungho requires a engine");
