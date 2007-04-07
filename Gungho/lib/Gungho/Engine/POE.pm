@@ -32,7 +32,7 @@ sub run
     $keepalive_config->{keep_alive}   ||= 10;
     $keepalive_config->{max_open}     ||= 200;
     $keepalive_config->{max_per_host} ||= 5;
-    $keepalive_config->{timeout}      ||= 1;
+    $keepalive_config->{timeout}      ||= 10;
 
     my $keepalive = POE::Component::Client::Keepalive->new(%$keepalive_config);
 
