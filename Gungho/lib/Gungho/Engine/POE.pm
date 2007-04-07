@@ -5,6 +5,7 @@
 
 package Gungho::Engine::POE;
 use strict;
+use warnings;
 use base qw(Gungho::Engine);
 use POE;
 use POE::Component::Client::HTTP;
@@ -58,14 +59,12 @@ sub session_loop
     my ($kernel, $heap) = @_[KERNEL, HEAP];
     my $c = $heap->{CONTEXT};
 
-    foreach my $request ( $c->get_requests() ) {
-        $kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
-    }
-
     if ($c->has_requests) {
+        foreach my $request ( $c->get_requests() ) {
+            $kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
+        }
+
         $kernel->yield('session_loop');
-    } else {
-        $kernel->yield('_stop');
     }
 }
 
@@ -74,7 +73,10 @@ sub handle_response
     my ($heap, $req_packet, $res_packet) = @_[ HEAP, ARG0, ARG1 ];
 
     my $c = $heap->{CONTEXT};
-    $c->handle_response($res_packet->[0]);
+
+    my $req = $req_packet->[0];
+    my $res = $res_packet->[0];
+    $c->handle_response($res);
 }
 
 1;
