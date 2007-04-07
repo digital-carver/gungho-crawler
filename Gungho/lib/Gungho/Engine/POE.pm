@@ -99,7 +99,7 @@ sub handle_response
 
     my $req = $req_packet->[0];
     my $res = $res_packet->[0];
-    $c->handle_response($res);
+    $c->handle_response($req, $res);
 }
 
 1;

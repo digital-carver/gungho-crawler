@@ -20,12 +20,12 @@ Gungho::Handler - Base Class For Gungho Handlers
 
   sub handle_response
   {
-     my ($self, $response) = @_;
+     my ($self, $request, $response) = @_;
   }
 
 =head1 METHODS
 
-=head2 handle_response($response)
+=head2 handle_response($request, response)
 
 This is where you want to process the response.
 

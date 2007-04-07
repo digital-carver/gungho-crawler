@@ -142,8 +142,8 @@ sub get_requests
 
 sub handle_response
 {
-    my ($self, $response) = @_;
-    $self->handler->handle_response($self, $response);
+    my ($self, $request, $response) = @_;
+    $self->handler->handle_response($self, $request, $response);
 }
 
 1;

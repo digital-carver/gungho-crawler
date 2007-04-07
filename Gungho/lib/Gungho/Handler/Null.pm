@@ -11,8 +11,8 @@ sub handle_response
 {
     my $self = shift;
     my $c    = shift;
+    my $req  = shift;
     my $res  = shift;
-    my $req  = $res->request;
 
     $c->log->info($req->uri . " responded with code " . $res->code)
         if $c->log->is_info;
