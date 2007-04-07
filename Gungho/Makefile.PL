@@ -8,6 +8,7 @@ requires("Class::Accessor::Fast");
 requires("Class::C3");
 requires("Class::Inspector");
 requires("Config::Any");
+requires("Data::Dump");
 requires("UNIVERSAL::require");
 
 features(
