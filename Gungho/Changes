@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.01 Fri 07 Apr 2007
+  - handle_response() now take $request and $response all over
+  - Add send_request() in Gungho.pm, Gungho/Engine/POE.pm
+  - Add notes() in Gungho/Request.pm. Cloning is properly handled
+
 0.01_04 Fri 07 Apr 2007
   - Enable keepalive
 
