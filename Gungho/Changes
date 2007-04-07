@@ -1,6 +1,9 @@
 Changes
 =======
 
+0.01_04 Fri 07 Apr 2007
+  - Enable keepalive
+
 0.01_03 Fri 06 Apr 2007
   - Fix embarassing documentation whoopla. As stated, no,
     I'm not ashamed of stealing good code. 
