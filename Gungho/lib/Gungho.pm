@@ -140,6 +140,12 @@ sub get_requests
     $self->provider->get_requests;
 }
 
+sub send_request
+{
+    my $self = shift;
+    $self->engine->send_request($_[0]);
+}
+
 sub handle_response
 {
     my ($self, $request, $response) = @_;
@@ -211,6 +217,10 @@ Delegates to provider's get_requests
 =head2 handle_response
 
 Delegates to handler's handle_response
+
+=head2 send_request
+
+Delegates to engine's send_request
 
 =head2 load_config($config)
 
