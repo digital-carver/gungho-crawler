@@ -8,6 +8,7 @@ use strict;
 use warnings;
 use base qw(Gungho::Engine);
 use POE;
+use POE::Component::Client::Keepalive;
 use POE::Component::Client::HTTP;
 
 __PACKAGE__->mk_accessors($_) for qw(alias);
@@ -25,16 +26,38 @@ sub run
 {
     my ($self, $c) = @_;
 
-    my $config = $self->config->{http_comp_args};
-    POE::Component::Client::HTTP->spawn(%$config, 'Alias' => &UserAgentAlias);
+    my %config = %{ $self->config || {} };
+
+    my $keepalive_config = delete $config{keepalive} || {};
+    $keepalive_config->{keep_alive}   ||= 10;
+    $keepalive_config->{max_open}     ||= 200;
+    $keepalive_config->{max_per_host} ||= 5;
+    $keepalive_config->{timeout}      ||= 1;
+
+    my $keepalive = POE::Component::Client::Keepalive->new(%$keepalive_config);
+
+    my $client_config = delete $config{client} || {};
+    foreach my $key (keys %$client_config) {
+        if ($key =~ /^[a-z]/) { # ah, need to make this CamelCase
+            my $camel = ucfirst($key);
+            $camel =~ s/_(\w)/uc($1)/ge;
+            $client_config->{$camel} = delete $client_config->{$key};
+        }
+    }
+
+    POE::Component::Client::HTTP->spawn(
+        %$client_config,
+        Alias             => &UserAgentAlias,
+        ConnectionManager => $keepalive,
+    );
 
     POE::Session->create(
         heap => { CONTEXT => $c },
         object_states => [
             $self => {
-                _start => 'session_start',
-                _stop  => 'session_stop',
-                session_loop => 'session_loop',
+                _start          => 'session_start',
+                _stop           => 'session_stop',
+                session_loop    => 'session_loop',
                 handle_response => 'handle_response',
             }
         ]
@@ -87,7 +110,34 @@ __END__
 
 Gungho::Engine::POE - POE Engine For Gungho
 
+=head1 SYNOPSIS
+
+  engine:
+    module: POE
+    config:
+      client:
+        agent:
+          - AgentName1
+          - AgentName2
+        max_size: 16384
+        follow_redirect: 2
+        proxy: http://localhost:8080
+      keepalive:
+        keep_alive: 10
+        max_open: 200
+        max_per_host: 20
+        timeout: 10
+
+
 =head1 DESCRIPTION
+
+=head1 USING KEEPALIVE
+
+Gungho::Engine::POE uses PoCo::Client::Keepalive to control the connections.
+For the most part this has no visible effect on the user, but the "timeout"
+parameter dictate exactly how long the component waits for a new connection
+which means that, after finishing to fetch all the requests the engine
+waits for that amount of time before terminating. This is NORMAL.
 
 =head1 METHODS
 
