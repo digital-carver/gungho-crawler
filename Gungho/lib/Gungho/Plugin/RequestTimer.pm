@@ -95,11 +95,11 @@ regular time() as the store time values.
 
 Sets up the plugin.
 
-=head2 start_log()
+=head2 log_start()
 
 Starts logging
 
-=head2 stop_log()
+=head2 log_stop()
 
 Ends logging
 

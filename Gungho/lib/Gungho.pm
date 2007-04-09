@@ -253,20 +253,30 @@ or a hashref.
 
 Starts the Gungho process.
 
-=head2 setup
+=head2 setup()
 
 Sets up the Gungho environment, including calling the various setup_*
 methods to configure the provider, engine, handler, etc.
 
-=head2 setup_engine
+=head2 setup_engine()
 
-=head2 setup_handler
+=head2 setup_handler()
 
-=head2 setup_log
+=head2 setup_log()
 
-=head2 setup_provider
+=head2 setup_provider()
+
+=head2 setup_plugins()
 
 Sets up the various components.
+
+=head2 register_hook($hook_name => $coderef[, $hook_name => $coderef])
+
+Registers a hook to be run under the specified $hook_name
+
+=head2 run_hook($hook_name)
+
+Runs all the hooks under the hook $hook_name
 
 =head2 has_requests
 

@@ -9,3 +9,11 @@ use warnings;
 use base qw(Gungho::Component);
 
 1;
+
+__END__
+
+=head1 NAME
+
+Gungho::Plugin - Gungho Plugin Base Class
+
+=cut
