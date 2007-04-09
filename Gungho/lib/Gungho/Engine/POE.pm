@@ -46,6 +46,7 @@ sub run
     }
 
     POE::Component::Client::HTTP->spawn(
+        Agent             => "Gungho/$Gungho::VERSION",
         %$client_config,
         Alias             => &UserAgentAlias,
         ConnectionManager => $keepalive,
@@ -84,17 +85,19 @@ sub session_loop
 
     if ($c->has_requests) {
         foreach my $request ( $c->get_requests() ) {
-            $self->send_request($request);
+            $self->send_request($c, $request);
         }
 
         $kernel->yield('session_loop');
     }
 }
 
+# XXX - this is not a POE state. hmmm??
 sub send_request
 {
-    my $self = shift;
-    POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $_[0]);
+    my ($self, $c, $request) = @_;
+    $c->run_hook('engine.send_request', { request => $request });
+    POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
 }
 
 sub handle_response
@@ -105,6 +108,7 @@ sub handle_response
 
     my $req = $req_packet->[0];
     my $res = $res_packet->[0];
+    $c->run_hook('engine.handle_response', { request => $req, response => $res });
     $c->handle_response($req, $res);
 }
 

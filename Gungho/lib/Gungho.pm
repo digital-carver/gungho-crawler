@@ -14,9 +14,9 @@ use UNIVERSAL::require;
 
 use Gungho::Log;
 
-__PACKAGE__->mk_accessors($_) for qw(config log provider handler engine);
+__PACKAGE__->mk_accessors($_) for qw(config log provider handler engine hooks);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new
 {
@@ -34,10 +34,14 @@ sub setup
 {
     my $self = shift;
 
+    $self->hooks({});
+
     $self->setup_log();
     $self->setup_provider();
     $self->setup_handler();
     $self->setup_engine();
+
+    $self->setup_plugins();
 }
 
 sub setup_log
@@ -59,7 +63,9 @@ sub setup_provider
     }
 
     my $pkg = $self->load_gungho_module($config->{module}, 'Provider');
-    $self->provider( $pkg->new($config->{config}) );
+    my $obj = $pkg->new(config => $config->{config});
+    $obj->setup( $self );
+    $self->provider( $obj );
 }
 
 sub setup_engine
@@ -73,7 +79,9 @@ sub setup_engine
     }
 
     my $pkg = $self->load_gungho_module($config->{module}, 'Engine');
-    $self->engine( $pkg->new($config->{config}) );
+    my $obj = $pkg->new(config => $config->{config});
+    $obj->setup( $self );
+    $self->engine( $obj );
 }
 
 sub setup_handler
@@ -85,7 +93,46 @@ sub setup_handler
         config => {}
     };
     my $pkg = $self->load_gungho_module($config->{module}, 'Handler');
-    $self->handler( $pkg->new($config->{config}) );
+    my $obj = $pkg->new(config => $config->{config});
+    $obj->setup( $self );
+    $self->handler( $obj );
+}
+
+sub setup_plugins
+{
+    my $self = shift;
+
+    my $plugins = $self->config->{plugins} || [];
+    foreach my $plugin (@$plugins) {
+        my $pkg = $self->load_gungho_module($plugin->{module}, 'Plugin');
+        my $obj = $pkg->new(config => $plugin->{config});
+        $obj->setup($self);
+    }
+}
+
+sub register_hook
+{
+    my $self = shift;
+    my $hooks = $self->hooks;
+    while(@_) {
+        my($name, $hook) = splice(@_, 0, 2);
+        $hooks->{$name} ||= [];
+        push @{ $hooks->{$name} }, $hook;
+    }
+}
+
+sub run_hook
+{
+    my $self = shift;
+    my $name = shift;
+    my $hooks = $self->hooks->{$name} || [];
+    foreach my $hook (@{ $hooks }) {
+        if (ref($hook) eq 'CODE') {
+            $hook->($self, @_);
+        } else {
+            $hook->execute($self, @_);
+        }
+    }
 }
 
 sub load_config
@@ -172,6 +219,9 @@ Xango was *fast*, but it was horribly hard to debug. Gungho tries to build
 from clean structures, based upon principles from the likes of Catalyst and
 Plagger.
 
+All components (engine, provider, handler) are overridable and switcheable.
+Plugin mechanism is available to add hooks to be executed during the run.
+
 WARNING: *ALL* APIs are still subject to change.
 
 =head1 STRUCTURE
@@ -179,6 +229,18 @@ WARNING: *ALL* APIs are still subject to change.
 Gungho is comprised of three parts. A Provider, which provides Gungho with
 requests to process, a Handler, which handles the fetched page, and an
 Engine, which controls the entire process.
+
+There are also "hooks". These hooks can be registered from anywhere by
+invoking the register_hook() method. They are run at particular points,
+which are specified when you call register_hook().
+
+=head1 HOOKS
+
+Currently available hooks are:
+
+=head2 engine.send_request
+
+=head2 engine.handle_response
 
 =head1 METHODS
 

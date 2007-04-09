@@ -14,12 +14,8 @@ __PACKAGE__->mk_accessors($_) for qw(config);
 sub new
 {
     my $class  = shift;
-    my $config = shift;
-
-    my $self = bless {}, $class;
-    $self->config($config);
-    $self->setup();
-
+    my $self = bless { @_ }, $class;
+    $self->config({}) unless $self->config;
     return $self;
 }
 

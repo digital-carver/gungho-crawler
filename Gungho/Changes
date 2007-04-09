@@ -1,12 +1,21 @@
 Changes
 =======
 
-0.01 Fri 07 Apr 2007
+0.02 Mon Apr 09 2007
+  - Fix stupid bug in Gungho::Request
+  - Change the call syntax for G::Component->new(\%config) to 
+    G::Component->(config => \%config, %other_args)
+  - send_request() takes the context object as well
+  - Implement plugins
+  - Add G::Plugin::RequestTimer
+  - Add deps features in Makefile.PL 
+
+0.01 Sat 07 Apr 2007
   - handle_response() now take $request and $response all over
   - Add send_request() in Gungho.pm, Gungho/Engine/POE.pm
   - Add notes() in Gungho/Request.pm. Cloning is properly handled
 
-0.01_04 Fri 07 Apr 2007
+0.01_04 Sat 07 Apr 2007
   - Enable keepalive
 
 0.01_03 Fri 06 Apr 2007
