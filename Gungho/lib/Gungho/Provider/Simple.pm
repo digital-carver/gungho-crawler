@@ -7,6 +7,7 @@ package Gungho::Provider::Simple;
 use strict;
 use warnings;
 use base qw(Gungho::Provider);
+use Gungho::Request;
 
 __PACKAGE__->mk_accessors($_) for qw(requests);
 
@@ -18,6 +19,23 @@ sub new
     $self;
 }
 
+sub setup
+{
+    my $self = shift;
+
+    my $url = $self->config->{url};
+    if (! ref($url) ) {
+        $url = [ $url ];
+    }
+
+    foreach my $u (@$url) {
+        $self->add_request(
+            Gungho::Request->new(GET => $u)
+        );
+    }
+    $self->next::method(@_);
+}
+
 sub add_request
 {
     my ($self, $req) = @_;
@@ -25,6 +43,8 @@ sub add_request
     my $list = $self->requests;
     push @$list, $req;
     $self->has_requests(1);
+
+    print "Added request for ", $req->uri, "\n";
 }
 
 sub get_requests
