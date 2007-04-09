@@ -25,7 +25,7 @@ sub notes
 
     my $value = $self->{_notes}{$key};
     if (@_) {
-        $self->{_notes}{$key} = $_[1];
+        $self->{_notes}{$key} = $_[0];
     }
     return $value;
 }
