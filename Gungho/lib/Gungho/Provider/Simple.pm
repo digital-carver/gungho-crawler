@@ -29,11 +29,12 @@ sub add_request
 
 sub get_requests
 {
-    my $self = shift;
+    my ($self, $c) = @_;
 
     my $list = $self->requests;
     $self->requests([]);
     $self->has_requests(0);
+    $c->is_running(0);
     return @$list;
 }
 
