@@ -14,7 +14,7 @@ use UNIVERSAL::require;
 
 use Gungho::Log;
 
-__PACKAGE__->mk_accessors($_) for qw(config log provider handler engine hooks);
+__PACKAGE__->mk_accessors($_) for qw(config log provider handler engine is_running hooks);
 
 our $VERSION = '0.02';
 
@@ -173,30 +173,34 @@ sub load_gungho_module
     return $pkg;
 }
 
-sub run { $_[0]->engine->run($_[0]) }
+sub run
+{
+    $_[0]->is_running(1);
+    $_[0]->engine->run($_[0]);
+}
 
 sub has_requests
 {
-    my $self = shift;
-    $self->provider->has_requests;
+    my ($self) = @_;
+    $self->provider->has_requests(@_);
 }
 
 sub get_requests
 {
-    my $self = shift;
-    $self->provider->get_requests;
+    my ($self) = @_;
+    $self->provider->get_requests(@_);
 }
 
 sub send_request
 {
-    my $self = shift;
-    $self->engine->send_request($_[0]);
+    my ($self) = @_;
+    $self->engine->send_request(@_);
 }
 
 sub handle_response
 {
-    my ($self, $request, $response) = @_;
-    $self->handler->handle_response($self, $request, $response);
+    my ($self) = @_;
+    $self->handler->handle_response(@_);
 }
 
 1;

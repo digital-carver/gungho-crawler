@@ -33,7 +33,7 @@ sub _parse_fh
 
 sub get_requests
 {
-    my $self = shift;
+    my ($self, $c) = @_;
 
     my $filename = $self->config->{filename};
     open(my $fh, $filename) or
@@ -43,6 +43,7 @@ sub get_requests
     close($fh);
 
     $self->has_requests(0);
+    $c->is_running(0);
 
     return @requests;
 }

@@ -11,7 +11,7 @@ use POE;
 use POE::Component::Client::Keepalive;
 use POE::Component::Client::HTTP;
 
-__PACKAGE__->mk_accessors($_) for qw(alias);
+__PACKAGE__->mk_accessors($_) for qw(alias loop_alarm loop_delay);
 
 use constant UserAgentAlias => 'Gungho_Engine_POE_UserAgent_Alias';
 
@@ -81,14 +81,35 @@ sub session_stop
 sub session_loop
 {
     my ($self, $kernel, $heap) = @_[OBJECT, KERNEL, HEAP];
+    $self->loop_alarm(undef);
+
     my $c = $heap->{CONTEXT};
+
+    if (! $c->is_running) {
+        $c->log->debug("is_running = 0, going down...\n") if $c->log->is_debug;
+        return;
+    }
+
+    $self->dispatch_requests($c);
+
+    my $alarm_id = $self->loop_alarm;
+    if (! $alarm_id) {
+        my $delay = $self->loop_delay;
+        if (! defined $delay || $delay <= 0) {
+            $delay = 5;
+        }
+        $self->loop_alarm($kernel->delay_set('session_loop', $delay));
+    }
+}
+
+sub dispatch_requests
+{
+    my ($self, $c) = @_;
 
     if ($c->has_requests) {
         foreach my $request ( $c->get_requests() ) {
             $self->send_request($c, $request);
         }
-
-        $kernel->yield('session_loop');
     }
 }
 
