@@ -43,8 +43,6 @@ sub add_request
     my $list = $self->requests;
     push @$list, $req;
     $self->has_requests(1);
-
-    print "Added request for ", $req->uri, "\n";
 }
 
 sub get_requests
