@@ -6,7 +6,7 @@
 package Gungho;
 use strict;
 use warnings;
-use base qw(Class::Accessor::Fast);
+use base qw(Gungho::Base);
 use Carp qw(croak);
 use Config::Any;
 use Class::Inspector;
@@ -14,7 +14,7 @@ use UNIVERSAL::require;
 
 use Gungho::Log;
 
-__PACKAGE__->mk_accessors($_) for qw(config log provider handler engine is_running hooks);
+__PACKAGE__->mk_accessors($_) for qw(config log provider handler engine is_running hooks features);
 
 our $VERSION = '0.02';
 
@@ -35,13 +35,35 @@ sub setup
     my $self = shift;
 
     $self->hooks({});
+    $self->features({});
 
+    $self->setup_components();
     $self->setup_log();
     $self->setup_provider();
     $self->setup_handler();
     $self->setup_engine();
 
     $self->setup_plugins();
+
+    $self->next::method(@_); # This propagates to 
+}
+
+sub setup_components
+{
+    my $self = shift;
+
+    my $list = $self->config->{components};
+    foreach my $module (@$list) {
+        my $pkg = $self->load_gungho_module($module, 'Component');
+        $pkg->inject_base($self);
+    }
+
+    # XXX - Hack! Class::C3 doesn't like it when we have G::Base
+    # before G::Component based objects in our ISA, so remove
+    if (@$list) {
+        @Gungho::ISA = grep { $_ ne 'Gungho::Base' } @Gungho::ISA;
+        Class::C3::reinitialize();
+    }
 }
 
 sub setup_log
@@ -135,6 +157,12 @@ sub run_hook
     }
 }
 
+sub has_feature
+{
+    my ($self, $name) = @_;
+    return exists $self->features()->{$name};
+}
+
 sub load_config
 {
     my $self = shift;
@@ -194,6 +222,7 @@ sub get_requests
 sub send_request
 {
     my ($self) = @_;
+$self->log->debug("Sending request!");
     $self->engine->send_request(@_);
 }
 

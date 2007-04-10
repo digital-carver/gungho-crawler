@@ -86,7 +86,7 @@ sub session_loop
     my $c = $heap->{CONTEXT};
 
     if (! $c->is_running) {
-        $c->log->debug("is_running = 0, going down...\n") if $c->log->is_debug;
+        $c->log->debug("is_running = 0, waiting for other queued states to finish...\n") if $c->log->is_debug;
         return;
     }
 
@@ -130,6 +130,14 @@ sub handle_response
     my $req = $req_packet->[0];
     my $res = $res_packet->[0];
     $c->run_hook('engine.handle_response', { request => $req, response => $res });
+
+    # Do we support auth challenge ?
+    my $code = $c->can('check_authentication_challenge');
+    if ( $code ) {
+        # return if auth has taken care of the response
+        return if $code->($c, $req, $res);
+    }
+        
     $c->handle_response($req, $res);
 }
 
