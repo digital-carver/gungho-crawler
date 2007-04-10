@@ -5,7 +5,7 @@
 
 package Gungho::Engine;
 use strict;
-use base qw(Gungho::Component);
+use base qw(Gungho::Base);
 
 sub run {}
 

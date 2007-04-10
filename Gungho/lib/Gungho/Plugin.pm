@@ -6,7 +6,7 @@
 package Gungho::Plugin;
 use strict;
 use warnings;
-use base qw(Gungho::Component);
+use base qw(Gungho::Base);
 
 1;
 

@@ -5,7 +5,7 @@
 
 package Gungho::Handler;
 use strict;
-use base qw(Gungho::Component);
+use base qw(Gungho::Base);
 use Gungho::Request;
 
 sub handle_response {}

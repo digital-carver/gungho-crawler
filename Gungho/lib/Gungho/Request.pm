@@ -9,11 +9,25 @@ use warnings;
 use base qw(HTTP::Request);
 use Storable qw(dclone);
 
+sub id
+{
+    my $self = shift;
+    $self->{_id} ||= do {
+        my $digest = Gungho::find_digest();
+
+        $digest->add(time(), {}, rand(), $self->method, $self->uri, $self->protocol);
+        $self->headers->scan(sub {
+            $digest->add($_[0], $_[1]);
+        });
+    };
+}
+
 sub clone
 {
     my $self  = shift;
     my $clone = $self->SUPER::clone;
     $clone->notes( dclone $self->notes );
+    return $clone;
 }
 
 sub notes

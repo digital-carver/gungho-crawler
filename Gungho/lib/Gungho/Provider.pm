@@ -5,7 +5,7 @@
 
 package Gungho::Provider;
 use strict;
-use base qw(Gungho::Component);
+use base qw(Gungho::Base);
 use Gungho::Request;
 
 __PACKAGE__->mk_accessors($_) for qw(has_requests);

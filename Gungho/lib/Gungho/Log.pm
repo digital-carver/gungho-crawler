@@ -6,7 +6,7 @@
 package Gungho::Log;
 use strict;
 use warnings;
-use base qw(Gungho::Component);
+use base qw(Gungho::Base);
 use Data::Dump;
 
 our %LEVELS = ();
