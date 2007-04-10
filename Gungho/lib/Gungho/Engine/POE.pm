@@ -189,6 +189,10 @@ sets up the engine.
 Instantiates a PoCo::Client::HTTP session and a main session that handles the
 main control.
 
+=head2 dispatch_requests($c)
+
+Retrieves pending requests from Gungho and dispatches them
+
 =head2 send_request($request)
 
 Sends a request to the http client

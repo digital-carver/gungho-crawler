@@ -286,10 +286,16 @@ or a hashref.
 
 Starts the Gungho process.
 
+=head2 has_feature($name)
+
+Returns true if Gungho supports some feature $name
+
 =head2 setup()
 
 Sets up the Gungho environment, including calling the various setup_*
 methods to configure the provider, engine, handler, etc.
+
+=head2 setup_components()
 
 =head2 setup_engine()
 

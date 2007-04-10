@@ -76,6 +76,10 @@ Gungho::Provider::Simple - An In-Memory, Simple Provider
 
 Creates a new instance.
 
+=head2 setup($c)
+
+Sets up the provider.
+
 =head2 add_request($request)
 
 Adds a new request to the provider.

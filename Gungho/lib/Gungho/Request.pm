@@ -8,17 +8,36 @@ use strict;
 use warnings;
 use base qw(HTTP::Request);
 use Storable qw(dclone);
+use UNIVERSAL::require;
+
+our $DIGEST;
+
+sub _find_digest
+{
+    $DIGEST ||= do {
+        my $pkg;
+        foreach my $x qw(SHA1 SHA-256 MD5) {
+            my $candidate = "Digest::$x";
+            if ($candidate->require()) {
+                $pkg = $candidate;
+                last;
+            }
+        }
+        $pkg;
+    };
+}
 
 sub id
 {
     my $self = shift;
     $self->{_id} ||= do {
-        my $digest = Gungho::find_digest();
+        my $digest = _find_digest();
 
         $digest->add(time(), {}, rand(), $self->method, $self->uri, $self->protocol);
         $self->headers->scan(sub {
             $digest->add($_[0], $_[1]);
         });
+        $digest->hexdigest;
     };
 }
 
@@ -59,7 +78,11 @@ creating this separately in anticipation for a possible change
 
 =head1 METHODS
 
-=head2 clone
+=head2 id()
+
+Returns a Unique ID for this request
+
+=head2 clone()
 
 Clones the request.
 
