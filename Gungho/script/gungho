@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use FindBin;
+use Getopt::Long;
+use lib(File::Spec->catdir($FindBin::Bin, File::Spec->updir, 'lib'));
+
+use Gungho;
+
+{
+    my ($config, $version);
+
+    # Default config file is expected to be at the current directory
+    $config = do {
+        my $file;
+        foreach my $suffix qw(yml yaml) {
+            my $test = "config.$suffix";
+            if (-f $test) {
+                $file = $test;
+                last;
+            }
+        }
+        $file;
+    };
+
+    if (! GetOptions('--config=s', \$config, '--version', \$version)) {
+        exit 1;
+    }
+
+    Gungho->new($config)->run;
+}
