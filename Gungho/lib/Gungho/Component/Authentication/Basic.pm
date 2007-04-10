@@ -93,12 +93,38 @@ __END__
 
 Gungho::Component::Authentication::Basic - Add Basic Auth To Gungho
 
+=head1 SYNOPSIS
+
+  ---
+  components:
+    - Authentication::Basic
+  credentials:
+    basic:
+      -
+        - http://example.com
+        - "Admin Only"
+        - username
+        - password
+      -
+        - http://example2.com
+        - "Admin Only"
+        - username2
+        - password2
+
 =head1 DESCRIPTION
 
 This module adds the capability to store basic authentication information
 inside Gungho. 
 
 =head1 METHODS
+
+=head2 setup($c)
+
+Sets up the component
+
+=head2 authenticate($is_proxy, $realm, $request, $response)
+
+Does the WWW Authentication and redispatches the request
 
 =head2 set_basic_credentials($uri, $realm, $uid, $pass)
 

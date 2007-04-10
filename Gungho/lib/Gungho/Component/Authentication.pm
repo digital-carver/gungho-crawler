@@ -1,4 +1,7 @@
-
+# $Id$
+#
+# Copyright (c) 2007 Daisuke Maki <daisuke@endeworks.jp>
+# all rights reserved.
 
 package Gungho::Component::Authentication;
 use strict;
@@ -7,22 +10,6 @@ use base qw(Gungho::Component);
 use Carp qw(croak);
 use HTTP::Status();
 use HTTP::Headers::Util();
-
-sub inject_base
-{
-    my $class = shift;
-    my $c     = shift;
-
-    $c->features->{ $class->can('feature_name') ?
-        $class->feature_name : 
-        do {
-            my $name = $class;
-            $name =~ s/^Gungho::Component:://;
-            $name;
-        }
-    }++;
-    $class->next::method($c, @_);
-}
 
 sub authenticate
 {
@@ -84,3 +71,38 @@ DONE:
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Gungho::Component::Authentication - Base Class For WWW Authentication
+
+=head1 SYNOPSIS
+
+   package MyAuth;
+   use base qw(Gungho::Component::Authentication);
+
+=head1 DESCRIPTION
+
+Gungho::Component::Authentication provides the base mechanism to detect
+and authenticate WWW Authentication responses.
+
+Subclasses must override the authenticate() method.
+
+=head1 METHODS
+
+=head2 authenticate($is_proxy, $auth_params, $request, $response)
+
+Should authenticate the request, and do any re-dispatching if need be.
+Should return 1 if the request has been redispatched.
+
+=head2 check_authentication_challenge($c, $req, $res)
+
+Checks the given request/response for a WWW Authentication challenge, and
+re-dispatches the request if need be.
+
+Returns 1 if the request has been redispatched (in which case your engine
+class should not forward this response to handle_response()), 0 otherwise.
+
+=cut
