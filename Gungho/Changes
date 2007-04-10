@@ -1,6 +1,15 @@
 Changes
 =======
 
+0.02_01 Tues Apr 10 2007
+  - Add experimental component system
+    >>> NOTE <<< This is still subject to change *widely*
+  - Add Gungho->has_feature(X)
+  - Add WWW Authentication component -- now you can authenticate
+    your requests via Basic authentication
+  - Fix Gungho::Request->clone()
+  - Gungho::Provider::Simple respects the is_running() flag
+
 0.02 Mon Apr 09 2007
   - Fix stupid bug in Gungho::Request
   - Change the call syntax for G::Component->new(\%config) to 
