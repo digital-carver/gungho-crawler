@@ -58,7 +58,7 @@ sub dispatch
     }
 
     if (scalar @{ $self->requests } <= 0) {
-        $c->has_requests(0);
+        $self->has_requests(0);
         $c->is_running(0);
     }
 }
