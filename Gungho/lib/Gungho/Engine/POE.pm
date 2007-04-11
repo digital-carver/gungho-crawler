@@ -19,6 +19,7 @@ sub setup
 {
     my $self = shift;
     $self->alias('MainComp');
+    $self->loop_delay( $self->config->{loop_delay} ) if $self->config->{loop_delay};
     $self->next::method(@_);
 }
 
@@ -143,6 +144,7 @@ Gungho::Engine::POE - POE Engine For Gungho
   engine:
     module: POE
     config:
+      loop_delay: 0.5
       client:
         agent:
           - AgentName1
