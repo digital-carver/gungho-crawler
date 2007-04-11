@@ -45,7 +45,12 @@ sub add_request
     $self->has_requests(1);
 }
 
-*pushback_request = \&add_request;
+sub pushback_request
+{
+    my ($self, $c, $request) = @_;
+    $c->is_running(1);
+    $self->add_request($request);
+}
 
 sub dispatch
 {
@@ -91,7 +96,7 @@ Sets up the provider.
 
 Adds a new request to the provider.
 
-=head2 pushback_request($request)
+=head2 pushback_request($c, $request)
 
 =head2 dispatch()
 

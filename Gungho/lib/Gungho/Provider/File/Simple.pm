@@ -23,7 +23,7 @@ sub new
 
 sub pushback_request
 {
-    my ($self, $req) = @_;
+    my ($self, $c, $req) = @_;
 
     my $list = $self->requests;
     push @$list, $req;
@@ -45,7 +45,7 @@ sub dispatch
             next unless /\S+/;
 
             my $req = $c->prepare_request(Gungho::Request->new(GET => $_));
-            $self->pushback_request($req);
+            $self->pushback_request($c, $req);
         }
         close($fh);
         $self->read_done(1)
