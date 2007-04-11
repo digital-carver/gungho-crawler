@@ -1,6 +1,9 @@
 Changes
 =======
 
+0.02_04 Wed Apr 11 2007
+  - Throttle::Domain was actually checking for URL, not domains.
+
 0.02_03 Wed Apr 11 2007
   - Packaging blunder. Add dep files for Throttle components
 

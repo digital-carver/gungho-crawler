@@ -37,7 +37,7 @@ EOSUB
             if (my $re = $d->{match}) {
                 # protect ourselves from "/"
                 $re =~ s/\//\\\//g;
-                $sub .= "    (\$url =~ /$re/) and return 1;\n";
+                $sub .= "    (\$host =~ /$re/) and return 1;\n";
             }
         }
         $sub .= "\nreturn 0;\n}";
@@ -78,6 +78,7 @@ Gungho::Component::Throttle::Domain - Throttle By Domain
       interval: 3600
       domains:
         - match: 'A [Regular]+ Exp?ression'
+        - match: \.cpan\.org$
   components:
     - Throttle::Domain
 
