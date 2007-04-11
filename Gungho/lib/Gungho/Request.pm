@@ -30,6 +30,8 @@ sub _find_digest_class
 sub id
 {
     my $self = shift;
+
+    local $@ = undef;
     $self->{_id} ||= do {
         my $pkg    = _find_digest_class() || die "Could not find Digest class";
         my $digest = $pkg->new;
@@ -40,7 +42,7 @@ sub id
         });
         $digest->hexdigest;
     };
-    die if $@;
+    die $@ if $@;
     $self->{_id};
 }
 
@@ -64,6 +66,19 @@ sub notes
         $self->{_notes}{$key} = $_[0];
     }
     return $value;
+}
+
+sub format
+{
+    my $self   = shift;
+    my $scheme = $self->uri->scheme;
+    my $pkg    = "Gungho::Request::$scheme";
+
+    require Class::Inspector;
+    Class::Inspector->loaded($pkg) or $pkg->require or die;
+
+    my $protocol = $pkg->new;
+    $protocol->format($self);
 }
 
 1;
@@ -92,5 +107,9 @@ Clones the request.
 =head2 notes($key[, $value])
 
 Associate arbitrary notes to the request
+
+=head2 format
+
+Formats the request so that it's appropriate to send through a socket.
 
 =cut
