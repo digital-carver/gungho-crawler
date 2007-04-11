@@ -8,44 +8,57 @@ use strict;
 use warnings;
 use base qw(Gungho::Provider);
 
+__PACKAGE__->mk_accessors($_) for qw(read_done requests);
+
 sub new
 {
     my $class = shift;
     my $self = $class->next::method(@_);
 
     $self->has_requests(1);
+    $self->read_done(0);
+    $self->requests([]);
     $self;
 }
 
-sub _parse_fh
+sub pushback_request
 {
-    my $self = shift;
-    my $fh   = shift;
+    my ($self, $req) = @_;
 
-    my @requests;
-    while (<$fh>) {
-        chomp;
-        next unless /\S+/;
-        push @requests, Gungho::Request->new(GET => $_);
-    }
-    return @requests;
+    my $list = $self->requests;
+    push @$list, $req;
+    $self->has_requests(1);
 }
 
-sub get_requests
+sub dispatch
 {
     my ($self, $c) = @_;
 
-    my $filename = $self->config->{filename};
-    open(my $fh, $filename) or
-        die "Could not open $filename for reading: $!";
+    if (! $self->read_done) {
+        my $filename = $self->config->{filename};
+        open(my $fh, $filename) or
+            die "Could not open $filename for reading: $!";
 
-    my @requests = $self->_parse_fh($fh);
-    close($fh);
+        while (<$fh>) {
+            chomp;
+            next unless /\S+/;
 
-    $self->has_requests(0);
-    $c->is_running(0);
+            my $req = $c->prepare_request(Gungho::Request->new(GET => $_));
+            $self->pushback_request($req);
+        }
+        close($fh);
+        $self->read_done(1)
+    }
 
-    return @requests;
+    my $requests = $self->requests;
+    $self->requests([]);
+    while (@$requests) {
+        $self->dispatch_request($c, shift @$requests);
+    }
+
+    if (scalar @{ $self->requests } <= 0) {
+        $c->is_running(0);
+    }
 }
 
 1;
@@ -74,9 +87,8 @@ Gungho::Provider::File::Simple - Provide Requests From A Simple File
 
 Creates a new instance.
 
-=head2 get_requests
+=head2 pushback_request
 
-Opens the filename specified in the config file, and reads each line in the
-file, converting them to a simple Gungho::Request object.
+=head2 dispatch
 
 =cut

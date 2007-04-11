@@ -19,12 +19,13 @@ sub new
     $self;
 }
 
+=head1
 sub setup
 {
     my $self = shift;
 
     my $url = $self->config->{url};
-    if (! ref($url) ) {
+    if ($url && ! ref($url) ) {
         $url = [ $url ];
     }
 
@@ -35,6 +36,7 @@ sub setup
     }
     $self->next::method(@_);
 }
+=cut
 
 sub add_request
 {

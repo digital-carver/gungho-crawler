@@ -1,7 +1,15 @@
 Changes
 =======
 
-0.02_01 Tues Apr 10 2007
+0.02_02 Wed Apr 11 2007
+  - Add throttling. You can now throttle your requests by domain or
+    simply by the number of requests in a specific amount of time.
+    Providers are now expected to handle "pushback" of requests when
+    a request has been throttled.
+  - Internal change: Code path to send requests has changed from
+    Gungho.pm doing the control to Provider doing the control
+
+0.02_01 Tue Apr 10 2007
   - Add experimental component system
     >>> NOTE <<< This is still subject to change *widely*
   - Add Gungho->has_feature(X)

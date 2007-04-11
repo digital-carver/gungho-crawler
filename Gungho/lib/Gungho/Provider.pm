@@ -10,7 +10,25 @@ use Gungho::Request;
 
 __PACKAGE__->mk_accessors($_) for qw(has_requests);
 
-sub get_requests {}
+sub dispatch {}
+
+sub dispatch_request
+{
+    my ($self, $c, $req) = @_;
+    eval {
+        $c->send_request($req);
+    };
+    if (my $e = $@) {
+        if ($e->isa('Gungho::Exception::RequestThrottled')) {
+            # This request was throttled. Attempt to do it later
+            $self->pushback_request($req);
+        } else {
+            die $e;
+        }
+    }
+}
+
+sub pushback_request {}
 
 1;
 
@@ -26,8 +44,17 @@ Gungho::Provider - Base Class For Gungho Prividers
 
 Returns true if there are still more requests to be processed.
 
-=head2 get_requests
+=head2 dispatch($c)
 
-Returns a list of requests that wished to be processed.
+Dispatch requests to be fetched to the Gungho framework
+
+=head2 dispatch_request($c, $req)
+
+Dispatch a single request
+
+=head2 pushback_request($req)
+
+Push back a request which couldn't be sent to the engine, for example
+because the request was throttled.
 
 =cut

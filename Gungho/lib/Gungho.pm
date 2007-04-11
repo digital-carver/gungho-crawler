@@ -10,9 +10,11 @@ use base qw(Gungho::Base);
 use Carp qw(croak);
 use Config::Any;
 use Class::Inspector;
+use UNIVERSAL::isa;
 use UNIVERSAL::require;
 
 use Gungho::Log;
+use Gungho::Exception;
 
 __PACKAGE__->mk_accessors($_) for qw(config log provider handler engine is_running hooks features);
 
@@ -207,23 +209,36 @@ sub run
     $_[0]->engine->run($_[0]);
 }
 
-sub has_requests
+sub dispatch_requests
 {
-    my ($self) = @_;
-    $self->provider->has_requests(@_);
+    my $self = shift;
+    $self->provider->dispatch($self);
 }
 
-sub get_requests
+sub prepare_request
 {
-    my ($self) = @_;
-    $self->provider->get_requests(@_);
+    my $self = shift;
+    my $req  = shift;
+    $self->run_hook('dispatch.prepare_request', $req);
+
+    return $req;
 }
 
 sub send_request
 {
-    my ($self) = @_;
-$self->log->debug("Sending request!");
-    $self->engine->send_request(@_);
+    my ($self, $request) = @_;
+
+    if ($self->has_feature('Throttle')) {
+        if ($self->throttle($request)) {
+            $self->engine->send_request($self, $request);
+        } else {
+            $self->log->debug("Request " . $request->url . " was throttled")
+                if $self->log->is_debug;
+            Gungho::Exception::RequestThrottled->throw($request);
+        }
+    } else {
+        $self->engine->send_request($self, $request);
+    }
 }
 
 sub handle_response
@@ -328,6 +343,14 @@ Delegates to provider's get_requests
 =head2 handle_response
 
 Delegates to handler's handle_response
+
+=head2 dispatch_requests
+
+Calls provider->dispatch
+
+=head2 prepare_request($req)
+
+Given a request, preps it before sending it to the engine
 
 =head2 send_request
 

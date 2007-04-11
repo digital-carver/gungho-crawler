@@ -9,7 +9,9 @@ requires("Class::C3");
 requires("Class::Inspector");
 requires("Config::Any");
 requires("Data::Dump");
+requires("Exception::Class");
 requires("Storable");
+requires("UNIVERSAL::isa");
 requires("UNIVERSAL::require");
 
 # Hey, stolen right off of Plagger

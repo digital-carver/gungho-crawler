@@ -90,7 +90,7 @@ sub session_loop
         return;
     }
 
-    $self->dispatch_requests($c);
+    $c->dispatch_requests();
 
     my $alarm_id = $self->loop_alarm;
     if (! $alarm_id) {
@@ -99,17 +99,6 @@ sub session_loop
             $delay = 5;
         }
         $self->loop_alarm($kernel->delay_set('session_loop', $delay));
-    }
-}
-
-sub dispatch_requests
-{
-    my ($self, $c) = @_;
-
-    if ($c->has_requests) {
-        foreach my $request ( $c->get_requests() ) {
-            $self->send_request($c, $request);
-        }
     }
 }
 
@@ -188,10 +177,6 @@ sets up the engine.
 
 Instantiates a PoCo::Client::HTTP session and a main session that handles the
 main control.
-
-=head2 dispatch_requests($c)
-
-Retrieves pending requests from Gungho and dispatches them
 
 =head2 send_request($request)
 

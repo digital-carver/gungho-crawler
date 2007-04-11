@@ -30,6 +30,24 @@ sub feature_name
     $name;
 }
 
+sub component_config
+{
+    my $self = shift;
+    my $pkg  = shift || caller();
+
+    if ($pkg !~ s/^Gungho::Component:://) {
+        $pkg = "+$pkg";
+    }
+
+    my $components = $self->config->{components};
+    foreach my $comp (@$components) {
+        if ($comp->{module} eq $pkg) {
+            return $comp->{config};
+        }
+    }
+    return {};
+}
+
 1;
 
 __END__
