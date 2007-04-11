@@ -1,0 +1,7 @@
+---
+provider:
+    module: Simple
+    config:
+        url:
+            - "http://search.cpan.org"
+            - "http://www.perl.org"
