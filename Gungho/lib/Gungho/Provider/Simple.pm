@@ -19,7 +19,6 @@ sub new
     $self;
 }
 
-=head1
 sub setup
 {
     my $self = shift;
@@ -36,7 +35,6 @@ sub setup
     }
     $self->next::method(@_);
 }
-=cut
 
 sub add_request
 {
@@ -47,15 +45,22 @@ sub add_request
     $self->has_requests(1);
 }
 
-sub get_requests
+*pushback_request = \&add_request;
+
+sub dispatch
 {
     my ($self, $c) = @_;
 
-    my $list = $self->requests;
+    my $requests = $self->requests;
     $self->requests([]);
-    $self->has_requests(0);
-    $c->is_running(0);
-    return @$list;
+    while (@$requests) {
+        $self->dispatch_request($c, shift @$requests);
+    }
+
+    if (scalar @{ $self->requests } <= 0) {
+        $c->has_requests(0);
+        $c->is_running(0);
+    }
 }
 
 1;
@@ -86,11 +91,10 @@ Sets up the provider.
 
 Adds a new request to the provider.
 
-=head2 get_requests()
+=head2 pushback_request($request)
 
-Returns the list of requests in the provider. The list is set to an empty
-list after the call, and has_requests is set to 0
+=head2 dispatch()
 
-
+dispatches the requests
 
 =cut
