@@ -12,11 +12,11 @@ use UNIVERSAL::require;
 
 our $DIGEST;
 
-sub _find_digest
+sub _find_digest_class
 {
     $DIGEST ||= do {
         my $pkg;
-        foreach my $x qw(SHA1 SHA-256 MD5) {
+        foreach my $x qw(SHA1 MD5) {
             my $candidate = "Digest::$x";
             if ($candidate->require()) {
                 $pkg = $candidate;
@@ -31,14 +31,17 @@ sub id
 {
     my $self = shift;
     $self->{_id} ||= do {
-        my $digest = _find_digest();
+        my $pkg    = _find_digest_class() || die "Could not find Digest class";
+        my $digest = $pkg->new;
 
-        $digest->add(time(), {}, rand(), $self->method, $self->uri, $self->protocol);
+        $digest->add(map { defined $_ ? $_ : '' } (time(), {}, rand(), $self->method, $self->uri, $self->protocol));
         $self->headers->scan(sub {
-            $digest->add($_[0], $_[1]);
+            $digest->add(join(':', $_[0], $_[1]));
         });
         $digest->hexdigest;
     };
+    die if $@;
+    $self->{_id};
 }
 
 sub clone
