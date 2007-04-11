@@ -36,6 +36,7 @@ sub dispatch
 
     if (! $self->read_done) {
         my $filename = $self->config->{filename};
+        die "No file specified" unless $filename;
         open(my $fh, $filename) or
             die "Could not open $filename for reading: $!";
 
