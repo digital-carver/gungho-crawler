@@ -1,7 +1,14 @@
 Changes
 =======
 
-0.02_05 Wed Apr 11 2007
+0.03 Thu Apr 12 2007 [rev 51]
+  - Add simple examples at examples directory
+  - Add Danga::Socket engine -- this is a pretty crude implementation
+  - Add documentation.
+  - Fix G::Request's ID generation
+  - Change pushback_request()'s signature to include a $c
+
+0.02_05 Wed Apr 11 2007 [rev. 41]
   - Provider::Simple wasn't exactly prepared for the new code path.
     Fixed, and tested with Plagger
 

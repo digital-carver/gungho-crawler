@@ -6,6 +6,7 @@
 package Gungho;
 use strict;
 use warnings;
+use 5.008;
 use base qw(Gungho::Base);
 use Carp qw(croak);
 use Config::Any;
@@ -18,7 +19,7 @@ use Gungho::Exception;
 
 __PACKAGE__->mk_accessors($_) for qw(config log provider handler engine is_running hooks features);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub new
 {
@@ -232,7 +233,7 @@ sub send_request
         if ($self->throttle($request)) {
             $self->engine->send_request($self, $request);
         } else {
-            $self->log->debug("Request " . $request->url . " was throttled")
+            $self->log->debug("Request " . $request->url . " (" . $request->id . ") was throttled")
                 if $self->log->is_debug;
             Gungho::Exception::RequestThrottled->throw($request);
         }
