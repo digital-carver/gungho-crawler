@@ -119,6 +119,23 @@ sub handle_response
 
     my $req = $req_packet->[0];
     my $res = $res_packet->[0];
+
+    # Work around POE doing too much for us. 
+    if ($POE::Component::Client::HTTP::VERSION >= 0.80) {
+        if ($res->content_encoding) {
+            my @ct = $res->content_type;
+            if ((shift @ct) =~ /^text\//) {
+                foreach my $ct (@ct) {
+                    next unless $ct =~ /charset=((?!utf-?8).+)$/;
+                    my $enc = $1;
+                    require Encode;
+                    $res->content( Encode::encode($enc, $res->content) );
+                    last;
+                }
+            }
+        }
+    }
+
     $c->run_hook('engine.handle_response', { request => $req, response => $res });
 
     # Do we support auth challenge ?
