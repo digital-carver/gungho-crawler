@@ -42,6 +42,7 @@ sub dispatch
 
         while (<$fh>) {
             chomp;
+            s/\s*#.*$//;
             next unless /\S+/;
 
             my $req = $c->prepare_request(Gungho::Request->new(GET => $_));
