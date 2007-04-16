@@ -283,6 +283,17 @@ There are also "hooks". These hooks can be registered from anywhere by
 invoking the register_hook() method. They are run at particular points,
 which are specified when you call register_hook().
 
+=head1 INLINE
+
+If you're looking into simple crawlers, you may want to look at Gungho::Inline,
+
+  Gungho::Inline->new({
+    provider => sub { ... },
+    handler  => sub { ... }
+  });
+
+See the manual for Gungho::Inline for details.
+
 =head1 HOOKS
 
 Currently available hooks are:
