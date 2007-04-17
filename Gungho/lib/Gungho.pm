@@ -73,8 +73,17 @@ sub setup_log
 {
     my $self = shift;
 
-    my $log = Gungho::Log->new();
+    my $log_config = $self->config->{log} || {};
+    my @levels     = @{ $log_config->{levels} || [ qw(info warn error fatal) ] };
+
+    my $log = Gungho::Log->new(@levels);
     $log->autoflush(1);
+
+    # Only explicitly enable debug if the global debug flag is set
+    if ($self->config->{debug}) {
+        $log->enable('debug');
+    }
+
     $self->log($log);
 }
 
