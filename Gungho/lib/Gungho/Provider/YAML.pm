@@ -112,4 +112,16 @@ Gungho::Provider::YAML - Specify requests in YAML format
       content:
     - url: http://example.com/get/me
 
+=head1 DESCRIPTION
+
+Gungho::Provider::YAML allows you to write down requests in an YAML file
+
+=head1 METHODS
+
+=head2 new
+
+=head2 dispatch
+
+=head2 pushbak_reuqest
+
 =cut

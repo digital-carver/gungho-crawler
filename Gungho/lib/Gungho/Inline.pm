@@ -144,6 +144,14 @@ Sometimes you don't need the full power of an independent Gungho Provider
 and or Handler. In those cases, Gungho::Inline saves you from creating 
 separate packages
 
+This module is still experimental. Feedback welcome
+
+=head1 METHODS
+
+=head2 new(provider => $callback, handler => $callback)
+
+Creates a new Gungho instance with these callbacks
+
 =head1 AUTHOR
 
 Original code by Kazuho Oku. 
