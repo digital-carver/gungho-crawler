@@ -122,6 +122,6 @@ Gungho::Provider::YAML allows you to write down requests in an YAML file
 
 =head2 dispatch
 
-=head2 pushbak_reuqest
+=head2 pushback_request
 
 =cut
