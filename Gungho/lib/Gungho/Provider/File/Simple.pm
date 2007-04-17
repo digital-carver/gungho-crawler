@@ -83,6 +83,11 @@ Gungho::Provider::File::Simple - Provide Requests From A Simple File
   http://bar.com
   http://baz.com
 
+=head1 DESCRIPTION
+
+This module allows you to put a list of URLs in a plain text file. Gungho
+will pick each line up and fetch the URL. You can embed comments via #
+
 =head1 METHODS
 
 =head2 new

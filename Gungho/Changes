@@ -1,6 +1,12 @@
 Changes
 =======
 
+0.04 Tue Apr 17 2007 [rev 61]
+  - Add Gungho::Inline - thanks to Kazuho Oku
+  - Add way to control logging behavior
+  - Allow comments in files for Provider::Simple
+  - Work around POE trying to decode contents for us.
+
 0.03 Thu Apr 12 2007 [rev 51]
   - Add simple examples at examples directory
   - Add Danga::Socket engine -- this is a pretty crude implementation

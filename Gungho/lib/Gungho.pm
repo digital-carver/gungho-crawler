@@ -19,7 +19,7 @@ use Gungho::Exception;
 
 __PACKAGE__->mk_accessors($_) for qw(config log provider handler engine is_running hooks features);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub new
 {
