@@ -9,7 +9,7 @@ use warnings;
 use base qw(Gungho::Component::Throttle);
 use Data::Throttler;
 
-__PACKAGE__->mk_accessors($_) for qw(throttler);
+__PACKAGE__->mk_classdata($_) for qw(throttler);
 
 sub prepare_throttler
 {

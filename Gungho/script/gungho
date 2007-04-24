@@ -44,7 +44,7 @@ EOM
         pod2usage(-verbose => 2);
     }
 
-    Gungho->new($config)->run;
+    Gungho->run($config);
 }
 
 __END__

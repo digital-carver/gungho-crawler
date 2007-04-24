@@ -13,10 +13,9 @@ sub inject_base
     my $class = shift;
     my $c     = shift;
 
-    my $pkg = ref($c);
     {
         no strict 'refs';
-        push @{ "${pkg}::ISA" }, $class;
+        push @Gungho::ISA, $class;
     }
 
     $c->features->{ $class->feature_name }++;

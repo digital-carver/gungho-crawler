@@ -5,17 +5,16 @@
 
 package Gungho::Base;
 use strict;
-use base qw(Class::Accessor::Fast);
+use base qw(Class::Accessor::Fast Class::Data::Inheritable);
 use Class::C3;
 INIT { Class::C3::initialize() }
 
-__PACKAGE__->mk_accessors($_) for qw(config);
+__PACKAGE__->mk_classdata(config => {});
 
 sub new
 {
     my $class  = shift;
-    my $self = bless { @_ }, $class;
-    $self->config({}) unless $self->config;
+    my $self = bless {}, $class;
     return $self;
 }
 

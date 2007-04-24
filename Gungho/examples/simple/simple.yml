@@ -1,4 +1,5 @@
 ---
+debug: 1
 provider:
     module: Simple
     config:

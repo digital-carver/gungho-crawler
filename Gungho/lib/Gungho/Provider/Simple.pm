@@ -57,6 +57,7 @@ sub dispatch
     my ($self, $c) = @_;
 
     my $requests = $self->requests;
+
     $self->requests([]);
     while (@$requests) {
         $self->dispatch_request($c, shift @$requests);

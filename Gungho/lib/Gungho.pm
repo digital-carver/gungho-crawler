@@ -17,25 +17,27 @@ use UNIVERSAL::require;
 use Gungho::Log;
 use Gungho::Exception;
 
-__PACKAGE__->mk_accessors($_) for qw(config log provider handler engine is_running hooks features);
+__PACKAGE__->mk_classdata($_) for (
+    qw(log provider handler engine is_running hooks features),
+    qw(setup_finished)
+);
 
 our $VERSION = '0.04';
 
 sub new
 {
+    warn "Gungho::new() has been deprecated in favor of Gungho->run()";
     my $class = shift;
-    my $self  = bless {}, $class;
-
-    my $config = $self->load_config($_[0]);
-    $self->config($config);
-    $self->setup();
-
-    return $self;
+    $class->setup($_[0]);
+    return $class;
 }
 
 sub setup
 {
     my $self = shift;
+
+    my $config = $self->load_config($_[0]);
+    $self->config($config);
 
     $self->hooks({});
     $self->features({});
@@ -45,10 +47,11 @@ sub setup
     $self->setup_provider();
     $self->setup_handler();
     $self->setup_engine();
-
     $self->setup_plugins();
 
-    $self->next::method(@_); # This propagates to 
+    $self->next::method(@_);
+    $self->setup_finished(1);
+    $self;
 }
 
 sub setup_components
@@ -97,7 +100,8 @@ sub setup_provider
     }
 
     my $pkg = $self->load_gungho_module($config->{module}, 'Provider');
-    my $obj = $pkg->new(config => $config->{config});
+    $pkg->config($config->{config}) if $config->{config};
+    my $obj = $pkg->new();
     $obj->setup( $self );
     $self->provider( $obj );
 }
@@ -113,7 +117,8 @@ sub setup_engine
     }
 
     my $pkg = $self->load_gungho_module($config->{module}, 'Engine');
-    my $obj = $pkg->new(config => $config->{config});
+    $pkg->config($config->{config}) if $config->{config};
+    my $obj = $pkg->new();
     $obj->setup( $self );
     $self->engine( $obj );
 }
@@ -127,7 +132,8 @@ sub setup_handler
         config => {}
     };
     my $pkg = $self->load_gungho_module($config->{module}, 'Handler');
-    my $obj = $pkg->new(config => $config->{config});
+    $pkg->config($config->{config}) if $config->{config};
+    my $obj = $pkg->new();
     $obj->setup( $self );
     $self->handler( $obj );
 }
@@ -139,7 +145,8 @@ sub setup_plugins
     my $plugins = $self->config->{plugins} || [];
     foreach my $plugin (@$plugins) {
         my $pkg = $self->load_gungho_module($plugin->{module}, 'Plugin');
-        my $obj = $pkg->new(config => $plugin->{config});
+        $pkg->config($plugin->{config}) if $plugin->{config};
+        my $obj = $pkg->new();
         $obj->setup($self);
     }
 }
@@ -215,8 +222,12 @@ sub load_gungho_module
 
 sub run
 {
-    $_[0]->is_running(1);
-    $_[0]->engine->run($_[0]);
+    my $self = shift;
+    if (! $self->setup_finished()) {
+        $self->setup(@_);
+    }
+    $self->is_running(1);
+    $self->engine->run($self);
 }
 
 sub dispatch_requests
@@ -291,6 +302,24 @@ Engine, which controls the entire process.
 There are also "hooks". These hooks can be registered from anywhere by
 invoking the register_hook() method. They are run at particular points,
 which are specified when you call register_hook().
+
+=head1 COMPONENTS
+
+Components add new functionality to Gungho. Components are loaded at
+startup time fro the config file / hash given to Gungho constructor.
+
+  Gungho->new({
+    components => [
+      'Throttle::Simple'
+    ],
+    throttle => {
+      max_interval => ...,
+    }
+  });
+
+Components modify Gungho's inheritance structure at run time to add
+extra functionality to Gungho, and therefore should only be loaded
+at run time.
 
 =head1 INLINE
 

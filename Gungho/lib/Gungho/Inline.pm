@@ -7,11 +7,8 @@
 package Gungho::Inline;
 use strict;
 use warnings;
-
 use base qw(Gungho);
 use Gungho::Request;
-
-__PACKAGE__->mk_accessors($_) for qw(requests callback);
 
 sub new {
     my $class = shift;
