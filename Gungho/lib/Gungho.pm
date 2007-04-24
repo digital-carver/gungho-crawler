@@ -319,7 +319,7 @@ startup time fro the config file / hash given to Gungho constructor.
 
 Components modify Gungho's inheritance structure at run time to add
 extra functionality to Gungho, and therefore should only be loaded
-at run time.
+before starting the engine.
 
 =head1 INLINE
 
