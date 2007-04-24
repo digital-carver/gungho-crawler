@@ -10,7 +10,7 @@ use warnings;
 use base qw(Gungho);
 use Gungho::Request;
 
-sub new {
+sub setup {
     my $class = shift;
     my $config = shift;
     
@@ -25,7 +25,7 @@ sub new {
         }
     }
 
-    $class->SUPER::new($config);
+    $class->next::method($config);
 }
 
 package Gungho::Provider::Inline;
@@ -145,9 +145,9 @@ This module is still experimental. Feedback welcome
 
 =head1 METHODS
 
-=head2 new(provider => $callback, handler => $callback)
+=head2 setup({ provider => $callback, handler => $callback, %args })
 
-Creates a new Gungho instance with these callbacks
+Sets up Gungho::Inline with this set of providers
 
 =head1 AUTHOR
 
