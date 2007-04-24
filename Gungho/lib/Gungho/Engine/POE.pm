@@ -14,6 +14,27 @@ use POE::Component::Client::HTTP;
 __PACKAGE__->mk_accessors($_) for qw(alias loop_alarm loop_delay);
 
 use constant UserAgentAlias => 'Gungho_Engine_POE_UserAgent_Alias';
+use constant SKIP_DECODE_CONTENT  =>
+    exists $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} ?  $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} : 1;
+use constant FORCE_ENCODE_CONTENT => 
+    $ENV{GUNGHO_ENGINE_POE_FORCE_ENCODE_CONTENT} && ! SKIP_DECODE_CONTENT;
+
+BEGIN
+{
+    if (SKIP_DECODE_CONTENT) {
+        eval <<'        EOCODE';
+            no warnings 'redefine';
+            sub HTTP::Response::decoded_content {
+                my ($self, %opt) = @_;
+                my $caller = (caller(2))[3];
+                if ($caller eq 'POE::Component::Client::HTTP::Request::return_response') {
+                    $opt{charset} = 'none';
+                }
+                $self->SUPER::decoded_content(%opt);
+            }
+        EOCODE
+    }
+}
 
 sub setup
 {
@@ -121,7 +142,7 @@ sub handle_response
     my $res = $res_packet->[0];
 
     # Work around POE doing too much for us. 
-    if ($POE::Component::Client::HTTP::VERSION >= 0.80) {
+    if (FORCE_ENCODE_CONTENT && $POE::Component::Client::HTTP::VERSION >= 0.80) {
         if ($res->content_encoding) {
             my @ct = $res->content_type;
             if ((shift @ct) =~ /^text\//) {
@@ -178,6 +199,29 @@ Gungho::Engine::POE - POE Engine For Gungho
 
 =head1 DESCRIPTION
 
+Gunghog::Engine::POE gives you the full power of POE to Gungho.
+
+=head1 POE::Component::Client::HTTP AND DECODED CONTENTS
+
+Since version 0.80, POE::Component::Client::HTTP silently decodes the content 
+of an HTTP response. This means that, even when the HTTP header states
+
+  Content-Type: text/html; charset=euc-jp
+
+Your content grabbed via $response->content() will be in decode Perl unicode.
+This is a side-effect from POE::Component::Client::HTTP trying to handle
+Content-Encoding for us, and HTTP::Request also trying to be clever.
+
+We have devised workarounds for this. You can either set the following
+variables in your environment (before Gunghoe::Engine::POE is loaded)
+to enable the workarounds:
+
+  GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT = 1
+  # or
+  GUNGHO_ENGINE_POE_FORCE_ENCODE_CONTENT = 1
+
+See L<ENVIRONMENT VARIABLES|ENVIRONMENT VARIABLES> for details
+
 =head1 USING KEEPALIVE
 
 Gungho::Engine::POE uses PoCo::Client::Keepalive to control the connections.
@@ -185,6 +229,24 @@ For the most part this has no visible effect on the user, but the "timeout"
 parameter dictate exactly how long the component waits for a new connection
 which means that, after finishing to fetch all the requests the engine
 waits for that amount of time before terminating. This is NORMAL.
+
+=head1 ENVIRONMENT VARIABLES
+
+=head2 GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT
+
+When set to a non-null value, this will install a new subroutine in
+HTTP::Response's namespace, and will circumvent HTTP::Response to decode
+its content by explicitly passing charset = 'none' to HTTP::Response's
+decoded_content().
+
+This workaround is ENABLED by default.
+
+=head2 GUNGHO_ENGINE_POE_FORCE_ENCODE_CONTENT
+
+When set to a non-null value, this will re-encode the content back to
+what the Content-Type header specified the charset to be.
+
+By default this option is disabled.
 
 =head1 METHODS
 
