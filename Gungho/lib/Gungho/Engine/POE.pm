@@ -15,7 +15,7 @@ __PACKAGE__->mk_accessors($_) for qw(alias loop_alarm loop_delay);
 
 use constant UserAgentAlias => 'Gungho_Engine_POE_UserAgent_Alias';
 use constant SKIP_DECODE_CONTENT  =>
-    exists $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} ?  $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} : 1;
+    exists $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} ?  $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} : 0;
 use constant FORCE_ENCODE_CONTENT => 
     $ENV{GUNGHO_ENGINE_POE_FORCE_ENCODE_CONTENT} && ! SKIP_DECODE_CONTENT;
 
