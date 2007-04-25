@@ -13,11 +13,7 @@ sub inject_base
     my $class = shift;
     my $c     = shift;
 
-    {
-        no strict 'refs';
-        push @Gungho::ISA, $class;
-    }
-
+    push @Gungho::ISA, $class;
     $c->features->{ $class->feature_name }++;
 }
 
