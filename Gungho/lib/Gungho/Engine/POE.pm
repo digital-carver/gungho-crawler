@@ -15,7 +15,7 @@ __PACKAGE__->mk_accessors($_) for qw(alias loop_alarm loop_delay);
 
 use constant UserAgentAlias => 'Gungho_Engine_POE_UserAgent_Alias';
 use constant SKIP_DECODE_CONTENT  =>
-    exists $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} ?  $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} : 0;
+    exists $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} ?  $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} : 1;
 use constant FORCE_ENCODE_CONTENT => 
     $ENV{GUNGHO_ENGINE_POE_FORCE_ENCODE_CONTENT} && ! SKIP_DECODE_CONTENT;
 
@@ -24,9 +24,11 @@ BEGIN
     if (SKIP_DECODE_CONTENT) {
         eval <<'        EOCODE';
             no warnings 'redefine';
+            package HTTP::Response;
             sub HTTP::Response::decoded_content {
                 my ($self, %opt) = @_;
                 my $caller = (caller(2))[3];
+
                 if ($caller eq 'POE::Component::Client::HTTP::Request::return_response') {
                     $opt{charset} = 'none';
                 }
@@ -69,6 +71,7 @@ sub run
 
     POE::Component::Client::HTTP->spawn(
         Agent             => "Gungho/$Gungho::VERSION",
+        FollowRedirects   => 1,
         %$client_config,
         Alias             => &UserAgentAlias,
         ConnectionManager => $keepalive,
