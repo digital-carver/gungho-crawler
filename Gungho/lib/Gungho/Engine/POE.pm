@@ -145,7 +145,9 @@ sub handle_response
     my $res = $res_packet->[0];
 
     # Work around POE doing too much for us. 
-    if (FORCE_ENCODE_CONTENT && $POE::Component::Client::HTTP::VERSION >= 0.80) {
+    if (FORCE_ENCODE_CONTENT && $POE::Component::Client::HTTP::VERSION # Hide from CPAN
+        >= 0.80)
+    {
         if ($res->content_encoding) {
             my @ct = $res->content_type;
             if ((shift @ct) =~ /^text\//) {
