@@ -27,6 +27,14 @@ sub _find_digest_class
     };
 }
 
+sub new
+{
+    my $class = shift;
+    my $self  = $class->SUPER::new(@_);
+    $self->{_notes} = {};
+    return $self;
+}
+
 sub id
 {
     my $self = shift;
