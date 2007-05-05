@@ -1,6 +1,13 @@
 Changes
 =======
 
+0.05 Sun May 06 2007 [rev 71]
+  - Gungho->new has been deprecated in favor of a simple call to ->run()
+  - Gungho::Inline->new has been deprecated
+  - Fix SKIP_DECODED_CONTENT handling by properly specifying a package.
+    POE workaround should now work.
+  - Gungho::Engine::POE will set FollowRedirect to 1 by default.
+
 0.04 Tue Apr 17 2007 [rev 61]
   - Add Gungho::Inline - thanks to Kazuho Oku
   - Add way to control logging behavior

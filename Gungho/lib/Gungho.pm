@@ -22,7 +22,7 @@ __PACKAGE__->mk_classdata($_) for (
     qw(setup_finished)
 );
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 sub new
 {
