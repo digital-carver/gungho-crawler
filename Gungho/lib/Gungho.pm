@@ -428,9 +428,13 @@ All rights reserved.
 
 =head1 CONTRIBUTORS
 
+=over 4
+
 =item Kazuho Oku
 
 =item Keiichi Okabe
+
+=back
 
 =head1 LICENSE
 
