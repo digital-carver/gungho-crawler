@@ -104,6 +104,10 @@ creating this separately in anticipation for a possible change
 
 =head1 METHODS
 
+=head2 new()
+
+Creates a new Gungho::Request instance
+
 =head2 id()
 
 Returns a Unique ID for this request
