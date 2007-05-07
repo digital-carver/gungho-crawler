@@ -70,7 +70,7 @@ sub run
     }
 
     POE::Component::Client::HTTP->spawn(
-        Agent             => "Gungho/$Gungho::VERSION",
+        Agent             => $c->default_user_agent,
         FollowRedirects   => 1,
         %$client_config,
         Alias             => &UserAgentAlias,

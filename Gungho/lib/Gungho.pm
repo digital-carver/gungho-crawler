@@ -19,7 +19,7 @@ use Gungho::Exception;
 
 __PACKAGE__->mk_classdata($_) for (
     qw(log provider handler engine is_running hooks features),
-    qw(setup_finished)
+    qw(setup_finished default_user_agent)
 );
 
 our $VERSION = '0.05';
@@ -38,7 +38,7 @@ sub setup
 
     my $config = $self->load_config($_[0]);
     $self->config($config);
-
+    $self->default_user_agent("Gungho/$Gungho::VERSION (http://code.google.com/p/gungho-crawler/wiki/Index)");
     $self->hooks({});
     $self->features({});
 
@@ -424,8 +424,13 @@ You can obtain the current code base from
 =head1 AUTHOR
 
 Copyright (c) 2007 Daisuke Maki E<lt>daisuke@endeworks.jpE<gt>
-
 All rights reserved.
+
+=head1 CONTRIBUTORS
+
+=item Kazuho Oku
+
+=item Keiichi Okabe
 
 =head1 LICENSE
 

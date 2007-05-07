@@ -59,9 +59,6 @@ sub send_request
 
     my $uri  = $req->uri;
 
-print "Sending request to $uri\n";
-
-    
     my $socket = IO::Socket::INET->new(
         PeerAddr => $uri->host,
         PeerPort => $uri->port || $uri->default_port,
@@ -76,6 +73,8 @@ print "Sending request to $uri\n";
     $danga->watch_write(1);
     $danga->{request} = $req;
     $danga->{engine}  = $self;
+
+    $req->headers->push_header(user_agent => $c->default_user_agent);
     $req->notes(danga => $danga);
 }
 
