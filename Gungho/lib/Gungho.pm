@@ -277,8 +277,7 @@ Gungho - Yet Another High Performance Web Crawler Framework
 =head1 SYNOPSIS
 
   use Gungho;
-  my $g = Gungho->new($config);
-  $g->run;
+  Gungho->run($config);
 
 =head1 DESCRIPTION
 
@@ -308,7 +307,7 @@ which are specified when you call register_hook().
 Components add new functionality to Gungho. Components are loaded at
 startup time fro the config file / hash given to Gungho constructor.
 
-  Gungho->new({
+  Gungho->run({
     components => [
       'Throttle::Simple'
     ],
@@ -325,7 +324,7 @@ before starting the engine.
 
 If you're looking into simple crawlers, you may want to look at Gungho::Inline,
 
-  Gungho::Inline->new({
+  Gungho::Inline->run({
     provider => sub { ... },
     handler  => sub { ... }
   });
@@ -344,12 +343,12 @@ Currently available hooks are:
 
 =head2 new($config)
 
-Creates a new Gungho instance. It requires either the name of a config filename
-or a hashref.
+This method has been deprecated. Use run() instead.
 
 =head2 run
 
-Starts the Gungho process.
+Starts the Gungho process.  It requires either the name of a config filename
+or a hashref.
 
 =head2 has_feature($name)
 

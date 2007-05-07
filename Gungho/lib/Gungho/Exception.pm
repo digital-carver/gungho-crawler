@@ -3,6 +3,9 @@
 # Copyright (c) 2007 Daisuke Maki <daisuke@endeworks.jp>
 # All rights reserved.
 
+package Gungho::Exception;
+use strict;
+use warnings;
 use Exception::Class
     'Gungho::Exception',
     map {
@@ -16,6 +19,6 @@ __END__
 
 =head1 NAME
 
-Gungho::Exception
+Gungho::Exception - Gungho Exceptions
 
 =cut

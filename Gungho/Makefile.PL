@@ -48,5 +48,32 @@ if ($@) {
     die "Failed to load deps! : $@";
 }
 
+my @tests;
+eval {
+    my $code;
+
+    $code = sub {
+        my $dir = shift;
+        my $dh  = DirHandle->new($dir);
+        while (my $f = $dh->read) {
+            next if $f =~ /^\.+$/;
+            my $fullpath = File::Spec->catfile($dir, $f);
+            if (-d $fullpath) {
+                $code->($fullpath);
+            } else {
+                next unless $fullpath =~ /\.t$/;
+                push @tests, $fullpath;
+            }
+        }
+    };
+    $code->('t');
+
+    @tests;
+};
+if ($@) {
+    die "Failed to load tests! : $@";
+}
+
+tests join(' ', @tests);
 auto_install;
 WriteAll;
