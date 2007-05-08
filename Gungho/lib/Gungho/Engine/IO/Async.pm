@@ -10,10 +10,12 @@ use base qw(Gungho::Engine);
 use HTTP::Parser;
 use HTTP::Status;
 use IO::Async::Buffer;
+use IO::Async::Notifier;
 use IO::Socket::INET;
+use Net::DNS;
 
 __PACKAGE__->mk_classdata($_) for qw(impl_class);
-__PACKAGE__->mk_accessors($_) for qw(context impl loop_delay);
+__PACKAGE__->mk_accessors($_) for qw(context impl loop_delay resolver);
 
 # probe for available impl_class
 use constant HAVE_IO_POLL => (eval { use IO::Poll } && !$@);
@@ -51,14 +53,65 @@ sub setup_impl_class
 sub run
 {
     my ($self, $c) = @_;
+    $self->resolver(Net::DNS::Resolver->new);
     $self->impl->run($c);
 }
 
 sub send_request
 {
+    my ($self, $c, $request) = @_;
+
+    if ($request->requires_name_lookup) {
+        $self->lookup_host($c, $request);
+    } else {
+        $self->start_request($c, $request);
+    }
+}
+
+sub handle_response
+{
+    my ($self, $c, $req, $res) = @_;
+    if (my $host = $req->notes('original_host')) {
+        # Put it back
+        $req->uri->host($host);
+    }
+    $c->handle_response($req, $res);
+}
+
+sub lookup_host
+{
+    my ($self, $c, $request) = @_;
+
+    my $resolver = $self->resolver;
+    my $bgsock   = $resolver->bgsend($request->uri->host);
+    my $notifier = IO::Async::Notifier->new(
+        handle => $bgsock,
+        on_read_ready => sub {
+            $self->impl->remove($_[0]);
+            my $packet = $resolver->bgread($bgsock);
+            foreach my $rr ($packet->answer) {
+                next unless $rr->type eq 'A';
+                $request->notes('original_host', $request->uri->host);
+                $request->push_header('Host', $request->uri->host);
+                $request->uri->host($rr->address);
+                $self->start_request($c, $request);
+                return;
+            }
+
+            $self->handle_response(
+                $c,
+                $request,
+                $self->_http_error(500, "Failed to resolve host " . $request->uri->host, $request)
+            );
+        }
+    );
+    $self->impl->add($notifier);
+}
+
+sub start_request
+{
     my ($self, $c, $req) = @_;
     my $uri  = $req->uri;
-
     my $socket = IO::Socket::INET->new(
         PeerAddr => $uri->host,
         PeerPort => $uri->port || $uri->default_port,
@@ -76,7 +129,7 @@ sub send_request
             $$buffref = '';
 
             if ($st == 0) {
-                $c->handle_response($notifier->{request}, $parser->object);
+                $self->handle_response($c, $notifier->{request}, $parser->object);
                 $notifier->handle_closed();
                 $self->impl->remove($notifier);
             }
@@ -84,12 +137,12 @@ sub send_request
         on_read_error => sub {
             my $notifier = shift;
             my $res = $self->_http_error(400, "incomplete response", $notifier->{request});
-            $c->handle_response($notifier->{request}, $res);
+            $c->handle_response($c, $notifier->{request}, $res);
         },
         on_write_error => sub {
             my $notifier = shift;
             my $res = $self->_http_error(500, "Could not write to socket ", $notifier->{request});
-            $c->handle_response($notifier->{request}, $res);
+            $self->handle_response($c, $notifier->{request}, $res);
         }
     );
 
