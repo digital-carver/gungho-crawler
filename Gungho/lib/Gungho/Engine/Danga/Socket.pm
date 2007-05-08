@@ -115,15 +115,7 @@ sub event_write
         }
     }
 
-    my @h;
     my $request = $self->{request};
-    $request->headers->scan(sub {
-        my($k, $v) = @_;
-        $k =~ s/^://;
-        $v =~ s/\n/ /g;
-        push(@h, $k, $v);
-    });
-
     my $req_str = $request->format();
     if ($self->write($req_str)) {
         $self->watch_write(0);
