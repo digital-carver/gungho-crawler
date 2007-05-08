@@ -213,4 +213,10 @@ In particular, this class definitely should cache connections.
 
 =head2 send_request
 
+=head2 handle_response
+
+=head2 start_request
+
+=head2 lookup_host
+
 =cut

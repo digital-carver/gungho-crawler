@@ -126,6 +126,10 @@ Clones the request.
 
 Associate arbitrary notes to the request
 
+=head2 requires_name_lookup
+
+Returns true if the request object's uri host is not in an IP address format
+
 =head2 format
 
 Formats the request so that it's appropriate to send through a socket.
