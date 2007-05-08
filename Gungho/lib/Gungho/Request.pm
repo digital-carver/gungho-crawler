@@ -76,6 +76,12 @@ sub notes
     return $value;
 }
 
+sub requires_name_lookup
+{
+    my $self = shift;
+    return $self->uri->host() !~ /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+}
+
 sub format
 {
     my $self   = shift;

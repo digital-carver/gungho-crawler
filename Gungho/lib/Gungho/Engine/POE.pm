@@ -11,9 +11,10 @@ use POE;
 use POE::Component::Client::Keepalive;
 use POE::Component::Client::HTTP;
 
-__PACKAGE__->mk_accessors($_) for qw(alias loop_alarm loop_delay);
+__PACKAGE__->mk_accessors($_) for qw(alias loop_alarm loop_delay resolver);
 
 use constant UserAgentAlias => 'Gungho_Engine_POE_UserAgent_Alias';
+use constant DnsResolverAlias => 'Gungho_Engine_POE_DnsResolver_Alias';
 use constant SKIP_DECODE_CONTENT  =>
     exists $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} ?  $ENV{GUNGHO_ENGINE_POE_SKIP_DECODE_CONTENT} : 1;
 use constant FORCE_ENCODE_CONTENT => 
@@ -69,6 +70,9 @@ sub run
         }
     }
 
+    my $resolver = POE::Component::Client::DNS->spawn(Alias => &DnsResolverAlias);
+    $self->resolver($resolver);
+
     POE::Component::Client::HTTP->spawn(
         Agent             => $c->default_user_agent,
         FollowRedirects   => 1,
@@ -81,10 +85,10 @@ sub run
         heap => { CONTEXT => $c },
         object_states => [
             $self => {
-                _start          => 'session_start',
-                _stop           => 'session_stop',
-                session_loop    => 'session_loop',
-                handle_response => 'handle_response',
+                _start => '_session_start',
+                _stop  => '_session_stop',
+                map { ($_ => "_$_") }
+                    qw(session_loop start_request handle_response got_dns_response)
             }
         ]
     );
@@ -92,18 +96,18 @@ sub run
     POE::Kernel->run();
 }
 
-sub session_start
+sub _session_start
 {
     $_[KERNEL]->alias_set( $_[OBJECT]->alias );
     $_[KERNEL]->yield('session_loop');
 }
 
-sub session_stop
+sub _session_stop
 {
     $_[KERNEL]->alias_remove( $_[OBJECT]->alias );
 }
 
-sub session_loop
+sub _session_loop
 {
     my ($self, $kernel, $heap) = @_[OBJECT, KERNEL, HEAP];
     $self->loop_alarm(undef);
@@ -132,10 +136,55 @@ sub send_request
 {
     my ($self, $c, $request) = @_;
     $c->run_hook('engine.send_request', { request => $request });
+
+    POE::Kernel->post($self->alias, 'start_request', $request);
+}
+
+sub _start_request
+{
+    my ($kernel, $heap, $request) = @_[KERNEL, HEAP, ARG0];
+
+    # check if this request requires a DNS resolution
+    if ($request->requires_name_lookup()) {
+        my $c = $heap->{CONTEXT};
+        my $dns_response = $c->engine->resolver->resolve(
+            event => "got_dns_response",
+            host  => $request->uri->host,
+            context => { request => $request }
+        );
+        if ($dns_response) {
+            $kernel->yield('got_dns_response', $dns_response);
+        }
+        return;
+    }
+
     POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
 }
 
-sub handle_response
+sub _got_dns_response
+{
+    my ($kernel, $response) = @_[KERNEL, ARG0];
+
+    my $request = $response->{context}->{request};
+    my @answers = $response->{response}->answer();
+
+    foreach my $answer (@answers) {
+        next if $answer->type ne 'A';
+        $request->push_header(Host => $request->uri->host());
+        $request->notes(original_host => $request->uri->host());
+        $request->uri->host($answer->address);
+        $kernel->yield('start_request', $request);
+        return;
+    }
+
+    $kernel->yield(
+        'handle_response',
+        $request,
+        $_[OBJECT]->_http_error(500, "Failed to resolve host " . $request->uri->host, $request),
+    );
+}
+
+sub _handle_response
 {
     my ($heap, $req_packet, $res_packet) = @_[ HEAP, ARG0, ARG1 ];
 
@@ -143,6 +192,11 @@ sub handle_response
 
     my $req = $req_packet->[0];
     my $res = $res_packet->[0];
+
+    if (my $host = $req->notes('original_host')) {
+        # Put it back
+        $req->uri->host($host);
+    }
 
     # Work around POE doing too much for us. 
     if (FORCE_ENCODE_CONTENT && $POE::Component::Client::HTTP::VERSION # Hide from CPAN
@@ -267,16 +321,6 @@ main control.
 =head2 send_request($request)
 
 Sends a request to the http client
-
-=head2 handle_response
-
-=head2 session_start
-
-=head2 session_stop
-
-=head2 session_loop
-
-These are used as POE session states
 
 =head1 TODO
 

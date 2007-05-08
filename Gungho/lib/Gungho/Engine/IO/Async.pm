@@ -101,29 +101,6 @@ sub send_request
     $self->impl->add($buffer);
 }
 
-# Stolen from PoCo::Client::HTTP::Request
-sub _http_error
-{
-    my ($self, $code, $message, $request) = @_;
-
-    my $nl = "\n";
-    my $r = HTTP::Response->new($code);
-    my $http_msg = status_message($code);
-    my $m = (
-      "<html>$nl"
-      . "<HEAD><TITLE>Error: $http_msg</TITLE></HEAD>$nl"
-      . "<BODY>$nl"
-      . "<H1>Error: $http_msg</H1>$nl"
-      . "$message$nl"
-      . "</BODY>$nl"
-      . "</HTML>$nl"
-    );
-
-    $r->content($m);
-    $r->request($request);
-    return $r;
-}
-
 package Gungho::Engine::IO::Async::Impl::Select;
 use strict;
 use warnings;
