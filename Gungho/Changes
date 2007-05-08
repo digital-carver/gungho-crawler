@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.06 Tue May 08 2007 [rev 85]
+  - Add a new engine based on IO::Async
+  - Add a simple FileWriter handler
+  - Fix documentation and remove ->new()
+  - Fix documentation and add contributors
+  - Tweak the user-agent
+  - Add optional deps for Class::C3::XS
+
 0.05 Sun May 06 2007 [rev 71]
   - Gungho->new has been deprecated in favor of a simple call to ->run()
   - Gungho::Inline->new has been deprecated

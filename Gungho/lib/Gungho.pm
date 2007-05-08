@@ -22,7 +22,7 @@ __PACKAGE__->mk_classdata($_) for (
     qw(setup_finished default_user_agent)
 );
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 sub new
 {
