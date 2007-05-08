@@ -1,8 +1,9 @@
 Changes
 =======
 
-0.07
-  - Add asynchronous DNS lookups for POE engine
+0.07 Tue May 08 2007 [rev 90]
+  - Add asynchronous DNS lookups for POE, IO::Async, Danga::Socket engines
+  - Add dependency on Danga::Socket::Callback, if we're using Danga::Socket engine
 
 0.06 Tue May 08 2007 [rev 85]
   - Add a new engine based on IO::Async
