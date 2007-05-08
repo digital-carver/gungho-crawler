@@ -173,4 +173,14 @@ This class uses IO::Async to dispatch requests.
 WARNING: This engine is still experimental. Patches welcome!
 In particular, this class definitely should cache connections.
 
+=head1 METHODS
+
+=head2 run
+
+=head2 setup
+
+=head2 setup_impl_class
+
+=head2 send_request
+
 =cut
