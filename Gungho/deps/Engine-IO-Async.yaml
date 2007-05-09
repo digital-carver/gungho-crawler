@@ -6,3 +6,4 @@ depends:
     'HTTP::Parser': 0
     'HTTP::Status': 0
     'IO::Socket::INET': 0
+    'Net::DNS': 0
