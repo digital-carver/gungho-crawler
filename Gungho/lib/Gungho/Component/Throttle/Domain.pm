@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use base qw(Gungho::Component::Throttle::Throttler);
 
-__PACKAGE__->mk_accessors($_) for qw(matcher);
+__PACKAGE__->mk_classdata($_) for qw(matcher);
 
 sub setup
 {
@@ -23,9 +23,7 @@ sub setup
 
     my $domains = $config->{domains} || [];
     my $matcher;
-    if (! @$domains) {
-        $matcher = sub { 0 };
-    } else {
+    if (@$domains) {
         my $sub = <<EOSUB;
 sub {
     my \$request = shift;
@@ -57,12 +55,13 @@ sub throttle
     my $do_throttle = 1;
     my $code = $self->matcher;
     if ($code) {
-        $do_throtle = $code->($request);
+        $do_throttle = $code->($request);
     }
 
     if ($do_throttle) {
-        $t->try_push(key => $request->url->host);
+        return $self->throttler->try_push(key => $request->url->host);
     }
+    return 1;
 }
 
 1;
