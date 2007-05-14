@@ -314,6 +314,28 @@ There are also "hooks". These hooks can be registered from anywhere by
 invoking the register_hook() method. They are run at particular points,
 which are specified when you call register_hook().
 
+=head1 CONFIGURATION OPTIONS
+
+=over 4
+
+=item debug
+
+   ---
+   debug: 1
+
+Setting debug to a non-zero value will trigger debug messages to be displayed.
+
+=item block_private_ip_address
+
+   ---
+   block_private_ip_address: 1
+
+Setting this to a non-zero value will make addresses resolved via DNS lookups
+to be blocked, if they resolved to a private IP address such as 192.168.1.1.
+127.0.0.1 isn't considered to be a private IP.
+
+=back
+
 =head1 COMPONENTS
 
 Components add new functionality to Gungho. Components are loaded at
