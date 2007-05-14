@@ -98,7 +98,7 @@ sub dispatch {
     my ($self, $c) = @_;
     
     if ($self->callback) {
-        my @args = (&OLD_PARAMETER_LIST ? ($c, $self) : ($self, $c));
+        my @args = (&Gungho::Inline::OLD_PARAMETER_LIST ? ($c, $self) : ($self, $c));
         unless ($self->callback->(@args)) {
             $self->callback(undef);
         }
@@ -135,7 +135,7 @@ sub setup {
 sub handle_response {
     my ($self, $c, $req, $res) = @_;
     
-    my @args = (&OLD_PARAMETER_LIST ? ($req, $res, $c, $self) : ($self, $c, $req, $res));
+    my @args = (&Gungho::Inline::OLD_PARAMETER_LIST ? ($req, $res, $c, $self) : ($self, $c, $req, $res));
     $self->callback->(@args);
 }
 
