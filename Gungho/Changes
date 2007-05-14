@@ -1,6 +1,22 @@
 Changes
 =======
 
+0.08 Mon May 14 2007 
+  - *API Incompatiblity*
+    - Gungho::Inline->run()'s parameter list changed so that it can accept
+      a config file name (or a hashref, like Gungho->run), and a second
+      hashref that contains the code references.
+    - Parameter ordering for Gungho::Inline's provider and handler has been
+      changed so that it resembles that of regular providers and handlers
+    - The old behavior for both of the above changes are still preserved
+      if you specify the GUNGHO_INLINE_OLD_PARAMETER_LIST environment
+      variable, or if you specify sub Gungho::Inline::OLD_PARAMETER_LIST { 1 }
+  - Implement blocking of private DNS names from lookups. By default
+    this is disabled. 
+  - So that method names for POE events are clearly marked as such,
+    all methods that are mapped to POE events in Engine::POE are now
+    prefixed with _poe_* (including private methods)
+
 0.07 Tue May 08 2007 [rev 90]
   - Add asynchronous DNS lookups for POE, IO::Async, Danga::Socket engines
   - Add dependency on Danga::Socket::Callback, if we're using Danga::Socket engine
@@ -14,8 +30,9 @@ Changes
   - Add optional deps for Class::C3::XS
 
 0.05 Sun May 06 2007 [rev 71]
-  - Gungho->new has been deprecated in favor of a simple call to ->run()
-  - Gungho::Inline->new has been deprecated
+  - *API Incompatiblity*
+    - Gungho->new has been deprecated in favor of a simple call to ->run()
+    - Gungho::Inline->new has been deprecated
   - Fix SKIP_DECODED_CONTENT handling by properly specifying a package.
     POE workaround should now work.
   - Gungho::Engine::POE will set FollowRedirect to 1 by default.
