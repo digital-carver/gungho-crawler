@@ -13,7 +13,8 @@ use Gungho::Request;
 BEGIN
 {
     if (! __PACKAGE__->can('OLD_PARAMETER_LIST')) {
-        eval "sub OLD_PARAMETER_LIST() { $ENV{GUNGHO_INLINE_OLD_PARAMETER_LIST} } ";
+        my $old_parameter_list = $ENV{GUNGHO_INLINE_OLD_PARAMETER_LIST} || 0;
+        eval "sub OLD_PARAMETER_LIST() { $old_parameter_list } ";
         die if $@;
     }
 }
@@ -22,9 +23,9 @@ sub setup
 {
     my $class = shift;
     if (&OLD_PARAMETER_LIST) {
-        $self->_setup_old_parameters(@_);
+        $class->_setup_old_parameters(@_);
     } else {
-        my $config = $self->load_config($_[0]);
+        my $config = $class->load_config($_[0]);
         my $opts   = $_[1] || {};
 
         foreach my $k qw(provider handler) {
@@ -44,7 +45,7 @@ sub setup
 
 sub _setup_old_parameters
 {
-    my $self = shift;
+    my $class = shift;
     my $config = shift;
     
     foreach my $k qw(provider handler) {
