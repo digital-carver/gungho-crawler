@@ -80,7 +80,7 @@ sub notes
 sub requires_name_lookup
 {
     my $self = shift;
-    return $self->uri->host() !~ /$RE{net}{IPv4}/;
+    return $self->uri->host() !~ /^$RE{net}{IPv4}$/;
 }
 
 sub format
