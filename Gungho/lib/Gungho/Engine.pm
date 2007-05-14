@@ -8,6 +8,7 @@ use strict;
 use warnings;
 use base qw(Gungho::Base);
 use HTTP::Status qw(status_message);
+use Regexp::Common qw(net);
 
 sub run {}
 
@@ -51,7 +52,19 @@ sub _address_is_private
 {
     my ($self, $address) = @_;
 
-    return $address =~ /^(?:192\.168|10\.0)\.\d+\.\d+$/
+    if ($address =~ /^$RE{net}{IPv4}$/) {
+        my ($o1, $o2, $o3, $o4) = ($2, $3, $4, $5);
+
+        if ($o1 eq '10') {
+            return 1;
+        } elsif ($o1 eq '172') {
+            return $o2 >= 16 && $o2 <= 31
+        } elsif ($o1 eq '192' && $o2 eq '160') {
+            return 1;
+        }
+    }
+       
+    return 1;
 }
 
 # Utility method to create an error HTTP response.
