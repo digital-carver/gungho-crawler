@@ -8,7 +8,6 @@ use strict;
 use warnings;
 use base qw(Gungho::Engine);
 use HTTP::Parser;
-use HTTP::Status;
 use IO::Async::Buffer;
 use IO::Async::Notifier;
 use IO::Socket::INET;

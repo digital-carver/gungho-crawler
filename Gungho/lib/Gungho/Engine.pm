@@ -7,6 +7,7 @@ package Gungho::Engine;
 use strict;
 use warnings;
 use base qw(Gungho::Base);
+use HTTP::Status qw(status_message);
 
 sub run {}
 
@@ -20,7 +21,7 @@ sub handle_dns_response
         my $host = $request->uri->host;
         # Check if we are filtering private addresses
         if ($c->block_private_ip_address && $self->_address_is_private($answer->address)) {
-            $c->log->info("[DNS] Hostname $host resoled to a private address: " . $answer->address);
+            $c->log->info("[DNS] Hostname $host resolved to a private address: " . $answer->address);
             last;
         }
 
