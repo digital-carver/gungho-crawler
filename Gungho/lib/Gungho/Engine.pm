@@ -15,33 +15,33 @@ sub handle_dns_response
 {
     my ($self, $c, $request, $dns_response) = @_;
 
-    foreach my $answer ($dns_response->answer) {
-        next if $answer->type ne 'A';
-
-        my $host = $request->uri->host;
-        # Check if we are filtering private addresses
-        if ($c->block_private_ip_address && $self->_address_is_private($answer->address)) {
-            $c->log->info("[DNS] Hostname $host resolved to a private address: " . $answer->address);
-            last;
-        }
-
-        $request->push_header(Host => $host);
-        $request->notes(original_host => $host);
-        $request->uri->host($answer->address);
-
-        eval {
-            $c->send_request($request);
-        };
-        if (my $e = $@) {
-            if ($e->isa('Gungho::Exception::RequestThrottled')) {
-                # This request was throttled. Attempt to do it later
-                $c->provider->pushback_request($c, $request);
-            } else {
-                die $e;
+    if ($dns_response) {
+        foreach my $answer ($dns_response->answer) {
+            next if $answer->type ne 'A';
+            my $host = $request->uri->host;
+            # Check if we are filtering private addresses
+            if ($c->block_private_ip_address && $self->_address_is_private($answer->address)) {
+                $c->log->info("[DNS] Hostname $host resolved to a private address: " . $answer->address);
+                last;
             }
-        }
 
-        return;
+            $request->push_header(Host => $host);
+            $request->notes(original_host => $host);
+            $request->uri->host($answer->address);
+            eval {
+                $c->send_request($request);
+            };
+            if (my $e = $@) {
+                if ($e->isa('Gungho::Exception::RequestThrottled')) {
+                    # This request was throttled. Attempt to do it later
+                    $c->provider->pushback_request($c, $request);
+                } else {
+                    die $e;
+                }
+            }
+
+            return;
+        }
     }
 
     $self->_http_error(500, "Failed to resolve host " . $request->uri->host, $request),
