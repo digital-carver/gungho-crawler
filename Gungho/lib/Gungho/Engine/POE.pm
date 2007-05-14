@@ -85,9 +85,9 @@ sub run
         heap => { CONTEXT => $c },
         object_states => [
             $self => {
-                _start => '_session_start',
-                _stop  => '_session_stop',
-                map { ($_ => "_$_") }
+                _start => '_poe_session_start',
+                _stop  => '_poe_session_stop',
+                map { ($_ => "_poe_$_") }
                     qw(session_loop start_request handle_response got_dns_response)
             }
         ]
@@ -96,18 +96,18 @@ sub run
     POE::Kernel->run();
 }
 
-sub _session_start
+sub _poe_session_start
 {
     $_[KERNEL]->alias_set( $_[OBJECT]->alias );
     $_[KERNEL]->yield('session_loop');
 }
 
-sub _session_stop
+sub _poe_session_stop
 {
     $_[KERNEL]->alias_remove( $_[OBJECT]->alias );
 }
 
-sub _session_loop
+sub _poe_session_loop
 {
     my ($self, $kernel, $heap) = @_[OBJECT, KERNEL, HEAP];
     $self->loop_alarm(undef);
@@ -140,7 +140,7 @@ sub send_request
     POE::Kernel->post($self->alias, 'start_request', $request);
 }
 
-sub _start_request
+sub _poe_start_request
 {
     my ($kernel, $heap, $request) = @_[KERNEL, HEAP, ARG0];
 
@@ -152,6 +152,7 @@ sub _start_request
             host  => $request->uri->host,
             context => { request => $request }
         );
+        # PoCo::Client::DNS may resolve DNS immediately
         if ($dns_response) {
             $kernel->yield('got_dns_response', $dns_response);
         }
@@ -161,30 +162,18 @@ sub _start_request
     POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
 }
 
-sub _got_dns_response
+sub _poe_got_dns_response
 {
     my ($kernel, $response) = @_[KERNEL, ARG0];
 
-    my $request = $response->{context}->{request};
-    my @answers = $response->{response}->answer();
-
-    foreach my $answer (@answers) {
-        next if $answer->type ne 'A';
-        $request->push_header(Host => $request->uri->host());
-        $request->notes(original_host => $request->uri->host());
-        $request->uri->host($answer->address);
-        $kernel->yield('start_request', $request);
-        return;
-    }
-
-    $kernel->yield(
-        'handle_response',
-        $request,
-        $_[OBJECT]->_http_error(500, "Failed to resolve host " . $request->uri->host, $request),
+    $_[OBJECT]->handle_dns_response(
+        $_[HEAP]->{CONTEXT}, 
+        $response->{context}->{request}, # original request
+        $response->{response}, # DNS response
     );
 }
 
-sub _handle_response
+sub _poe_handle_response
 {
     my ($heap, $req_packet, $res_packet) = @_[ HEAP, ARG0, ARG1 ];
 

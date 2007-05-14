@@ -76,20 +76,10 @@ sub lookup_name
         on_read_ready => sub { 
             my $ds = shift;
             delete Danga::Socket->DescriptorMap->{ fileno($ds->sock) };
-            my $packet = $resolver->bgread($ds->sock);
-            foreach my $rr ($packet->answer) {
-                next unless $rr->type eq 'A';
-                $req->notes('original_host', $req->uri->host);
-                $req->push_header('Host', $req->uri->host);
-                $req->uri->host($rr->address);
-                $self->start_request($c, $req);
-                return;
-            }
-
-            $self->handle_response(
+            $self->handle_dns_response(
                 $c,
                 $req,
-                $self->_http_error(500, "Failed to resolve host " . $req->uri->host, $req)
+                $resolver->bgread($ds->sock)
             );
         },
         on_error => sub {

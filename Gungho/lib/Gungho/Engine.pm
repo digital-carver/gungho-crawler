@@ -5,9 +5,41 @@
 
 package Gungho::Engine;
 use strict;
+use warnings;
 use base qw(Gungho::Base);
 
 sub run {}
+
+sub handle_dns_response
+{
+    my ($self, $c, $request, $dns_response) = @_;
+
+    foreach my $answer ($dns_response->answer) {
+        next if $answer->type ne 'A';
+
+        my $host = $request->uri->host;
+        # Check if we are filtering private addresses
+        if ($c->block_private_ip_address && $self->_address_is_private($answer->address)) {
+            $c->log->info("[DNS] Hostname $host resoled to a private address: " . $answer->address);
+            last;
+        }
+
+        $request->push_header(Host => $host);
+        $request->notes(original_host => $host);
+        $request->uri->host($answer->address);
+        $c->send_request($request);
+        return;
+    }
+
+    $self->_http_error(500, "Failed to resolve host " . $request->uri->host, $request),
+}
+
+sub _address_is_private
+{
+    my ($self, $address) = @_;
+
+    return $address =~ /^(?:192\.168|10\.0)\.\d+\.\d+$/
+}
 
 # Utility method to create an error HTTP response.
 # Stolen from PoCo::Client::HTTP::Request
@@ -55,6 +87,10 @@ Gungho::Engine - Base Class For Gungho Engine
 =head1 METHODS
 
 =head2 run()
+
+=head2 handle_dns_response()
+
+Handles the response from DNS lookups.
 
 Starts the engine. The exact behavior differs between each engine
 

@@ -17,18 +17,25 @@ use UNIVERSAL::require;
 use Gungho::Log;
 use Gungho::Exception;
 
-__PACKAGE__->mk_classdata($_) for (
-    qw(log provider handler engine is_running hooks features),
-    qw(setup_finished default_user_agent)
+my @INTERNAL_PARAMS             = qw(setup_finished default_user_agent);
+my @CONFIGURABLE_PARAMS         = qw(block_private_ip_address);
+my %CONFIGURABLE_PARAM_DEFAULTS = (
+    map { ($_ => 0) } @CONFIGURABLE_PARAMS
 );
 
-our $VERSION = '0.07';
+__PACKAGE__->mk_classdata($_) for (
+    qw(log provider handler engine is_running hooks features),
+    @INTERNAL_PARAMS,
+    @CONFIGURABLE_PARAMS,
+);
+
+our $VERSION = '0.08';
 
 sub new
 {
     warn "Gungho::new() has been deprecated in favor of Gungho->run()";
     my $class = shift;
-    $class->setup($_[0]);
+    $class->setup(@_);
     return $class;
 }
 
@@ -38,6 +45,11 @@ sub setup
 
     my $config = $self->load_config($_[0]);
     $self->config($config);
+
+    for my $key (@CONFIGURABLE_PARAMS) {
+        $self->$key( $config->{$key} || $CONFIGURABLE_PARAM_DEFAULTS{$key} );
+    }
+
     $self->default_user_agent("Gungho/$Gungho::VERSION (http://code.google.com/p/gungho-crawler/wiki/Index)");
     $self->hooks({});
     $self->features({});

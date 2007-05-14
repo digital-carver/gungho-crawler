@@ -9,6 +9,7 @@ use warnings;
 use base qw(HTTP::Request);
 use Storable qw(dclone);
 use UNIVERSAL::require;
+use Regexp::Common qw(net);
 
 our $DIGEST;
 
@@ -79,7 +80,7 @@ sub notes
 sub requires_name_lookup
 {
     my $self = shift;
-    return $self->uri->host() !~ /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+    return $self->uri->host() !~ /$RE{net}{IPv4}/;
 }
 
 sub format

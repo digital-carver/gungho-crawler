@@ -88,20 +88,10 @@ sub lookup_host
         handle => $bgsock,
         on_read_ready => sub {
             $self->impl->remove($_[0]);
-            my $packet = $resolver->bgread($bgsock);
-            foreach my $rr ($packet->answer) {
-                next unless $rr->type eq 'A';
-                $request->notes('original_host', $request->uri->host);
-                $request->push_header('Host', $request->uri->host);
-                $request->uri->host($rr->address);
-                $self->start_request($c, $request);
-                return;
-            }
-
-            $self->handle_response(
+            $self->handle_dns_response(
                 $c,
                 $request,
-                $self->_http_error(500, "Failed to resolve host " . $request->uri->host, $request)
+                $resolver->bgread($bgsock), 
             );
         }
     );
