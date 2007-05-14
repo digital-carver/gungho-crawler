@@ -25,8 +25,8 @@ sub setup
     if (&OLD_PARAMETER_LIST) {
         $class->_setup_old_parameters(@_);
     } else {
-        my $config = $class->load_config($_[0]);
-        my $opts   = $_[1] || {};
+        my $config = $class->load_config(shift);
+        my $opts   = shift || {};
 
         foreach my $k qw(provider handler) {
             if ($opts->{$k} && ref $opts->{$k} eq 'CODE') {
@@ -38,6 +38,7 @@ sub setup
                 };
             }
         }
+        @_ = ($config);
     }
 
     $class->next::method(@_);
