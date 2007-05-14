@@ -28,7 +28,19 @@ sub handle_dns_response
         $request->push_header(Host => $host);
         $request->notes(original_host => $host);
         $request->uri->host($answer->address);
-        $c->send_request($request);
+
+        eval {
+            $c->send_request($request);
+        };
+        if (my $e = $@) {
+            if ($e->isa('Gungho::Exception::RequestThrottled')) {
+                # This request was throttled. Attempt to do it later
+                $c->provider->pushback_request($c, $request);
+            } else {
+                die $e;
+            }
+        }
+
         return;
     }
 
