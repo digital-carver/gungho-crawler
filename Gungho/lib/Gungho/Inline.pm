@@ -87,6 +87,7 @@ sub setup {
 sub add_request {
     my ($self, $req) = @_;
     push @{$self->requests}, $req;
+    $self->has_requests(1);
 }
 
 sub pushback_request {
