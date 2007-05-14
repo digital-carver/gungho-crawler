@@ -54,11 +54,15 @@ sub throttle
     my $self = shift;
     my $request = shift;
 
-    if ($self->matcher->($request)) {
-        my $t = $self->throttler;
-        return $t->try_push(key => $request->url->host);
+    my $do_throttle = 1;
+    my $code = $self->matcher;
+    if ($code) {
+        $do_throtle = $code->($request);
     }
-    $self->next::method($request);
+
+    if ($do_throttle) {
+        $t->try_push(key => $request->url->host);
+    }
 }
 
 1;
@@ -81,6 +85,14 @@ Gungho::Component::Throttle::Domain - Throttle By Domain
         - match: \.cpan\.org$
   components:
     - Throttle::Domain
+
+=head1 DESCRIPITION
+
+This component allows you to throttle requests by domain names.
+
+You can specify a regular expression, in which case only the domains that 
+match the particular regular expression will be throttled. Otherwise,
+the hostname from each request will be used as the key to throttle
 
 =head1 METHODS
 
