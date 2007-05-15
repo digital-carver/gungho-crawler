@@ -1,6 +1,11 @@
 Changes
 =======
 
+0.08001  Mon May 15 2007 
+  - No code change
+  - Doc blunder
+  - Hide HTTP::Response from PAUSE
+
 0.08 Mon May 15 2007 
   - *API Incompatiblity*
     - Gungho::Inline->run()'s parameter list changed so that it can accept

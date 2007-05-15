@@ -15,6 +15,6 @@ __END__
 
 =head1 NAME
 
-Gunghoe::Component::RobotRules::Storage - RobotRules Storage Base Class
+Gungho::Component::RobotRules::Storage - RobotRules Storage Base Class
 
 =cut

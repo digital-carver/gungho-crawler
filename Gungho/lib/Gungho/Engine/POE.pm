@@ -23,17 +23,17 @@ use constant FORCE_ENCODE_CONTENT =>
 BEGIN
 {
     if (SKIP_DECODE_CONTENT) {
-        eval <<'        EOCODE';
+        eval sprintf(<<'        EOCODE', 'HTTP::Response');
             no warnings 'redefine';
-            package HTTP::Response;
+            package %s;
             sub HTTP::Response::decoded_content {
-                my ($self, %opt) = @_;
+                my ($self, %%opt) = @_;
                 my $caller = (caller(2))[3];
 
                 if ($caller eq 'POE::Component::Client::HTTP::Request::return_response') {
                     $opt{charset} = 'none';
                 }
-                $self->SUPER::decoded_content(%opt);
+                $self->SUPER::decoded_content(%%opt);
             }
         EOCODE
     }

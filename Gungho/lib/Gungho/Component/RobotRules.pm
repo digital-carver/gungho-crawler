@@ -155,7 +155,7 @@ sub parse_robot_rules
 
 =head1 NAME
 
-Gungho::Compoent::RobotRules - Respect robots.txt
+Gungho::Component::RobotRules - Respect robots.txt
 
 =head1 SYNOPSIS
 
