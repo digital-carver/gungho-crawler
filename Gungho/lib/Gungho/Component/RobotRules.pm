@@ -56,6 +56,8 @@ sub allowed
 
         my $uri = $request->original_uri;
         $uri->path('/robots.txt');
+        $uri->query(undef);
+        $uri->fragment(undef);
         my $req = Gungho::Request->new(GET => $uri);
         $req->notes('auto_robot_rules' => 1);
         $c->provider->pushback_request( $c, $req );
