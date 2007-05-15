@@ -14,7 +14,7 @@ __PACKAGE__->mk_classdata(config => {});
 sub new
 {
     my $class  = shift;
-    my $self = bless {}, $class;
+    my $self = bless { @_ }, $class;
     return $self;
 }
 

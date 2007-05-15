@@ -197,6 +197,12 @@ or, somewhere in your code, create a subroutine constant:
    }
    use Gungho::Inline;
 
+=head1 CONSTANTS
+
+=head2 OLD_PARAMETER_LIST
+
+If true, uses the old-style parameter list
+
 =head1 METHODS
 
 =head2 setup({ provider => $callback, handler => $callback, %args })

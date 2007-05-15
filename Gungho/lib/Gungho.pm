@@ -17,8 +17,8 @@ use UNIVERSAL::require;
 use Gungho::Log;
 use Gungho::Exception;
 
-my @INTERNAL_PARAMS             = qw(setup_finished default_user_agent);
-my @CONFIGURABLE_PARAMS         = qw(block_private_ip_address);
+my @INTERNAL_PARAMS             = qw(setup_finished);
+my @CONFIGURABLE_PARAMS         = qw(block_private_ip_address user_agent);
 my %CONFIGURABLE_PARAM_DEFAULTS = (
     map { ($_ => 0) } @CONFIGURABLE_PARAMS
 );
@@ -44,13 +44,17 @@ sub setup
     my $self = shift;
 
     my $config = $self->load_config($_[0]);
+    if (exists $ENV{GUNGHO_DEBUG}) {
+        $config->{debug} = $ENV{GUNGHO_DEBUG};
+    }
+
     $self->config($config);
 
     for my $key (@CONFIGURABLE_PARAMS) {
         $self->$key( $config->{$key} || $CONFIGURABLE_PARAM_DEFAULTS{$key} );
     }
 
-    $self->default_user_agent("Gungho/$Gungho::VERSION (http://code.google.com/p/gungho-crawler/wiki/Index)");
+    $self->user_agent("Gungho/$Gungho::VERSION (http://code.google.com/p/gungho-crawler/wiki/Index)") unless $self->user_agent;
     $self->hooks({});
     $self->features({});
 
@@ -244,40 +248,47 @@ sub run
 
 sub dispatch_requests
 {
-    my $self = shift;
-    $self->provider->dispatch($self);
+    my $c = shift;
+    $c->provider->dispatch($c, @_);
 }
 
 sub prepare_request
 {
-    my $self = shift;
+    my $c = shift;
     my $req  = shift;
-    $self->run_hook('dispatch.prepare_request', $req);
-
+    $c->run_hook('dispatch.prepare_request', $req);
     return $req;
 }
 
 sub send_request
 {
-    my ($self, $request) = @_;
-
-    if ($self->has_feature('Throttle')) {
-        if ($self->throttle($request)) {
-            $self->engine->send_request($self, $request);
-        } else {
-            $self->log->debug("Request " . $request->url . " (" . $request->id . ") was throttled")
-                if $self->log->is_debug;
-            Gungho::Exception::RequestThrottled->throw($request);
-        }
-    } else {
-        $self->engine->send_request($self, $request);
+    my $c = shift;
+    my $e;
+    eval {
+        $c->maybe::next::method(@_);
+    };
+    if ($e = Gungho::Exception->caught('Gungho::Exception::SendRequest::Handled')) {
+        return;
+    } elsif ($e = Gungho::Exception->caught()) {
+        die $e;
     }
+    $c->engine->send_request($c, @_);
 }
 
 sub handle_response
 {
-    my ($self) = @_;
-    $self->handler->handle_response(@_);
+    my $c = shift;
+
+    my $e;
+    eval {
+        $c->maybe::next::method(@_);
+    };
+    if ($e = Gungho::Exception->caught('Gungho::Exception::HandleResponse::Handled')) {
+        return;
+    } elsif ($e = Gungho::Exception->caught()) {
+        die $e;
+    }
+    $c->handler->handle_response($c, @_);
 }
 
 1;

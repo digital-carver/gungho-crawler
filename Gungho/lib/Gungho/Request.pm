@@ -32,6 +32,7 @@ sub new
 {
     my $class = shift;
     my $self  = $class->SUPER::new(@_);
+    $self->id; # Forcefully make the ID here.
     $self->{_notes} = {};
     return $self;
 }
@@ -75,6 +76,16 @@ sub notes
         $self->{_notes}{$key} = $_[0];
     }
     return $value;
+}
+
+sub original_uri
+{
+    my $self = shift;
+    my $uri  = $self->uri->clone;
+    if (my $host = $self->notes('original_host')) {
+        $uri->host($host);
+    }
+    return $uri;
 }
 
 sub requires_name_lookup
@@ -126,6 +137,11 @@ Clones the request.
 =head2 notes($key[, $value])
 
 Associate arbitrary notes to the request
+
+=head2 original_uri
+
+Returns a cloned copy of the request URI, with the host name swapped to
+the original hostname before DNS substitution
 
 =head2 requires_name_lookup
 

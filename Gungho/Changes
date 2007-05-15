@@ -1,7 +1,7 @@
 Changes
 =======
 
-0.08 Mon May 14 2007 
+0.08 Mon May 15 2007 
   - *API Incompatiblity*
     - Gungho::Inline->run()'s parameter list changed so that it can accept
       a config file name (or a hashref, like Gungho->run), and a second
@@ -12,10 +12,17 @@ Changes
       if you specify the GUNGHO_INLINE_OLD_PARAMETER_LIST environment
       variable, or if you specify sub Gungho::Inline::OLD_PARAMETER_LIST { 1 }
   - Implement blocking of private DNS names from lookups. By default
-    this is disabled. 
+    this is disabled. To enable, set block_private_ip_address
   - So that method names for POE events are clearly marked as such,
     all methods that are mapped to POE events in Engine::POE are now
     prefixed with _poe_* (including private methods)
+  - Change the way components are invoked. Components are now invoked via
+    maybe::next::method() chain, and if a component should want to stop
+    processing somewhere in the chain, it should raise an exception
+  - Add Gunghoe::Component::RobotRules
+  - GUNGHO_DEBUG environment variable is now respeced
+  - Don't throttle (again) a request if it has gone through DNS-resolution 
+    path internally.
 
 0.07 Tue May 08 2007 [rev 90]
   - Add asynchronous DNS lookups for POE, IO::Async, Danga::Socket engines

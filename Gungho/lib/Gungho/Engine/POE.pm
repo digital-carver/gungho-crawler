@@ -74,9 +74,9 @@ sub run
     $self->resolver($resolver);
 
     POE::Component::Client::HTTP->spawn(
-        Agent             => $c->default_user_agent,
         FollowRedirects   => 1,
         %$client_config,
+        Agent             => $c->user_agent,
         Alias             => &UserAgentAlias,
         ConnectionManager => $keepalive,
     );
@@ -131,10 +131,10 @@ sub _poe_session_loop
     }
 }
 
-# XXX - this is not a POE state. hmmm??
 sub send_request
 {
     my ($self, $c, $request) = @_;
+
     $c->run_hook('engine.send_request', { request => $request });
 
     POE::Kernel->post($self->alias, 'start_request', $request);

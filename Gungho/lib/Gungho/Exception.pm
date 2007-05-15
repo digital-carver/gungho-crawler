@@ -10,7 +10,11 @@ use Exception::Class
     'Gungho::Exception',
     map {
         ($_ => { isa => 'Gungho::Exception' })
-    } qw(Gungho::Exception::RequestThrottled)
+    } qw(
+        Gungho::Exception::RequestThrottled
+        Gungho::Exception::SendRequest::Handled
+        Gungho::Exception::HandleResponse::Handled
+    )
 ;
 
 1;

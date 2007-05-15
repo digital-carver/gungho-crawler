@@ -15,17 +15,7 @@ sub dispatch {}
 sub dispatch_request
 {
     my ($self, $c, $req) = @_;
-    eval {
-        $c->send_request($req);
-    };
-    if (my $e = $@) {
-        if ($e->isa('Gungho::Exception::RequestThrottled')) {
-            # This request was throttled. Attempt to do it later
-            $self->pushback_request($c, $req);
-        } else {
-            die $e;
-        }
-    }
+    $c->send_request($req);
 }
 
 sub pushback_request {}
