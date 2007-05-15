@@ -1,12 +1,18 @@
 Changes
 =======
 
-0.08001  Mon May 15 2007 
+0.08002 Tue May 15 2007 [rev 111]
+  - Some remaining pieces of code that were assuming Gungho to be an
+    object failed to execute at Class::Accessor::Fast. Spotted by
+    Keiichi Okabe.
+  - Make sure to force robots.txt request to be query-less and fragment-less
+
+0.08001 Tue May 15 2007 [rev 108]
   - No code change
   - Doc blunder
   - Hide HTTP::Response from PAUSE
 
-0.08 Mon May 15 2007 
+0.08 Tue May 15 2007 [rev 107]
   - *API Incompatiblity*
     - Gungho::Inline->run()'s parameter list changed so that it can accept
       a config file name (or a hashref, like Gungho->run), and a second
