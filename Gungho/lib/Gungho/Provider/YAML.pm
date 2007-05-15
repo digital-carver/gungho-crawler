@@ -12,7 +12,7 @@ use Best [
     qw(LoadFile)
 ];
 
-__PACKAGE__->mk_accessors($_) for qw(read_done requests);
+__PACKAGE__->mk_classdata($_) for qw(read_done requests);
 
 sub new
 {

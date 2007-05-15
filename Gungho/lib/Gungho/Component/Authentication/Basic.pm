@@ -10,7 +10,7 @@ use base qw(Gungho::Component::Authentication);
 use MIME::Base64 ();
 use URI;
 
-__PACKAGE__->mk_accessors($_) for qw(basic_authentication);
+__PACKAGE__->mk_classdata($_) for qw(basic_authentication);
 
 sub setup
 {
