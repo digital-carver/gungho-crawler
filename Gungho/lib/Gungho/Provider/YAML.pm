@@ -66,8 +66,6 @@ sub dispatch
             }
 
             $req = $c->prepare_request($req);
-
-print $req->as_string;
             $self->pushback_request($c, $req);
         }
         $self->read_done(1)
