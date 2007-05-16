@@ -5,6 +5,7 @@
 
 package Gungho::Handler::Null;
 use strict;
+use warnings;
 use base qw(Gungho::Handler);
 
 sub handle_response

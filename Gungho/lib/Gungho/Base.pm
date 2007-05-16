@@ -5,6 +5,7 @@
 
 package Gungho::Base;
 use strict;
+use warnings;
 use base qw(Class::Accessor::Fast Class::Data::Inheritable);
 use Class::C3;
 INIT { Class::C3::initialize() }

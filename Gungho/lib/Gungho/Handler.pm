@@ -5,6 +5,7 @@
 
 package Gungho::Handler;
 use strict;
+use warnings;
 use base qw(Gungho::Base);
 use Gungho::Request;
 
