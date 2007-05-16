@@ -304,14 +304,28 @@ Gungho - Yet Another High Performance Web Crawler Framework
 
 =head1 DESCRIPTION
 
-Gungho is Yet Another Web Crawler Framework, aimed to be an extensible and
+Gungho is Yet Another Web Crawler Framework, aimed to be extensible and
 fast. Its meant to be a culmination of lessons learned while building Xango --
-Xango was *fast*, but it was horribly hard to debug. Gungho tries to build
-from clean structures, based upon principles from the likes of Catalyst and
-Plagger.
+Xango was *fast*, but it was horribly hard to debug or to extend (Gungho
+even works right out of the box ;)
 
-All components (engine, provider, handler) are overridable and switcheable.
-Plugin mechanism is available to add hooks to be executed during the run.
+Therefore, Gungho's main aim is to make it as easy as possible to write
+crawlers, while still keeping crawling *fast*. You can simply specify
+the urls to fetch and some code to handle the responses -- we do the rest.
+Gungho tries to build from clean structures, based upon principles from the
+likes of Catalyst and Plagger, so that you can easily extend it to your
+liking.
+
+Features such as robot rules handling (robots.txt) and request throttling
+can be removed/added on the fly, just by specifying the components that
+you want to load. You can easily create additional functionality by writing
+your own component.
+
+Gungho is still very fast -- it uses event driven frameworks such as
+POE, Danga::Socket, and IO::Async as the main engine to drive requests.
+Choose the best engine for your needs: For example, if you plan on creating
+a POE-based handler to process the response, you might choose the POE engine -
+it will fit nicely into the request cycle.
 
 WARNING: *ALL* APIs are still subject to change.
 
@@ -324,6 +338,11 @@ Engine, which controls the entire process.
 There are also "hooks". These hooks can be registered from anywhere by
 invoking the register_hook() method. They are run at particular points,
 which are specified when you call register_hook().
+
+All components (engine, provider, handler) are overridable and switcheable.
+However, do note that if you plan on customizing stuff, you should be aware
+that Gungho uses Class::C3 extensively, and hence you may see warnings about
+the code you use.
 
 =head1 CONFIGURATION OPTIONS
 
@@ -364,6 +383,26 @@ startup time fro the config file / hash given to Gungho constructor.
 Components modify Gungho's inheritance structure at run time to add
 extra functionality to Gungho, and therefore should only be loaded
 before starting the engine.
+
+Here are some available components. Checkout the distribution for a current,
+complete list:
+
+=over 4
+
+=item RobotRules
+
+Handles collecting, parsing robots.txt, as well rejecting requests based on 
+the rules provided from it.
+
+=item Authentication::Basic
+
+Handles basic auth automatically.
+
+=item Throttle::Domain
+
+Throttles requests based on the number of requests sent to a domain.
+
+=back
 
 =head1 INLINE
 
@@ -460,6 +499,19 @@ Loads a Gungho component. Compliments the module name with 'Gungho::$prefix::',
 unless the name is prefixed with a '+'. In that case, no transformation is
 performed, and the module name is used as-is.
 
+=head1 HOW *NOT* TO USE Gungho
+
+One last note about Gungho - Don't use it if you are planning on accessing
+a single url -- It's usually not worth it, so you might as well use
+LWP::UserAgent or an equivalent module.
+
+Gungho's event driven engine works best when you are accessing hundreds,
+if not thousands of urls. It may in fact be slower than using LWP::UserAgent
+if you are accessing just a single url.
+
+Of course, you may wish to utilize features other than speed that Gungho 
+provides, so at that point, it's simply up to you.
+
 =head1 CODE
 
 You can obtain the current code base from
@@ -469,7 +521,6 @@ You can obtain the current code base from
 =head1 AUTHOR
 
 Copyright (c) 2007 Daisuke Maki E<lt>daisuke@endeworks.jpE<gt>
-All rights reserved.
 
 =head1 CONTRIBUTORS
 
