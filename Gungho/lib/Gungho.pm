@@ -111,7 +111,7 @@ sub setup_provider
     my $self = shift;
 
     my $config = $self->config->{provider};
-    if (! $config) {
+    if (! $config || ref $config ne 'HASH') {
         croak("Gungho requires a provider");
     }
 
@@ -128,7 +128,7 @@ sub setup_engine
     my $config = $self->config->{engine} || {
         module => 'POE',
     };
-    if (! $config) {
+    if (! $config || ref $config ne 'HASH') {
         croak("Gungho requires a engine");
     }
 
