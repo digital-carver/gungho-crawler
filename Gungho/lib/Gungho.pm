@@ -77,6 +77,7 @@ sub setup_components
     my $list = $self->config->{components};
     foreach my $module (@$list) {
         my $pkg = $self->load_gungho_module($module, 'Component');
+        $pkg->isa('Gungho::Component') or die "$pkg is not a Gungho::Component subclass";
         $pkg->inject_base($self);
     }
 
@@ -116,6 +117,7 @@ sub setup_provider
     }
 
     my $pkg = $self->load_gungho_module($config->{module}, 'Provider');
+    $pkg->isa('Gungho::Provider') or die "$pkg is not a Gungho::Provider subclass";
     $pkg->config($config->{config}) if $config->{config};
     my $obj = $pkg->new();
     $obj->setup( $self );
@@ -133,6 +135,7 @@ sub setup_engine
     }
 
     my $pkg = $self->load_gungho_module($config->{module}, 'Engine');
+    $pkg->isa('Gungho::Engine') or die "$pkg is not a Gungho::Engine subclass";
     $pkg->config($config->{config}) if $config->{config};
     my $obj = $pkg->new();
     $obj->setup( $self );
@@ -148,6 +151,7 @@ sub setup_handler
         config => {}
     };
     my $pkg = $self->load_gungho_module($config->{module}, 'Handler');
+    $pkg->isa('Gungho::Handler') or die "$pkg is not a Gungho::Handler subclass";
     $pkg->config($config->{config}) if $config->{config};
     my $obj = $pkg->new();
     $obj->setup( $self );
