@@ -52,12 +52,12 @@ sub _address_is_private
 {
     my ($self, $address) = @_;
 
-    if ($address =~ /^$RE{net}{IPv4}$/) {
+    if ($address eq '127.0.0.1') {
+        return 1;
+    } elsif ($address =~ /^$RE{net}{IPv4}$/) {
         my ($o1, $o2, $o3, $o4) = ($2, $3, $4, $5);
 
         if ($o1 eq '10') {
-            return 1;
-        } elsif ($o1 eq '127') {
             return 1;
         } elsif ($o1 eq '172') {
             return $o2 >= 16 && $o2 <= 31
@@ -114,11 +114,11 @@ Gungho::Engine - Base Class For Gungho Engine
 
 =head1 METHODS
 
-=head2 run()
-
 =head2 handle_dns_response()
 
 Handles the response from DNS lookups.
+
+=head2 run()
 
 Starts the engine. The exact behavior differs between each engine
 

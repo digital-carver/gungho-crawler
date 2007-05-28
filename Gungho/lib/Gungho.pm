@@ -29,7 +29,7 @@ __PACKAGE__->mk_classdata($_) for (
     @CONFIGURABLE_PARAMS,
 );
 
-our $VERSION = '0.08002';
+our $VERSION = '0.08003';
 
 sub new
 {
@@ -366,7 +366,7 @@ Setting debug to a non-zero value will trigger debug messages to be displayed.
 
 Setting this to a non-zero value will make addresses resolved via DNS lookups
 to be blocked, if they resolved to a private IP address such as 192.168.1.1.
-127.0.0.1 isn't considered to be a private IP.
+Note that 127.0.0.1 is also considered a private IP.
 
 =back
 

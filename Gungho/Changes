@@ -1,6 +1,15 @@
 Changes
 =======
 
+0.08003 Mon May 28 2007 [rev 
+  - *Backwards Incomptible Change*
+    - 127.0.0.1 is now considered a private IP address, when 
+      block_private_ip_address is in use (Kazuho Oku).
+  - 192.160.*.* was being considered a private IP address instead of
+    192.168.*.* (Kazuho Oku).
+  - The handler wasn't properly called when DNS lookups failed (Kazuho Oku)
+  - Fix t/03_live/perl.t to reflect recent API changes.
+
 0.08002 Tue May 15 2007 [rev 111]
   - Some remaining pieces of code that were assuming Gungho to be an
     object failed to execute at Class::Accessor::Fast. Spotted by
