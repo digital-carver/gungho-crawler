@@ -11,17 +11,19 @@ BEGIN
     }
 }
 
-Gungho::Inline->run({
-    provider => sub {
-        my($c, $p) = @_;
-        $p->add_request(Gungho::Request->new(GET => $_)) for qw(
-            http://www.perl.com
-            http://search.cpan.org
-        )
-    },
-    handler => sub {
-        my($req, $res) = @_;
-
-        ok( $res->is_success, $req->uri . " is success");
-    },
-});
+Gungho::Inline->run(
+    {},
+    {
+        provider => sub {
+            my($p, $c) = @_;
+            $p->add_request(Gungho::Request->new(GET => $_)) for qw(
+                http://www.perl.com
+                http://search.cpan.org
+            )
+        },
+        handler => sub {
+            my($h, $c, $req, $res) = @_;
+            ok( $res->is_success, $req->uri . " is success");
+        },
+    }
+);
