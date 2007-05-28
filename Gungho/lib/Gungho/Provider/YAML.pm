@@ -34,18 +34,24 @@ sub pushback_request
     $self->has_requests(1);
 }
 
+sub _load_from_yaml
+{
+    my ($self, $c) = @_;
+    my $filename = $self->config->{filename};
+    die "No file specified" unless $filename;
+
+    my $config = eval { LoadFile($filename) };
+    if ($@ || !$config) {
+        die "Could not read YAML file $filename: $@";
+    }
+}
+
 sub dispatch
 {
     my ($self, $c) = @_;
 
     if (! $self->read_done) {
-        my $filename = $self->config->{filename};
-        die "No file specified" unless $filename;
-
-        my $config = eval { LoadFile($filename) };
-        if ($@ || !$config) {
-            die "Could not read YAML file $filename: $@";
-        }
+        my $config = $self->_load_from_yaml();
 
         foreach my $conf (@{ $config->{requests} || []}) {
             my $req = Gungho::Request->new(
