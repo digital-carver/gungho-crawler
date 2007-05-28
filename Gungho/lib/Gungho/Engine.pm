@@ -45,7 +45,7 @@ sub handle_dns_response
         }
     }
 
-    $self->_http_error(500, "Failed to resolve host " . $request->uri->host, $request),
+    $c->handle_response($request, $self->_http_error(500, "Failed to resolve host " . $request->uri->host, $request)),
 }
 
 sub _address_is_private
@@ -57,9 +57,11 @@ sub _address_is_private
 
         if ($o1 eq '10') {
             return 1;
+        } elsif ($o1 eq '127') {
+            return 1;
         } elsif ($o1 eq '172') {
             return $o2 >= 16 && $o2 <= 31
-        } elsif ($o1 eq '192' && $o2 eq '160') {
+        } elsif ($o1 eq '192' && $o2 eq '168') {
             return 1;
         }
     }
