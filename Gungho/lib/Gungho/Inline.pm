@@ -170,8 +170,8 @@ Gungho::Inline - Inline Your Providers And Handlers
            my ($handler, $c, $req, $res) = @_;
            print $res->code, ' ', $req->uri, "\n";
         }
-    },
-  });
+    }
+  );
 
 =head1 DESCRIPTION
 
