@@ -30,7 +30,7 @@ sub path_to
     # Just writes to a file name that has been "properly" (for better
     # or for worse...) URl-encoded
 
-    return $self->dir->file( uri_escape( $res->uri ) );
+    return $self->dir->file( uri_escape( $req->uri ) );
 }
 
 sub handle_response
