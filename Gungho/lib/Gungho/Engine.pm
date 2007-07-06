@@ -21,11 +21,7 @@ sub handle_dns_response
             next if $answer->type ne 'A';
             my $host = $request->uri->host;
             # Check if we are filtering private addresses
-            if ($c->block_private_ip_address && $self->_address_is_private($answer->address)) {
-                $c->log->info("[DNS] Hostname $host resolved to a private address: " . $answer->address);
-                last;
-            }
-
+            return if $self->block_private_ip_address($c, $request, $answer->address);
             $request->push_header(Host => $host);
             $request->notes(original_host => $host);
             $request->uri->host($answer->address);
@@ -48,16 +44,28 @@ sub handle_dns_response
     $c->handle_response($request, $self->_http_error(500, "Failed to resolve host " . $request->uri->host, $request)),
 }
 
+sub block_private_ip_address {
+    my ($self, $c, $request, $address) = @_;
+
+    if ($c->block_private_ip_address && $self->_address_is_private($address)) {
+        $c->log->debug('Hostname ' . $request->uri->host . ' has a private ip address: ' . $address);
+        $c->handle_response($request, $self->_http_error(500, 'Access blocked for hostname with private address: ' . $request->uri->host, $request));
+        return 1;
+    }
+    
+    undef;
+}
+
 sub _address_is_private
 {
     my ($self, $address) = @_;
 
-    if ($address eq '127.0.0.1') {
-        return 1;
-    } elsif ($address =~ /^$RE{net}{IPv4}$/) {
+    if ($address =~ /^$RE{net}{IPv4}{-keep}$/) {
         my ($o1, $o2, $o3, $o4) = ($2, $3, $4, $5);
 
         if ($o1 eq '10') {
+            return 1;
+        } elsif ($o1 eq '127') {
             return 1;
         } elsif ($o1 eq '172') {
             return $o2 >= 16 && $o2 <= 31
@@ -66,7 +74,7 @@ sub _address_is_private
         }
     }
        
-    return 1;
+    return 0;
 }
 
 # Utility method to create an error HTTP response.
@@ -117,6 +125,10 @@ Gungho::Engine - Base Class For Gungho Engine
 =head2 handle_dns_response()
 
 Handles the response from DNS lookups.
+
+=head2 block_private_ip_address()
+
+Checks if the given DNS response contains a private IP address to be blocked
 
 =head2 run()
 

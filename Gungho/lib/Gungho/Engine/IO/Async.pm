@@ -63,7 +63,8 @@ sub send_request
     if ($request->requires_name_lookup) {
         $self->lookup_host($c, $request);
     } else {
-        $self->start_request($c, $request);
+        $self->block_private_ip_address($c, $request, $request->uri->host)
+            or $self->start_request($c, $request);
     }
 }
 
@@ -106,7 +107,7 @@ sub start_request
         PeerPort => $uri->port || $uri->default_port,
         Blocking => 0,
     );
-    die if $@;
+    die "Failed to open socket for $uri: $@" if $@;
 
     my $buffer = IO::Async::Buffer->new(
         handle => $socket,

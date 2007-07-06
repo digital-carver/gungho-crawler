@@ -61,6 +61,21 @@ sub run
 
     my $keepalive = POE::Component::Client::Keepalive->new(%$keepalive_config);
 
+    my $dns_config = delete $config{dns} || {};
+    foreach my $key (keys %$dns_config) {
+        if ($key =~ /^[a-z]/) { # ah, need to make this CamelCase
+            my $camel = ucfirst($key);
+            $camel =~ s/_(\w)/uc($1)/ge;
+            $dns_config->{$camel} = delete $dns_config->{$key};
+        }
+    }
+
+    my $resolver = POE::Component::Client::DNS->spawn(
+        %$dns_config,
+        Alias => &DnsResolverAlias,
+    );
+    $self->resolver($resolver);
+
     my $client_config = delete $config{client} || {};
     foreach my $key (keys %$client_config) {
         if ($key =~ /^[a-z]/) { # ah, need to make this CamelCase
@@ -69,9 +84,6 @@ sub run
             $client_config->{$camel} = delete $client_config->{$key};
         }
     }
-
-    my $resolver = POE::Component::Client::DNS->spawn(Alias => &DnsResolverAlias);
-    $self->resolver($resolver);
 
     POE::Component::Client::HTTP->spawn(
         FollowRedirects   => 1,
@@ -143,10 +155,10 @@ sub send_request
 sub _poe_start_request
 {
     my ($kernel, $heap, $request) = @_[KERNEL, HEAP, ARG0];
+    my $c = $heap->{CONTEXT};
 
     # check if this request requires a DNS resolution
     if ($request->requires_name_lookup()) {
-        my $c = $heap->{CONTEXT};
         my $dns_response = $c->engine->resolver->resolve(
             event => "got_dns_response",
             host  => $request->uri->host,
@@ -157,6 +169,8 @@ sub _poe_start_request
             $kernel->yield('got_dns_response', $dns_response);
         }
         return;
+    } else {
+        return if $c->engine->block_private_ip_address($c, $request, $request->uri->host);
     }
 
     POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
