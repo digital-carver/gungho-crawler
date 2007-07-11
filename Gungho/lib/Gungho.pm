@@ -314,8 +314,9 @@ Xango was *fast*, but it was horribly hard to debug or to extend (Gungho
 even works right out of the box ;)
 
 Therefore, Gungho's main aim is to make it as easy as possible to write
-crawlers, while still keeping crawling *fast*. You can simply specify
+complex crawlers, while still keeping crawling *fast*. You can simply specify
 the urls to fetch and some code to handle the responses -- we do the rest.
+
 Gungho tries to build from clean structures, based upon principles from the
 likes of Catalyst and Plagger, so that you can easily extend it to your
 liking.
@@ -329,7 +330,10 @@ Gungho is still very fast -- it uses event driven frameworks such as
 POE, Danga::Socket, and IO::Async as the main engine to drive requests.
 Choose the best engine for your needs: For example, if you plan on creating
 a POE-based handler to process the response, you might choose the POE engine -
-it will fit nicely into the request cycle.
+it will fit nicely into the request cycle. However, do note that the most
+heavily excercised engine is POE. Danga::Socket and IO::Async works, but
+haven't been tested too vigorously. Please send in requests and bug reports
+if you encounter any problems.
 
 WARNING: *ALL* APIs are still subject to change.
 
@@ -535,6 +539,11 @@ Copyright (c) 2007 Daisuke Maki E<lt>daisuke@endeworks.jpE<gt>
 =item Keiichi Okabe
 
 =back
+
+=head1 SEE ALSO
+
+L<Gungho::Inline|Gungho::Inline>
+L<Gungho::Component::RobotRules|Gungho::Component::RobotRules>
 
 =head1 LICENSE
 
