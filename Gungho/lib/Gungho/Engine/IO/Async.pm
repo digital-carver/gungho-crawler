@@ -107,7 +107,15 @@ sub start_request
         PeerPort => $uri->port || $uri->default_port,
         Blocking => 0,
     );
-    die "Failed to open socket for $uri: $@" if $@;
+    if ($@) {
+        $self->handle_response(
+            $c,
+            $req,
+            $self->_http_error(500, "Failed to connect to " . $uri->host . ": $@
+", $req)
+        );
+        return;
+    }
 
     my $buffer = IO::Async::Buffer->new(
         handle => $socket,
