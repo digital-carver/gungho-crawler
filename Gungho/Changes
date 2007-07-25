@@ -1,7 +1,23 @@
 Changes
 =======
 
-0.08003 Mon May 28 2007 [rev 
+0.08004 Wed Jul 25 2007 [rev 130]
+  [General]
+  - Previously block_private_address was blocking all addreses.
+    Fixed (Kazuho Oku)
+  - Previously private addresses were only checked after a DNS resolution.
+    Now given an address that contains IP addresses to begin with are
+    also checked (Kazuho Oku)
+  - Local addresses other than loopback (127.0.0.1) are also checked.
+
+  [POE Engine]
+  - Parameters can now be passed to PoCo::Client::DNS (Kazuho Oku)
+
+  [Build]
+  - Retooled the tests.
+  - Fixed requires list.
+
+0.08003 Mon May 28 2007 
   - *Backwards Incomptible Change*
     - 127.0.0.1 is now considered a private IP address, when 
       block_private_ip_address is in use (Kazuho Oku).
