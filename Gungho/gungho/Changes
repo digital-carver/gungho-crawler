@@ -1,0 +1,135 @@
+Changes
+=======
+
+0.08003 Mon May 28 2007 [rev 
+  - *Backwards Incomptible Change*
+    - 127.0.0.1 is now considered a private IP address, when 
+      block_private_ip_address is in use (Kazuho Oku).
+  - 192.160.*.* was being considered a private IP address instead of
+    192.168.*.* (Kazuho Oku).
+  - The handler wasn't properly called when DNS lookups failed (Kazuho Oku)
+  - Fix t/03_live/perl.t to reflect recent API changes.
+
+0.08002 Tue May 15 2007 [rev 111]
+  - Some remaining pieces of code that were assuming Gungho to be an
+    object failed to execute at Class::Accessor::Fast. Spotted by
+    Keiichi Okabe.
+  - Make sure to force robots.txt request to be query-less and fragment-less
+
+0.08001 Tue May 15 2007 [rev 108]
+  - No code change
+  - Doc blunder
+  - Hide HTTP::Response from PAUSE
+
+0.08 Tue May 15 2007 [rev 107]
+  - *API Incompatiblity*
+    - Gungho::Inline->run()'s parameter list changed so that it can accept
+      a config file name (or a hashref, like Gungho->run), and a second
+      hashref that contains the code references.
+    - Parameter ordering for Gungho::Inline's provider and handler has been
+      changed so that it resembles that of regular providers and handlers
+    - The old behavior for both of the above changes are still preserved
+      if you specify the GUNGHO_INLINE_OLD_PARAMETER_LIST environment
+      variable, or if you specify sub Gungho::Inline::OLD_PARAMETER_LIST { 1 }
+  - Implement blocking of private DNS names from lookups. By default
+    this is disabled. To enable, set block_private_ip_address
+  - So that method names for POE events are clearly marked as such,
+    all methods that are mapped to POE events in Engine::POE are now
+    prefixed with _poe_* (including private methods)
+  - Change the way components are invoked. Components are now invoked via
+    maybe::next::method() chain, and if a component should want to stop
+    processing somewhere in the chain, it should raise an exception
+  - Add Gunghoe::Component::RobotRules
+  - GUNGHO_DEBUG environment variable is now respeced
+  - Don't throttle (again) a request if it has gone through DNS-resolution 
+    path internally.
+
+0.07 Tue May 08 2007 [rev 90]
+  - Add asynchronous DNS lookups for POE, IO::Async, Danga::Socket engines
+  - Add dependency on Danga::Socket::Callback, if we're using Danga::Socket engine
+
+0.06 Tue May 08 2007 [rev 85]
+  - Add a new engine based on IO::Async
+  - Add a simple FileWriter handler
+  - Fix documentation and remove ->new()
+  - Fix documentation and add contributors
+  - Tweak the user-agent
+  - Add optional deps for Class::C3::XS
+
+0.05 Sun May 06 2007 [rev 71]
+  - *API Incompatiblity*
+    - Gungho->new has been deprecated in favor of a simple call to ->run()
+    - Gungho::Inline->new has been deprecated
+  - Fix SKIP_DECODED_CONTENT handling by properly specifying a package.
+    POE workaround should now work.
+  - Gungho::Engine::POE will set FollowRedirect to 1 by default.
+
+0.04 Tue Apr 17 2007 [rev 61]
+  - Add Gungho::Inline - thanks to Kazuho Oku
+  - Add way to control logging behavior
+  - Allow comments in files for Provider::Simple
+  - Work around POE trying to decode contents for us.
+
+0.03 Thu Apr 12 2007 [rev 51]
+  - Add simple examples at examples directory
+  - Add Danga::Socket engine -- this is a pretty crude implementation
+  - Add documentation.
+  - Fix G::Request's ID generation
+  - Change pushback_request()'s signature to include a $c
+
+0.02_05 Wed Apr 11 2007 [rev. 41]
+  - Provider::Simple wasn't exactly prepared for the new code path.
+    Fixed, and tested with Plagger
+
+0.02_04 Wed Apr 11 2007
+  - Throttle::Domain was actually checking for URL, not domains.
+
+0.02_03 Wed Apr 11 2007
+  - Packaging blunder. Add dep files for Throttle components
+
+0.02_02 Wed Apr 11 2007
+  - Add a gungho script
+  - Add throttling. You can now throttle your requests by domain or
+    simply by the number of requests in a specific amount of time.
+    Providers are now expected to handle "pushback" of requests when
+    a request has been throttled.
+  - Internal change: Code path to send requests has changed from
+    Gungho.pm doing the control to Provider doing the control
+
+0.02_01 Tue Apr 10 2007
+  - Add experimental component system
+    >>> NOTE <<< This is still subject to change *widely*
+  - Add Gungho->has_feature(X)
+  - Add WWW Authentication component -- now you can authenticate
+    your requests via Basic authentication
+  - Fix Gungho::Request->clone()
+  - Gungho::Provider::Simple respects the is_running() flag
+
+0.02 Mon Apr 09 2007
+  - Fix stupid bug in Gungho::Request
+  - Change the call syntax for G::Component->new(\%config) to 
+    G::Component->(config => \%config, %other_args)
+  - send_request() takes the context object as well
+  - Implement plugins
+  - Add G::Plugin::RequestTimer
+  - Add deps features in Makefile.PL 
+
+0.01 Sat 07 Apr 2007
+  - handle_response() now take $request and $response all over
+  - Add send_request() in Gungho.pm, Gungho/Engine/POE.pm
+  - Add notes() in Gungho/Request.pm. Cloning is properly handled
+
+0.01_04 Sat 07 Apr 2007
+  - Enable keepalive
+
+0.01_03 Fri 06 Apr 2007
+  - Fix embarassing documentation whoopla. As stated, no,
+    I'm not ashamed of stealing good code. 
+
+0.01_02 Fri 06 Apr 2007
+  - Add a new provider and small set of changes so that we can
+    use this in Plagger
+  - Use Class::Inspector to check if a module has been loaded
+
+0.01_01 Fri 06 Apr 2007 "It's right after YAPC" release
+  - Alpha release.
