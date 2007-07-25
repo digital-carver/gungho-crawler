@@ -1,6 +1,0 @@
----
-name: 'YAML Provider'
-default: 0
-depends:
-    Best: 0
-    YAML: 0
