@@ -51,6 +51,9 @@ from plugins in that it adds directly to Gungho's internals via subclassing.
 Plugins are called from various hooks, but components can directly interfere
 and/or add functionality to Gungho.
 
+To add a new component, just create a Gungho::Component subclass, and add
+it in your config. Gungho will ensure that it is loaded and setup.
+
 =head1 METHODS
 
 =head2 inject_base($c)
