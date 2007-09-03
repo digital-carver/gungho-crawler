@@ -113,7 +113,7 @@ sub start_request
         return;
     }
 
-    $req->headers->push_header(user_agent => $c->default_user_agent);
+    $req->headers->push_header(user_agent => $c->user_agent);
     my $danga = Danga::Socket::Callback->new(
         handle         => $socket,
         context        => { write_done => 0 },
