@@ -327,6 +327,17 @@ main control.
 
 Sends a request to the http client
 
+=head1 CAVEATS
+
+The POE engine supports multiple values in the user-agent header, but this
+is an exception. To be portable with other engines, and if you are using only
+one user-agent, set it at the top level:
+
+  user_agent: my_user_agent
+  engine:
+    module: POE
+    ...
+
 =head1 TODO
 
 Xango, Gungho's predecessor, tried really hard to overcome one of my pet-peeves

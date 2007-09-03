@@ -3,9 +3,12 @@ use Test::More;
 
 BEGIN
 {
-    if (! $ENV{GUNGHO_TEST_LIVE} || ! eval { require POE } || $@) {
+    if (! $ENV{GUNGHO_TEST_LIVE}) {
         plan skip_all => "Enable GUNGHO_TEST_LIVE to run these tests";
     } else {
+        # Check which engine we're checking
+
+
         plan tests => 5;
         use_ok "Gungho::Inline";
     }
@@ -16,7 +19,7 @@ Gungho::Inline->run(
         engine => {
             module => qw(POE),
             config => {
-                agent => 'test_user_agent'
+                agent => 'test_user_agent' # this only works for POE
             },
         }
     },

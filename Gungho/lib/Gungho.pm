@@ -54,7 +54,7 @@ sub setup
         $self->$key( $config->{$key} || $CONFIGURABLE_PARAM_DEFAULTS{$key} );
     }
 
-    $self->user_agent("Gungho/$Gungho::VERSION (http://code.google.com/p/gungho-crawler/wiki/Index)") unless $self->user_agent;
+    $self->user_agent("Gungho/$Gungho::VERSION (http://code.google.com/p/gungho-crawler/wiki/Index)") unless $config->{user_agent};
     $self->hooks({});
     $self->features({});
 
