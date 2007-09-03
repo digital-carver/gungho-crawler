@@ -1,6 +1,24 @@
 Changes
 =======
 
+All changes by Daisuke Maki unless otherwise noted.
+
+0.08005
+  [General]
+  - Add docs
+  - Fix dependencies
+  - Properly receive user_agent from config
+
+  [POE Engine]
+  - Make sure that client: agent: is respected. However, this is an exception
+    in the POE engine. If you are using only one user agent, you should be
+    using user_agent. Reported by Keiichi Okabe
+
+  [Tests]
+  - Added t/03_live/twitter.t, but twitter is currently responding with
+    urls like balancer://twitter_cluster/statuses/update.json, so it will
+    most likely fail anyway.
+
 0.08004 Wed Jul 25 2007 [rev 130]
   [General]
   - Previously block_private_address was blocking all addreses.
