@@ -26,8 +26,8 @@ use Gungho;
 
     if (! GetOptions(
             '--config=s', => \$config,
-            '--version',  => \$version,
-            '--help'      => \$help
+            '--version!',  => \$version,
+            '--help!'      => \$help
     )) {
         exit 1;
     }
@@ -44,6 +44,10 @@ EOM
         pod2usage(-verbose => 2);
     }
 
+    if (! $config) {
+        pod2usage(-verbose => 0);
+    }
+
     Gungho->run($config);
 }
 
@@ -55,14 +59,13 @@ gungho - An Extensible, High-Performance Web Crawler Framework
 
 =head1 SYNOPSIS
 
-   gungho
    gungho -c config.yml
    gungho -v
    gungho -h
 
 =head1 DESCRIPTION
 
-gungho is the command line tool to run the Gungho framework.
+gungho is the command line tool to run the Gungho web crawler framework.
 
 =head1 OPTIONS
 
