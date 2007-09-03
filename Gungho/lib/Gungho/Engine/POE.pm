@@ -23,6 +23,8 @@ use constant FORCE_ENCODE_CONTENT =>
 BEGIN
 {
     if (SKIP_DECODE_CONTENT) {
+        # PoCo::Client::HTTP workaround for blindly decoding content for us
+        # when encountering Contentn-Encoding
         eval sprintf(<<'        EOCODE', 'HTTP::Response');
             no warnings 'redefine';
             package %s;
@@ -87,8 +89,8 @@ sub run
 
     POE::Component::Client::HTTP->spawn(
         FollowRedirects   => 1,
-        %$client_config,
         Agent             => $c->user_agent,
+        %$client_config,
         Alias             => &UserAgentAlias,
         ConnectionManager => $keepalive,
     );
