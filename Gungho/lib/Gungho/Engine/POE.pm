@@ -171,9 +171,13 @@ sub _poe_start_request
             $kernel->yield('got_dns_response', $dns_response);
         }
         return;
-    } else {
-        return if $c->engine->block_private_ip_address($c, $request, $request->uri->host);
     }
+
+    $request->uri->host($request->notes('resolved_ip'))
+        if $request->notes('resolved_ip');
+
+    # block private IP addreses
+    return if $c->engine->block_private_ip_address($c, $request, $request->uri->host);
 
     POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
 }

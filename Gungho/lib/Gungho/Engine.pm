@@ -21,10 +21,12 @@ sub handle_dns_response
             next if $answer->type ne 'A';
             my $host = $request->uri->host;
             # Check if we are filtering private addresses
-            return if $self->block_private_ip_address($c, $request, $answer->address);
-            $request->push_header(Host => $host);
+            my $addr = $answer->address;
+            return if $self->block_private_ip_address($c, $request, $addr);
+
+            $request->header(Host => $host);
             $request->notes(original_host => $host);
-            $request->uri->host($answer->address);
+            $request->notes(resolved_ip   => $addr);
             eval {
                 $c->send_request($request);
             };

@@ -3,7 +3,13 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.08005
+0.08006
+  - Fix double-setting the host header. Reported by Keiichi Okabe
+  - Fix Gungho::Request->clone to actually clone the contents of notes()
+  - Attempt to use DNS lookup result from previous request, if the
+    request has been cloned.
+
+0.08005 Mon Sep 03 2007 [rev 142]
   [General]
   - Add docs
   - Fix dependencies

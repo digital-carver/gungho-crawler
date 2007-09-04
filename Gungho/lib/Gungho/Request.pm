@@ -60,7 +60,7 @@ sub clone
 {
     my $self  = shift;
     my $clone = $self->SUPER::clone;
-    $clone->notes( dclone $self->notes );
+    $clone->notes( %{ dclone $self->notes } );
     return $clone;
 }
 
@@ -91,7 +91,7 @@ sub original_uri
 sub requires_name_lookup
 {
     my $self = shift;
-    return $self->uri->host() !~ /^$RE{net}{IPv4}$/;
+    return ! $self->notes('resolved_ip') && $self->uri->host() !~ /^$RE{net}{IPv4}$/;
 }
 
 sub format

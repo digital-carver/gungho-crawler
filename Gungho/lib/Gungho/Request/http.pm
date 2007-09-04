@@ -43,7 +43,7 @@ sub format
     
     my @h;
     my @connection;
-    my %given = (host => 0, "content-length" => 0, "te" => 0);
+    my %given = (host => $request->header('Host') || 0, "content-length" => 0, "te" => 0);
     while (@_) {
         my($k, $v) = splice(@_, 0, 2);
         my $lc_k = lc($k);

@@ -63,8 +63,12 @@ sub send_request
     if ($request->requires_name_lookup) {
         $self->lookup_host($c, $request);
     } else {
-        $self->block_private_ip_address($c, $request, $request->uri->host)
-            or $self->start_request($c, $request);
+        $request->uri->host( $request->notes('resolved_ip') )
+            if $request->notes('resolved_ip');
+        if ( $self->block_private_ip_address($c, $request, $request->uri->host)) {
+            return;
+        }
+        $self->start_request($c, $request);
     }
 }
 
