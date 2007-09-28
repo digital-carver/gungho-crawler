@@ -145,7 +145,7 @@ sub parse_robot_rules
 {
     my ($c, $request, $response) = @_;
 
-    my $h = $response->content ?
+    my $h = ($request && $response && $response->is_success && $response->content) ?
         $c->robot_rules_parser->parse($request->original_uri, $response->content) :
         {}
     ;
