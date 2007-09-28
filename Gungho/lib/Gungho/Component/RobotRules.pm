@@ -123,7 +123,7 @@ sub setup_robot_rules_storage
     my $pkg = $config->{module} || 'RobotRules::Storage::DB_File';
     my $pkg_config = $config->{config} || {};
     $pkg = $c->load_gungho_module($pkg, 'Component');
-    my $storage = $pkg->new($config);
+    my $storage = $pkg->new(%$config);
     $storage->setup();
     $c->robot_rules_storage( $storage );
 }
