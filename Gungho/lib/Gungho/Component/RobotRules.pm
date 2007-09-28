@@ -73,9 +73,7 @@ sub handle_response
     my ($request, $response) = @_;
 
     if ($request->uri->path eq '/robots.txt' && $request->notes('auto_robot_rules')) {
-        if ($response->is_success) {
-            $c->parse_robot_rules($request, $response);
-        }
+        $c->parse_robot_rules($request, $response);
         $c->dispatch_pending_robots_txt($request);
         Gungho::Exception::HandleResponse::Handle->throw;
     }
