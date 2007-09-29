@@ -3,7 +3,13 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.08006 Tue Sep 28 2007 [rev 145]
+0.08007 Sat Sep 29 2007 [rev 149]
+  [RobotRules]
+  - Fix how parameters are passed
+  - Fixed a problem where Gungho would go in an infinite loop, if robots.txt 
+    didn't exist. 
+
+0.08006 Fri Sep 28 2007 [rev 145]
   [General]
   - Fix double-setting the host header. Reported by Keiichi Okabe
   - Fix Gungho::Request->clone to actually clone the contents of notes()
