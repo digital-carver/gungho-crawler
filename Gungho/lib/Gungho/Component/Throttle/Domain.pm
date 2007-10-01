@@ -91,7 +91,29 @@ This component allows you to throttle requests by domain names.
 
 You can specify a regular expression, in which case only the domains that 
 match the particular regular expression will be throttled. Otherwise,
-the hostname from each request will be used as the key to throttle
+the hostname from each request will be used as the key to throttle.
+
+=head1 CONFIGURATION
+
+All configuration parameters are specified in throttle.domain hash:
+
+  throttle:
+    doamin:
+      key1: value
+
+=head2 max_items
+
+Specifies the max number of items that can be fetched within the time
+specified in "interval"
+
+=head2 interval
+
+Specifies the interval to which to apply the max_items configuration.
+
+=head2 domains
+
+Specifies the domain to apply the throttling. If unspecified, the same
+throttling configuration will be applied to all domains
 
 =head1 METHODS
 
