@@ -3,6 +3,16 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.08008 Mon Oct 01 2007 [rev 155]
+  [General]
+  - Make sure that the URI object is one that has the host() method at
+    various places
+  - Make block_private_ip_address() to accept an URI object.
+
+  [Tests]
+  - Disable localhost tests, as there are environments where this doesn't
+    work.
+
 0.08007 Sat Sep 29 2007 [rev 149]
   [RobotRules]
   - Fix how parameters are passed
