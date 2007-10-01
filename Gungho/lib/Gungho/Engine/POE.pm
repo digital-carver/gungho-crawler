@@ -177,7 +177,7 @@ sub _poe_start_request
         if $request->notes('resolved_ip');
 
     # block private IP addreses
-    return if $c->engine->block_private_ip_address($c, $request, $request->uri->host);
+    return if $c->engine->block_private_ip_address($c, $request, $request->uri);
 
     POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
 }

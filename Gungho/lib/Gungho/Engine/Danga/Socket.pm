@@ -63,7 +63,7 @@ sub send_request
     } else {
         $req->uri->host( $req->notes('resolved_ip') ) 
             if $req->notes('resolved_ip');
-        if ($self->block_private_ip_address($c, $req, $req->uri->host)) {
+        if ($self->block_private_ip_address($c, $req, $req->uri)) {
             return;
         }
         $self->start_request($c, $req);

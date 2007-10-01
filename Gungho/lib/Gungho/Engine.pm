@@ -49,6 +49,14 @@ sub handle_dns_response
 sub block_private_ip_address {
     my ($self, $c, $request, $address) = @_;
 
+    if (ref $address && $address->isa('URI')) {
+        if (! $address->can('host')) {
+            # no host, no check
+            return undef;
+        }
+        $address = $address->host;
+    }
+
     if ($c->block_private_ip_address && $self->_address_is_private($address)) {
         $c->log->debug('Hostname ' . $request->uri->host . ' has a private ip address: ' . $address);
         $c->handle_response($request, $self->_http_error(500, 'Access blocked for hostname with private address: ' . $request->uri->host, $request));

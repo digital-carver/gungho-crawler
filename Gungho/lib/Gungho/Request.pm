@@ -91,7 +91,8 @@ sub original_uri
 sub requires_name_lookup
 {
     my $self = shift;
-    return ! $self->notes('resolved_ip') && $self->uri->host() !~ /^$RE{net}{IPv4}$/;
+    return ! $self->notes('resolved_ip') && 
+        ($self->uri->can('host') && $self->uri->host() !~ /^$RE{net}{IPv4}$/);
 }
 
 sub format
