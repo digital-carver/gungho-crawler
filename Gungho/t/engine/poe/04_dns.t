@@ -8,7 +8,7 @@ BEGIN
 {
     GunghoTest->plan_or_skip(
         requires    => "POE",
-        test_count  => 20
+        test_count  => 18
     );
 }
 

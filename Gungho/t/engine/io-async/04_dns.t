@@ -8,7 +8,7 @@ BEGIN
 {
     GunghoTest->plan_or_skip(
         requires    => "IO::Async::Buffer",
-        test_count  => 20
+        test_count  => 18
     );
 }
 

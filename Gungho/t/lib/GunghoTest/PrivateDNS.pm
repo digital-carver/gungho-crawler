@@ -30,9 +30,9 @@ sub run
                     http://172.31.255.254
                     http://192.168.0.1
                     http://192.168.255.254
-                    http://localhost
                     http://224.0.0.1
                 )
+#                    http://localhost
             },
             handler => sub {
                 my ($p, $c, $req, $res) = @_;
