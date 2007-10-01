@@ -3,6 +3,9 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.08009 Mon Oct 01 2007 [rev 157]
+  - New Cache component! Now you can cache anything, anywhere in your app.
+
 0.08008 Mon Oct 01 2007 [rev 155]
   [General]
   - Make sure that the URI object is one that has the host() method at
