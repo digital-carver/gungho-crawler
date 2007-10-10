@@ -75,7 +75,7 @@ sub handle_response
     if ($request->uri->path eq '/robots.txt' && $request->notes('auto_robot_rules')) {
         $c->parse_robot_rules($request, $response);
         $c->dispatch_pending_robots_txt($request);
-        Gungho::Exception::HandleResponse::Handle->throw;
+        Gungho::Exception::HandleResponse::Handled->throw;
     }
 
     $c->maybe::next::method(@_);
@@ -93,7 +93,7 @@ sub push_pending_robots_txt
     }
 
     if(! exists $h->{ $request->id }) {
-        $c->log->debug("Pushing request " . $request->id . " to pending list (robot rules)...")
+        $c->log->debug("Pushing request " . $request->uri . " to pending list (robot rules)...")
             if $c->log->is_debug;
         $h->{ $request->id } = $request ;
         return 1;
