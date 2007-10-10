@@ -15,7 +15,7 @@ sub setup
     my $module = delete $config{module} || 'Cache::Memcached';
 
     Class::Inspector->loaded($module) or $module->require or die;
-    $self->storage( $module->new(%$config) );
+    $self->storage( $module->new(%config) );
     $self->next::method(@_);
 }
 
