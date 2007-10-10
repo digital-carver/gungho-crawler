@@ -35,7 +35,7 @@ sub put_rule
     my $rule    = shift;
 
     my $uri = $request->original_uri;
-    $self->storage->set( $uri->host_port, $rule );
+    $self->storage->set( $uri->host_port, $rule, 86400 * 7 );
 }
 
 1;
