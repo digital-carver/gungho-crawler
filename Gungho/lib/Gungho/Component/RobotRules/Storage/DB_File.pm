@@ -12,7 +12,7 @@ use Storable qw(nfreeze thaw);
 sub setup
 {
     my $self = shift;
-    my $config = $self->config();
+    my $config = $self->{config};
     $config->{filename} ||= File::Spec->catfile(File::Spec->tmpdir, 'robots.db');
 
     my %o;
