@@ -3,6 +3,9 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.08010 Wed Oct 10 2007 [rev 158]
+  - Accept Data::Throttler::Memcached as the throttling engine as well.
+
 0.08009 Mon Oct 01 2007 [rev 157]
   - New Cache component! Now you can cache anything, anywhere in your app.
 

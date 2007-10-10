@@ -29,7 +29,7 @@ __PACKAGE__->mk_classdata($_) for (
     @CONFIGURABLE_PARAMS,
 );
 
-our $VERSION = '0.08009';
+our $VERSION = '0.08010';
 
 sub new
 {

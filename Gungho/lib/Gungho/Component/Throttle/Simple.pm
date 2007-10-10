@@ -16,7 +16,7 @@ sub setup
 
     $self->prepare_throttler(
         map { ($_ => $config->{$_}) }
-            qw(max_items interval db_file)
+            qw(max_items interval db_file throttler cache)
     );
     $self->next::method(@_);
 }

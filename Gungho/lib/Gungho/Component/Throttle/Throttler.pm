@@ -7,7 +7,6 @@ package Gungho::Component::Throttle::Throttler;
 use strict;
 use warnings;
 use base qw(Gungho::Component::Throttle);
-use Data::Throttler;
 
 __PACKAGE__->mk_classdata($_) for qw(throttler);
 
@@ -15,13 +14,16 @@ sub prepare_throttler
 {
     my $self = shift;
     my %args = @_;
-    $self->throttler(
-        Data::Throttler->new(
-            max_items => $args{max_items} || 1000,
-            interval  => $args{interval} || 3600,
-            db_file   => $args{db_file} || undef,
-        )
-    );
+
+    my $class = delete $args{throttler} || 'Data::Throttler';
+    if (! Class::Inspector->loaded($class)) {
+        $class->require or die;
+    }
+
+    $args{max_items} ||= 1000;
+    $args{interval}  ||= 3600;
+
+    $self->throttler( $class->new( %args ) );
 }
 
 1;
@@ -31,6 +33,10 @@ __END__
 =head1 NAME
 
 Gungho::Component::Throttle::Throttler - Data::Throttler Based Throttling
+
+=head1 SYNOPSIS
+
+  # Internal use only
 
 =head1 METHODS
 
