@@ -22,7 +22,8 @@ sub setup
 
 sub get_rule
 {
-    my $self = shift;
+    my $self    = shift;
+    my $c       = shift;
     my $request = shift;
     my $v;
 
@@ -35,7 +36,8 @@ sub get_rule
 
 sub put_rule
 {
-    my $self = shift;
+    my $self    = shift;
+    my $c       = shift;
     my $request = shift;
     my $rule    = shift;
 

@@ -11,7 +11,8 @@ use base qw(Gungho::Component::RobotRules::Storage);
 sub setup
 {
     my $self = shift;
-    my %config = %{ $self->config() };
+    my $c    = shift;
+    my %config = %{ $self->{config} };
     my $module = delete $config{module} || 'Cache::Memcached';
 
     Class::Inspector->loaded($module) or $module->require or die;
@@ -21,20 +22,25 @@ sub setup
 
 sub get_rule
 {
-    my $self = shift;
+    my $self    = shift;
+    my $c       = shift;
     my $request = shift;
 
-    my $uri = $request->original_uri;
-    return $self->storage->get( $uri->host_port ) || ();
+    my $uri  = $request->original_uri;
+    my $rule =  $self->storage->get( $uri->host_port ) || '';
+    $c->log->debug("Fetch robot rules for $uri ($rule)") if $c->log->is_debug;
+    return $rule || ();
 }
 
 sub put_rule
 {
-    my $self = shift;
+    my $self    = shift;
+    my $c       = shift;
     my $request = shift;
     my $rule    = shift;
 
     my $uri = $request->original_uri;
+    $c->log->debug("Saving robot rules for $uri") if $c->log->is_debug;
     $self->storage->set( $uri->host_port, $rule, 86400 * 7 );
 }
 

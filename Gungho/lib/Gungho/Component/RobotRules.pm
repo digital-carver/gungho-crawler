@@ -48,7 +48,7 @@ sub allowed
 {
     my ($c, $request) = @_;
 
-    my $rule = $c->robot_rules_storage->get_rule( $request );
+    my $rule = $c->robot_rules_storage->get_rule( $c, $request );
     if (! $rule) {
         if ($c->push_pending_robots_txt($request) == 0) {
             return -2;
@@ -73,6 +73,7 @@ sub handle_response
     my ($request, $response) = @_;
 
     if ($request->uri->path eq '/robots.txt' && $request->notes('auto_robot_rules')) {
+        $c->log->debug("Handling robots.txt response for " . $request->uri->path) if $c->log->is_debug;
         $c->parse_robot_rules($request, $response);
         $c->dispatch_pending_robots_txt($request);
         Gungho::Exception::HandleResponse::Handled->throw;
@@ -122,7 +123,7 @@ sub setup_robot_rules_storage
     my $pkg_config = $config->{config} || {};
     $pkg = $c->load_gungho_module($pkg, 'Component');
     my $storage = $pkg->new(%$config);
-    $storage->setup();
+    $storage->setup($c);
     $c->robot_rules_storage( $storage );
 }
 
@@ -147,8 +148,9 @@ sub parse_robot_rules
         $c->robot_rules_parser->parse($request->original_uri, $response->content) :
         {}
     ;
+    $c->log->debug("Parse robot rules " . $request->uri . ": " . keys(%$h) . " rules") if $c->log->is_debug;
     my $rule = Gungho::Component::RobotRules::Rule->new($h);
-    $c->robot_rules_storage->put_rule($request, $rule);
+    $c->robot_rules_storage->put_rule($c, $request, $rule);
 }
 
 1;
