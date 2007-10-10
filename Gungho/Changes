@@ -3,6 +3,11 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.08011 Wed Oct 10 2007 [rev 166]
+  - Fix problems with RobotRules::Storage::* not properly accepting
+    configuration parameters.
+  - RobotRules::Storage::* now accept a $c in the first argument
+
 0.08010 Wed Oct 10 2007 [rev 158]
   - Accept Data::Throttler::Memcached as the throttling engine as well.
 
