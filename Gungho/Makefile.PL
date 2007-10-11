@@ -20,6 +20,10 @@ requires("Storable");
 requires("UNIVERSAL::isa");
 requires("UNIVERSAL::require");
 
+build_requires('YAML');
+build_requires('DirHandle');
+build_requires('File::Spec');
+
 # Hey, stolen right off of Plagger
 eval {
     require YAML;
