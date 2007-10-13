@@ -12,8 +12,8 @@ BEGIN
         Gungho::Component::RobotRules
         Gungho::Component::RobotRules::Rule
         Gungho::Component::RobotRules::Storage
+        Gungho::Component::RobotRules::Storage::Cache
         Gungho::Component::RobotRules::Storage::DB_File
-        Gungho::Component::RobotRules::Storage
         Gungho::Component::RobotRules
         Gungho::Component::Throttle
         Gungho::Component::Throttle::Domain
@@ -27,7 +27,10 @@ BEGIN
         Gungho::Handler::Null
         Gungho::Inline
         Gungho::Log
+        Gungho::Log::Dispatch
+        Gungho::Log::Simple
         Gungho::Plugin
+        Gungho::Plugin::RequestLog
         Gungho::Plugin::RequestTimer
         Gungho::Provider
         Gungho::Provider::File::Simple
