@@ -14,7 +14,6 @@ use Class::Inspector;
 use UNIVERSAL::isa;
 use UNIVERSAL::require;
 
-use Gungho::Log;
 use Gungho::Exception;
 
 my @INTERNAL_PARAMS             = qw(setup_finished);
@@ -93,17 +92,12 @@ sub setup_log
 {
     my $self = shift;
 
-    my $log_config = $self->config->{log} || {};
-    my @levels     = @{ $log_config->{levels} || [ qw(info warn error fatal) ] };
+    my $log_config = { %{$self->config->{log} || {}} };
+    my $module     = delete $log_config->{module} || 'Simple';
+    my $pkg        = $self->load_gungho_module($module, 'Log');
+    my $log        = $pkg->new();
 
-    my $log = Gungho::Log->new(@levels);
-    $log->autoflush(1);
-
-    # Only explicitly enable debug if the global debug flag is set
-    if ($self->config->{debug}) {
-        $log->enable('debug');
-    }
-
+    $log->setup($self, $log_config);
     $self->log($log);
 }
 

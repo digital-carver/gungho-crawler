@@ -129,7 +129,7 @@ sub _poe_session_loop
     my $c = $heap->{CONTEXT};
 
     if (! $c->is_running) {
-        $c->log->debug("is_running = 0, waiting for other queued states to finish...\n") if $c->log->is_debug;
+        $c->log->debug("is_running = 0, waiting for other queued states to finish...\n");
         return;
     }
 

@@ -28,7 +28,7 @@ sub get_rule
 
     my $uri  = $request->original_uri;
     my $rule =  $self->storage->get( $uri->host_port ) || '';
-    $c->log->debug("Fetch robot rules for $uri ($rule)") if $c->log->is_debug;
+    $c->log->debug("Fetch robot rules for $uri ($rule)");
     return $rule || ();
 }
 
@@ -40,7 +40,7 @@ sub put_rule
     my $rule    = shift;
 
     my $uri = $request->original_uri;
-    $c->log->debug("Saving robot rules for $uri") if $c->log->is_debug;
+    $c->log->debug("Saving robot rules for $uri");
     $self->storage->set( $uri->host_port, $rule, 86400 * 7 );
 }
 

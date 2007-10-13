@@ -3,6 +3,16 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.08012
+  - *Backwards Incompatible Change*
+    - Gungho::Log has been totally redesigned the following methods are
+      now deprecated. Calling $c->debug(...) and such still work, but
+      log setup has been completely changed.
+      is_debug() and friends still exist, but they have been deprecated,
+      and always return false.
+  - Introduced Gungho::Log::Dispatch. Gungho::Log has now been re-implemented
+    as Gugho::Log::Simple.
+
 0.08011 Wed Oct 10 2007 [rev 166]
   - Fix problems with RobotRules::Storage::* not properly accepting
     configuration parameters.

@@ -29,12 +29,10 @@ sub send_request
         $c->allowed($request)
     ;
     if ($allowed == -2) {
-        $c->log->debug("Fetch for /robots.txt already scheduled for " . $request->uri->host_port)
-            if $c->log->is_debug;
+        $c->log->debug("Fetch for /robots.txt already scheduled for " . $request->uri->host_port);
         Gungho::Exception::SendRequest::Handled->throw;
     } elsif ($allowed == -1) {
-        $c->log->debug("No robot rules found for " . $request->uri->host_port . ", going to fetch one")
-            if $c->log->is_debug;
+        $c->log->debug("No robot rules found for " . $request->uri->host_port . ", going to fetch one");
         Gungho::Exception::SendRequest::Handled->throw;
     } elsif ($allowed) {
         $c->maybe::next::method($request);
@@ -73,7 +71,7 @@ sub handle_response
     my ($request, $response) = @_;
 
     if ($request->uri->path eq '/robots.txt' && $request->notes('auto_robot_rules')) {
-        $c->log->debug("Handling robots.txt response for " . $request->uri->path) if $c->log->is_debug;
+        $c->log->debug("Handling robots.txt response for " . $request->uri->path);
         $c->parse_robot_rules($request, $response);
         $c->dispatch_pending_robots_txt($request);
         Gungho::Exception::HandleResponse::Handled->throw;
@@ -94,8 +92,7 @@ sub push_pending_robots_txt
     }
 
     if(! exists $h->{ $request->id }) {
-        $c->log->debug("Pushing request " . $request->uri . " to pending list (robot rules)...")
-            if $c->log->is_debug;
+        $c->log->debug("Pushing request " . $request->uri . " to pending list (robot rules)...");
         $h->{ $request->id } = $request ;
         return 1;
     }
@@ -148,7 +145,7 @@ sub parse_robot_rules
         $c->robot_rules_parser->parse($request->original_uri, $response->content) :
         {}
     ;
-    $c->log->debug("Parse robot rules " . $request->uri . ": " . keys(%$h) . " rules") if $c->log->is_debug;
+    $c->log->debug("Parse robot rules " . $request->uri . ": " . keys(%$h) . " rules");
     my $rule = Gungho::Component::RobotRules::Rule->new($h);
     $c->robot_rules_storage->put_rule($c, $request, $rule);
 }
