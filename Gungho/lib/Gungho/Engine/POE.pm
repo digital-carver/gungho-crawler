@@ -148,9 +148,6 @@ sub _poe_session_loop
 sub send_request
 {
     my ($self, $c, $request) = @_;
-
-    $c->run_hook('engine.send_request', { request => $request });
-
     POE::Kernel->post($self->alias, 'start_request', $request);
 }
 
@@ -179,6 +176,7 @@ sub _poe_start_request
     # block private IP addreses
     return if $c->engine->block_private_ip_address($c, $request, $request->uri);
 
+    $c->run_hook('engine.send_request', { request => $request });
     POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
 }
 

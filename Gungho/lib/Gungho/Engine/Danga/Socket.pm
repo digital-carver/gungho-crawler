@@ -120,7 +120,7 @@ sub start_request
     $req->headers->push_header(user_agent => $c->user_agent);
     my $danga = Danga::Socket::Callback->new(
         handle         => $socket,
-        context        => { write_done => 0 },
+        context        => { write_done => 0, context => $c },
         on_write_ready => sub {
             my $ds = shift;
             if ($ds->{context}{write_done}) {
@@ -128,7 +128,9 @@ sub start_request
                     $ds->watch_write(0);
                 }
             }
+            my $c = $ds->{context}{context};
 
+            $c->run_hook('engine.send_request', { request => $req });
             my $req_str = $req->format();
             if ($ds->write($req_str)) {
                 $ds->watch_write(0);

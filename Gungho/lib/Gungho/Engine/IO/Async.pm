@@ -131,7 +131,9 @@ sub start_request
             $$buffref = '';
 
             if ($st == 0) {
-                $self->handle_response($c, $notifier->{request}, $parser->object);
+                my $res = $parser->object;
+                $c->run_hook('engine.handle_response', { request => $req, response => $res });
+                $self->handle_response($c, $notifier->{request}, $res);
                 $notifier->handle_closed();
                 $self->impl->remove($notifier);
             }
@@ -144,6 +146,7 @@ sub start_request
         on_write_error => sub {
             my $notifier = shift;
             my $res = $self->_http_error(500, "Could not write to socket ", $notifier->{request});
+            $c->run_hook('engine.handle_response', { request => $req, response => $res });
             $self->handle_response($c, $notifier->{request}, $res);
         }
     );
@@ -152,6 +155,7 @@ sub start_request
     $buffer->{parser}  = HTTP::Parser->new(response => 1);
     $buffer->{request} = $req;
 
+    $c->run_hook('engine.send_request', { request => $req });
     $buffer->send($req->format);
     $self->impl->add($buffer);
 }
