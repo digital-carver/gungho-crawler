@@ -10,8 +10,11 @@ All changes by Daisuke Maki unless otherwise noted.
       log setup has been completely changed.
       is_debug() and friends still exist, but they have been deprecated,
       and always return false.
-  - Introduced Gungho::Log::Dispatch. Gungho::Log has now been re-implemented
+    - engine.send_request hook has been moved to *right* before the 
+      request is sent
+  - Introduce Gungho::Log::Dispatch. Gungho::Log has now been re-implemented
     as Gugho::Log::Simple.
+  - Introduce Gungho::Plugin::RequestLog
 
 0.08011 Wed Oct 10 2007 [rev 166]
   - Fix problems with RobotRules::Storage::* not properly accepting
