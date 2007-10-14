@@ -29,10 +29,10 @@ sub send_request
         $c->allowed($request)
     ;
     if ($allowed == -2) {
-        $c->log->debug("Fetch for /robots.txt already scheduled for " . $request->uri->host_port);
+        $c->log->debug("Fetch for /robots.txt already scheduled for " . $request->original_uri->host_port);
         Gungho::Exception::SendRequest::Handled->throw;
     } elsif ($allowed == -1) {
-        $c->log->debug("No robot rules found for " . $request->uri->host_port . ", going to fetch one");
+        $c->log->debug("No robot rules found for " . $request->original_uri->host_port . ", going to fetch one");
         Gungho::Exception::SendRequest::Handled->throw;
     } elsif ($allowed) {
         $c->maybe::next::method($request);
@@ -83,14 +83,14 @@ sub handle_response
 sub push_pending_robots_txt
 {
     my ($c, $request) = @_;
-    return $c->robot_rules_storage->push_pending_robots_txt( $request );
+    return $c->robot_rules_storage->push_pending_robots_txt( $c, $request );
 }
 
 sub dispatch_pending_robots_txt
 {
     my ($c, $request) = @_;
 
-    my $pending = $c->robot_rules_storage->get_pending_robots_txt($request);
+    my $pending = $c->robot_rules_storage->get_pending_robots_txt($c, $request);
     if ($pending && ref $pending eq 'HASH') {
         $c->provider->pushback_request( $c, $_ ) for values %$pending;
     }

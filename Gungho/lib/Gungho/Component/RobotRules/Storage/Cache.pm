@@ -19,6 +19,7 @@ sub setup
     my $expiration = delete $config{expiration} || 86400  * 7;
 
     Class::Inspector->loaded($module) or $module->require or die;
+
     $self->storage( $module->new(%config) );
     $self->expiration( $expiration );
     $self->next::method(@_);
@@ -38,7 +39,7 @@ sub get_rule
     } else {
         @args = ($uri->host_port);
     }
-    my $rule = $self->storage->get( @args );
+    my $rule = $self->storage->get( @args ) || '';
     $c->log->debug("Fetch robot rules for $uri ($rule)");
     return $rule || ();
 }
@@ -102,7 +103,8 @@ sub push_pending_robots_txt
     }
 
     # If it already exists in the cache, just return
-    if ($storage->get(@args)) {
+    if (my $pending = $storage->get(@args)) {
+        $c->log->debug("storage->get(@args) returned $pending");
         return 0;
     }
 
@@ -112,10 +114,11 @@ sub push_pending_robots_txt
     # pending requests are still stored in-memory
     $c->log->debug("Pushing request $uri to pending list (robot rules)...");
 
+    my $pending_robots_txt_timeout = 180;
     if ($is_managed) {
-        push @args, (value => 1);
+        push @args, (value => 1, expires => $pending_robots_txt_timeout);
     } else {
-        push @args, 1;
+        push @args, 1, $pending_robots_txt_timeout;
     }
 
     $self->storage->set( @args );
