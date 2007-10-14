@@ -45,6 +45,31 @@ sub put_rule
     $self->storage->put( $uri->host_port, nfreeze($rule) );
 }
 
+sub get_pending_robots_txt
+{
+    my ($self, $c, $request) = @_;
+    my $uri = $request->original_uri;
+    delete $c->pending_robots_txt->{ $uri->host_port };
+}
+
+sub push_pending_robots_txt
+{
+    my ($self, $c, $request) = @_;
+    my $uri = $request->original_uri;
+    my $h = $c->pending_robots_txt->{ $uri->host_port };
+    if (! $h) {
+        $h = {};
+        $c->pending_robots_txt->{ $uri->host_port } = $h;
+    }
+
+    if(! exists $h->{ $request->id }) {
+        $c->log->debug("Pushing request " . $request->uri . " to pending list (robot rules)...");
+        $h->{ $request->id } = $request ;
+        return 1;
+    }
+    return 0;
+}
+
 1;
 
 __END__

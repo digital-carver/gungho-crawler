@@ -9,6 +9,7 @@ use base qw(Gungho::Base);
 
 __PACKAGE__->mk_accessors($_) for qw(storage);
 
+
 1;
 
 __END__

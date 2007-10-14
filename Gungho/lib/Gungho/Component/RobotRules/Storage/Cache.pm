@@ -31,7 +31,14 @@ sub get_rule
     my $request = shift;
 
     my $uri  = $request->original_uri;
-    my $rule =  $self->storage->get( $uri->host_port ) || '';
+    my @args;
+    my $storage = $self->storage;
+    if ($storage->isa('Cache::Memcached::Managed')) {
+        @args = (id => $uri->host_port, key => 'robot_rules.rule');
+    } else {
+        @args = ($uri->host_port);
+    }
+    my $rule = $self->storage->get( @args );
     $c->log->debug("Fetch robot rules for $uri ($rule)");
     return $rule || ();
 }
@@ -51,11 +58,69 @@ sub put_rule
     my @args;
     my $storage = $self->storage;
     if ($storage->isa('Cache::Memcached::Managed')) {
-        @args = (id => $uri->host_port, key => 'robot_rules', value => $rule, expiration => $self->expiration);
+        @args = (id => $uri->host_port, key => 'robot_rules.rule', value => $rule, expiration => $self->expiration);
     } else {
         @args = ($uri->host_port, $rule, $self->expiration);
     }
     $self->storage->set( @args );
+}
+
+sub get_pending_robots_txt
+{
+    my ($self, $c, $request) = @_;
+
+    my $uri = $request->original_uri;
+    my $host_port = $uri->host_port;
+    my @args;
+    my $storage = $self->storage;
+    my $is_managed = $storage->isa('Cache::Memcached::Managed');
+
+    if ($is_manged) {
+        @args = (id => $host_port, key => 'robot_rules.pending_robots_txt');
+    } else {
+        @args = ($host_port);
+    }
+
+    $storage->remove(@args);
+    return delete $c->pending_robots_txt->{ $host_port };
+}
+
+sub push_pending_robots_txt
+{
+    my ($self, $c, $request) = @_;
+
+    my $uri = $request->original_uri;
+    my $host_port = $uri->host_port;
+    my @args;
+    my $storage = $self->storage;
+    my $is_managed = $storage->isa('Cache::Memcached::Managed');
+
+    if ($is_managed) {
+        @args = (id => $host_port, key => 'robot_rules.pending_robots_txt');
+    } else {
+        @args = ($host_port);
+    }
+
+    # If it already exists in the cache, just return
+    if ($storage->get(@args)) {
+        return 0;
+    }
+
+    $c->pending_robots_txt->{ $host_port } ||= {};
+    my $h = $c->pending_robots_txt->{ $host_port };
+
+    # pending requests are still stored in-memory
+    $c->log->debug("Pushing request $uri to pending list (robot rules)...");
+
+    if ($is_managed)) {
+        push @args, (value => 1);
+    } else {
+        push @args, 1;
+    }
+
+    $self->storage->set( @args );
+    $h->{ $request->id } = $request ;
+    return 1;
 }
 
 1;
