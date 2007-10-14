@@ -22,3 +22,25 @@ BEGIN
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Gungho::Log - Log Base Class For Gungho
+
+=head1 METHODS
+
+=head2 is_debug
+
+=head2 is_info
+
+=head2 is_warn
+
+=head2 is_error
+
+=head2 is_fatal
+
+These methods have been deprecated, and are here only for backwards compatibility
+
+=cut
