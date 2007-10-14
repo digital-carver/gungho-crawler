@@ -75,7 +75,7 @@ sub get_pending_robots_txt
     my $storage = $self->storage;
     my $is_managed = $storage->isa('Cache::Memcached::Managed');
 
-    if ($is_manged) {
+    if ($is_managed) {
         @args = (id => $host_port, key => 'robot_rules.pending_robots_txt');
     } else {
         @args = ($host_port);
@@ -112,7 +112,7 @@ sub push_pending_robots_txt
     # pending requests are still stored in-memory
     $c->log->debug("Pushing request $uri to pending list (robot rules)...");
 
-    if ($is_managed)) {
+    if ($is_managed) {
         push @args, (value => 1);
     } else {
         push @args, 1;
@@ -147,5 +147,9 @@ Gungho::Component::RobotRules::Storage::Cache - Cache Storage For RobotRules
 =head2 get_rule
 
 =head2 put_rule
+
+=head2 get_pending_robots_txt
+
+=head2 push_pending_robots_txt
 
 =cut

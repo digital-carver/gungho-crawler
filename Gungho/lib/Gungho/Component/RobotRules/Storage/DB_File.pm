@@ -86,4 +86,8 @@ Gungho::Component::RobotRules::Storage::DB_File - DB_File Storage For RobotRules
 
 =head2 put_rule
 
+=head2 get_pending_robots_txt
+
+=head2 push_pending_robots_txt
+
 =cut
