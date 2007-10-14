@@ -3,7 +3,18 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.08013 Sun Oc 14 2007 [rev 182]
+  [RobotRules]
+  - Add expiration configuration parameters so that ttl for each robot rules
+    can be configured
+  - Add get_pending_robots_txt() and push_pending_robots_txt(). Pending
+    requests are now controled in the Storage::* classes
+  - Fix calling API for Storage::Cache, so that it also works for Cache::Memcached::Managed
+  - Fix a problem where RobotRules::Cache (which is distributed) couldn't
+    figure out that a robots.txt request has been dispatched.
+
 0.08012 Sun Oct 14 2007 [rev 175]
+  [Log]
   - *Backwards Incompatible Change*
     - Gungho::Log has been totally redesigned the following methods are
       now deprecated. Calling $c->debug(...) and such still work, but
@@ -17,6 +28,7 @@ All changes by Daisuke Maki unless otherwise noted.
   - Introduce Gungho::Plugin::RequestLog
 
 0.08011 Wed Oct 10 2007 [rev 166]
+  [RobotRules]
   - Fix problems with RobotRules::Storage::* not properly accepting
     configuration parameters.
   - RobotRules::Storage::* now accept a $c in the first argument
