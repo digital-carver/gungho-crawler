@@ -50,3 +50,31 @@ sub log_response
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Gungho::Plugin::RequestLog - Log Requests
+
+=head1 SYNOPSIS
+
+  plugins:
+    - module: RequestLog
+      config:
+        - module: File::Locked
+          file: /path/to/filename
+  
+=head1 DESCRIPTION
+
+If you want to know what Gungho's fetching, load this plugin
+
+=head1 METHODS
+
+=head2 setup
+
+=head2 log_request
+
+=head2 log_response
+
+=cut
