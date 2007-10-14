@@ -3,10 +3,10 @@
 # Copyright (c) 2007 Daisuke Maki <daisuke@endeworks.jp>
 # All rights reserved.
 
-package Gungho::Component::RequestLog;
+package Gungho::Plugin::RequestLog;
 use strict;
 use warnings;
-use base qw(Gungho::Component);
+use base qw(Gungho::Plugin);
 use Gungho::Log::Dispatch;
 
 __PACKAGE__->mk_accessors($_) for qw(log);
@@ -18,10 +18,14 @@ sub setup
     my $log = Gungho::Log::Dispatch->new();
     $log->setup($c, {
         min_level => 'info',
-        logs => $c->config->{request_log},
+        logs => $self->config,
         callbacks => sub {
             my %args = @_;
-            sprintf('%s %s', time(), $args{message});
+            my $message = $args{message};
+            if ($message !~ /\n$/) {
+                $message =~ s/$/\n/;
+            }
+            sprintf('%s %s', time(), $message);
         }
     });
     $self->log($log);
@@ -34,13 +38,14 @@ sub setup
 
 sub log_request
 {
-    my ($self, $data) = @_;
-    $self->log->info(sprintf("Fetching %s", $data->{request}->uri));
+    my ($self, $c, $data) = @_;
+    my $uri = $data->{request}->original_uri;
+    $self->log->info(sprintf("Fetching %s", $uri));
 }
 
 sub log_response
 {
-    my ($self, $data) = @_;
+    my ($self, $c, $data) = @_;
     $self->log->info(sprintf("DONE %s (status = %s)", $data->{request}->uri, $data->{response}->code));
 }
 
