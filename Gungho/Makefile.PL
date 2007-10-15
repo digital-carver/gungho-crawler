@@ -7,9 +7,9 @@ all_from("lib/Gungho.pm");
 requires("Best");
 requires("Class::Accessor::Fast");
 requires("Class::C3");
+requires("Class::Data::Inheritable");
 requires("Class::Inspector");
 requires("Config::Any");
-requires("Data::Dump");
 requires("Exception::Class");
 requires("FindBin");
 requires("Getopt::Long");
@@ -20,6 +20,8 @@ requires("Regexp::Common");
 requires("Storable");
 requires("UNIVERSAL::isa");
 requires("UNIVERSAL::require");
+
+recommends('Digest::MD5');
 
 build_requires('YAML');
 build_requires('DirHandle');
