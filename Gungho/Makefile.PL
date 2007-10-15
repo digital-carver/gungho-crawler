@@ -53,7 +53,18 @@ eval {
     }
 };
 if ($@) {
-    die "Failed to load deps! : $@";
+    print STDERR <<EOM;
+==============================================================================
+!!! Failed to load deps for features !!!
+
+$@
+NOTE: This means that Gungho was not able to load the files in deps directory,
+which contain the prerequisites for various components. If you force install,
+you may encounter problems running Gungho later.
+
+This is probably not good, but continuing anyway.
+==============================================================================
+EOM
 }
 
 my @tests;
@@ -79,7 +90,14 @@ eval {
     @tests;
 };
 if ($@) {
-    die "Failed to load tests! : $@";
+    print STDERR <<EOM
+==============================================================================
+!!! Failed to load tests !!!
+
+$@
+This is probably not good, but continuing anyway.
+==============================================================================
+EOM
 }
 
 tests join(' ', @tests);
