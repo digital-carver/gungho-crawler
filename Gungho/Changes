@@ -3,7 +3,24 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.08013 Sun Oc 14 2007 [rev 182]
+0.08014 Thu Oct 18 2007 [rev 194]
+  [General]
+  - Makefile.PL now tries harder to silece CPAN::Reporter warnings.
+  - Update module dependencies.
+  - Remove modules that have optional dependencies from t/01_load.t
+  - Use Gungho::Request instead of HTTP::Request
+
+  [Tests]
+  - Add more component tests.
+
+  [Cache]
+  - Fix docs
+
+  [RobotRules]
+  - Fix RobotRules::Storage::Cache so that Cache modules with different
+    API (i.e. delete vs remove) now work
+
+0.08013 Sun Oct 14 2007 [rev 182]
   [RobotRules]
   - Add expiration configuration parameters so that ttl for each robot rules
     can be configured
