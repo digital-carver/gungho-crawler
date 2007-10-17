@@ -15,6 +15,8 @@ use UNIVERSAL::isa;
 use UNIVERSAL::require;
 
 use Gungho::Exception;
+use Gungho::Request;
+use Gungho::Response;
 
 my @INTERNAL_PARAMS             = qw(setup_finished);
 my @CONFIGURABLE_PARAMS         = qw(block_private_ip_address user_agent);
@@ -276,17 +278,29 @@ sub send_request
 sub handle_response
 {
     my $c = shift;
+    my ($req, $res) = @_;
+
+    {
+        my $old = $res;
+        $res = Gungho::Response->new(
+            $res->code,
+            $res->message,
+            $res->headers,
+            $res->content
+        );
+        $res->request( $old->request );
+    }
 
     my $e;
     eval {
-        $c->maybe::next::method(@_);
+        $c->maybe::next::method($req, $res);
     };
     if ($e = Gungho::Exception->caught('Gungho::Exception::HandleResponse::Handled')) {
         return;
     } elsif ($e = Gungho::Exception->caught()) {
         die $e;
     }
-    $c->handler->handle_response($c, @_);
+    $c->handler->handle_response($c, $req, $res);
 }
 
 1;
