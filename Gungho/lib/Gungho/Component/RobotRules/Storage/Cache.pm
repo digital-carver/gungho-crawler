@@ -82,7 +82,10 @@ sub get_pending_robots_txt
         @args = ($host_port);
     }
 
-    $storage->remove(@args);
+    $storage->can('delete') ? 
+        $storage->delete(@args) :
+        $storage->remove(@args)
+    ;
     return delete $c->pending_robots_txt->{ $host_port };
 }
 
