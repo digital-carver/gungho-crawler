@@ -5,21 +5,6 @@ BEGIN
 {
     my @modules = qw(
         Gungho::Base
-        Gungho::Component
-        Gungho::Component::Authentication
-        Gungho::Component::Authentication::Basic
-        Gungho::Component::Authentication
-        Gungho::Component::RobotRules
-        Gungho::Component::RobotRules::Rule
-        Gungho::Component::RobotRules::Storage
-        Gungho::Component::RobotRules::Storage::Cache
-        Gungho::Component::RobotRules::Storage::DB_File
-        Gungho::Component::RobotRules
-        Gungho::Component::Throttle
-        Gungho::Component::Throttle::Domain
-        Gungho::Component::Throttle::Simple
-        Gungho::Component::Throttle::Throttler
-        Gungho::Component::Throttle
         Gungho::Engine
         Gungho::Exception
         Gungho::Handler
@@ -30,12 +15,7 @@ BEGIN
         Gungho::Log::Dispatch
         Gungho::Log::Simple
         Gungho::Plugin
-        Gungho::Plugin::RequestLog
-        Gungho::Plugin::RequestTimer
         Gungho::Provider
-        Gungho::Provider::File::Simple
-        Gungho::Provider::Simple
-        Gungho::Provider::YAML
         Gungho::Request
         Gungho::Request::http
         Gungho
