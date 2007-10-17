@@ -73,10 +73,10 @@ Gungho::Component::Cache - Use Cache In Your App
     default_backend: small_things
     backends:
       large_things:
-        class: 'Cache::Memcached::Managed',
+        class: '+Cache::Memcached::Managed',
         data: '127.0.0.1:11211'
       small_things:
-        class: 'Cache::Memcached::Managed',
+        class: '+Cache::Memcached::Managed',
         data: '127.0.0.1:11212'
 
 =head1 DESCRIPTION
