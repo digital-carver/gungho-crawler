@@ -9,6 +9,14 @@ use warnings;
 use base qw(Gungho::Plugin);
 use Gungho::Log::Dispatch;
 
+BEGIN
+{
+    eval "use Time::HiRes";
+    if (! $@) {
+        Time::HiRes->import( 'time' );
+    }
+}
+
 __PACKAGE__->mk_accessors($_) for qw(log);
 
 sub setup
@@ -17,16 +25,15 @@ sub setup
 
     my $log = Gungho::Log::Dispatch->new();
     $log->setup($c, {
-        min_level => 'info',
-        logs => $self->config,
+        logs      => $self->config,
         callbacks => sub {
             my %args = @_;
             my $message = $args{message};
             if ($message !~ /\n$/) {
                 $message =~ s/$/\n/;
             }
-            sprintf('%s %s', time(), $message);
-        }
+            return $message;
+        },
     });
     $self->log($log);
 
@@ -39,14 +46,36 @@ sub setup
 sub log_request
 {
     my ($self, $c, $data) = @_;
-    my $uri = $data->{request}->original_uri;
-    $self->log->info(sprintf("Fetching %s", $uri));
+
+    # Only log this if we've been asked to do soA
+    my $request = $data->{request};
+    my $uri     = $request->original_uri;
+    my $time    = time();
+    $request->notes('send_request_time' => $time);
+    $self->log->debug(sprintf("# %s | %s | %s", $time, $uri, $request->id));
 }
 
 sub log_response
 {
     my ($self, $c, $data) = @_;
-    $self->log->info(sprintf("DONE %s (status = %s)", $data->{request}->uri, $data->{response}->code));
+
+    my( $request, $response ) = ($data->{request}, $data->{response});
+    my $time = time();
+    my $send_time = $request->notes('send_request_time');
+
+    # It's quite possible that we're dealing with a request that was sent
+    # when this plugin wasn't loaded. In that case, do not calculate the
+    # time elapsed
+    my $elapsed;
+    if(! defined $send_time ) {
+        $elapsed = "(UNKNOWN)";
+    } else {
+        $elapsed = $time - $send_time;
+    }
+
+    $request->notes('handle_response_time' => $time);
+    $request->notes('total_request_time'   => $elapsed);
+    $self->log->info(sprintf("%s | %s | %s | %s | %s", $time, $elapsed, $response->code, $request->original_uri, $request->id));
 }
 
 1;
@@ -62,12 +91,38 @@ Gungho::Plugin::RequestLog - Log Requests
   plugins:
     - module: RequestLog
       config:
-        - module: File::Locked
+        - module: File
           file: /path/to/filename
   
 =head1 DESCRIPTION
 
-If you want to know what Gungho's fetching, load this plugin
+If you want to know what Gungho's fetching, load this plugin.
+
+The regular logs are logged at 'info' level, so don't set min_level to above
+'info' in the config. See Log::Dipatch for details.
+
+=head1 LOG FORMAT
+
+The basic log format is
+
+  CURRENT_TIME | ELAPSED TIME | RESPONSE CODE | URI | REQUEST ID
+
+For the rare cases where for some reason you believe the request has been
+requested to be fetched but the response isn't coming back, set the
+min_level of the log config to debug:
+
+  plugins:
+    - module: RequestLog
+      config:
+        - module: File
+          file: /path/to/filename
+          min_level: debug
+
+When you enable debug, lines like this will be logged at send_request time
+
+  # CURRENT_TIME | URI | REQUEST ID
+
+The leading '#' is there to aid you filter out the logs
 
 =head1 METHODS
 

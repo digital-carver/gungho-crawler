@@ -12,6 +12,7 @@ __PACKAGE__->mk_accessors($_) for qw(verbose);
 
 BEGIN
 {
+    warn "Gungho::Plugin::RequestTimer has been deprecated, use Gungho::Plugin::RequestLog";
     eval { Time::HiRes->require };
     if (! $@) {
         Time::HiRes->import(qw(time));
