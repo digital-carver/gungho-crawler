@@ -90,6 +90,7 @@ sub run
     POE::Component::Client::HTTP->spawn(
         FollowRedirects   => 1,
         Agent             => $c->user_agent,
+        Timeout           => 60,
         %$client_config,
         Alias             => &UserAgentAlias,
         ConnectionManager => $keepalive,
