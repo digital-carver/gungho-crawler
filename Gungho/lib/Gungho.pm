@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use 5.008;
 use base qw(Gungho::Base);
-use Carp qw(croak);
+use Carp ();
 use Config::Any;
 use Class::Inspector;
 use UNIVERSAL::isa;
@@ -109,7 +109,7 @@ sub setup_provider
 
     my $config = $self->config->{provider};
     if (! $config || ref $config ne 'HASH') {
-        croak("Gungho requires a provider");
+        Carp::croak("Gungho requires a provider");
     }
 
     my $pkg = $self->load_gungho_module($config->{module}, 'Provider');
@@ -127,7 +127,7 @@ sub setup_engine
         module => 'POE',
     };
     if (! $config || ref $config ne 'HASH') {
-        croak("Gungho requires a engine");
+        Carp::croak("Gungho requires a engine");
     }
 
     my $pkg = $self->load_gungho_module($config->{module}, 'Engine');
@@ -212,11 +212,11 @@ sub load_config
     }
 
     if (! $config) {
-        croak("Could not load config");
+        Carp::croak("Could not load config");
     }
 
     if (ref $config ne 'HASH') {
-        croak("Gungho expectes config that can be decoded to a HASH");
+        Carp::croak("Gungho expectes config that can be decoded to a HASH");
     }
 
     return $config;
