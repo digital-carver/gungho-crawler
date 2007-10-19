@@ -21,6 +21,7 @@ requires("Path::Class");
 requires("Pod::Usage");
 requires("Regexp::Common");
 requires("Storable");
+requires("URI");
 requires("UNIVERSAL::isa");
 requires("UNIVERSAL::require");
 
