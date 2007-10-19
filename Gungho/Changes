@@ -3,6 +3,14 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.08015 Sat Oct 20 2007 [rev 200]
+  [Plugins]
+  - Deprecate Plugin::RequestTimer
+  - Update RequestLog log format.
+
+  [POE Engine]
+  - Set default timeout to be 60
+
 0.08014 Thu Oct 18 2007 [rev 194]
   [General]
   - Makefile.PL now tries harder to silece CPAN::Reporter warnings.
