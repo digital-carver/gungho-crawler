@@ -1,6 +1,0 @@
----
-name: 'WWW Authentication'
-default: 1
-depends:
-    'MIME::Base64': 0
-    'URI': 0

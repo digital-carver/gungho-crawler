@@ -1,5 +1,0 @@
----
-name: 'Robot META Support'
-default: 1
-depends:
-    'HTML::RobotsMETA': 0

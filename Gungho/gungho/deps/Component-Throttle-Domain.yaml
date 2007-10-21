@@ -1,5 +1,0 @@
----
-name: 'Throttling By Domain'
-default: 1
-depends:
-    'Data::Throttler': 0
