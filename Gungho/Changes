@@ -3,6 +3,11 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.08016 Sun Oct 21 2007 [rev 206]
+  [Tests]
+  - Be more paranoid about testing.
+    Much thanks to David Cantrell for his automated testing.
+
 0.08015 Sat Oct 20 2007 [rev 200]
   [Plugins]
   - Deprecate Plugin::RequestTimer
