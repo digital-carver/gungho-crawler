@@ -1,0 +1,28 @@
+use strict;
+use Test::More;
+
+BEGIN
+{
+    my @modules = qw(
+        Gungho::Base
+        Gungho::Engine
+        Gungho::Exception
+        Gungho::Handler
+        Gungho::Handler::FileWriter::Simple
+        Gungho::Handler::Null
+        Gungho::Inline
+        Gungho::Log
+        Gungho::Log::Dispatch
+        Gungho::Log::Simple
+        Gungho::Plugin
+        Gungho::Provider
+        Gungho::Request
+        Gungho::Request::http
+        Gungho
+    );
+    
+    plan tests => scalar @modules;
+    use_ok($_) for @modules;
+}
+
+1;
