@@ -1,10 +1,13 @@
 use strict;
 use Test::More;
+use lib("t/lib");
+use GunghoTest;
 
 BEGIN
 {
-    eval "use Cache::Memory";
-    if ($@) {
+    if (! GunghoTest::assert_engine()) {
+        plan(skip_all => "No engine available");
+    } elsif ( ! eval "use Cache::Memory" || $@) {
         plan(skip_all => "Cache::Memory not installed: $@");
     } else {
         plan(tests => 10);

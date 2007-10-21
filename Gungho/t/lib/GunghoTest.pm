@@ -19,4 +19,32 @@ sub plan_or_skip
     return 1;
 }
 
+# Check if we have at least one of the engines available
+# (We don't count this as a test failure so to silence automated
+# CPAN tests)
+sub assert_engine
+{
+    my %have_engine;
+    foreach my $engine qw(POE Danga::Socket IO::Async) {
+        $have_engine{ $engine } = do {
+            eval "use Gungho::Engine::$engine";
+            $@ ? 0 : 1;
+        };
+    }
+
+    if (! scalar grep { $_ } values %have_engine ) {
+        print STDERR <<"        EOM";
+
+================================!!! WARNING !!!================================
+No engine modules could be loaded. 
+
+The test suite may pass as it is, but Gungho will be useless unless at least
+one engine is available
+================================!!! WARNING !!!================================
+        EOM
+        return 0;
+    }
+    return 1;
+}
+
 1;

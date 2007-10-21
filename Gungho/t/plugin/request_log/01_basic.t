@@ -1,11 +1,14 @@
 use strict;
 use Test::More;
+use lib("t/lib");
+use GunghoTest;
 
 BEGIN
 {
-    eval "use IO::Scalar";
-    if ($@) {
-        plan(skip_all => "IO::Scalar not available");
+    if (! GunghoTest::assert_engine()) {
+        plan(skip_all => "No engine available");
+    } elsif ( ! eval "use IO::Scalar" || $@) {
+        plan(skip_all => "IO::Scalar not installed: $@");
     } else {
         plan(tests => 5);
         use_ok("Gungho::Inline");

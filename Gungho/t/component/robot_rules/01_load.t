@@ -1,20 +1,27 @@
 use strict;
 use Test::More;
+use lib("t/lib");
+use GunghoTest;
 
 BEGIN
 {
-    my $ok = 1;
-
-    foreach my $module qw(URI WWW::RobotRules::Parser DB_File) {
-        next unless $module;
-        eval "use $module";
-        if ($@) {
-            plan(skip_all => "$module not installed: $@");
-            $ok = 0;
+    my $error;
+    if (! GunghoTest::assert_engine()) {
+        $error = "No engine available";
+    } else {
+        foreach my $module qw(URI WWW::RobotRules::Parser DB_File) {
+            next unless $module;
+            eval "use $module";
+            if ($@) {
+                $error = "$module not installed: $@";
+                last;
+            }
         }
     }
 
-    if ($ok) {
+    if ($error) {
+        plan(skip_all => $error);
+    } else {
         plan(tests => 7);
         use_ok("Gungho");
     }
