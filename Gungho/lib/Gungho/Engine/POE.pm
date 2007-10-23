@@ -268,6 +268,12 @@ Gungho::Engine::POE - POE Engine For Gungho
 
 Gunghog::Engine::POE gives you the full power of POE to Gungho.
 
+=head1 CHOOSING THE RIGHT loop_delay
+
+C<loop_delay> specifies the number of seconds to wait until calling C<dispatch>
+again. If you feel like Gungho is running slow, try setting this parameter to
+a smaller amount. Things will run much smoother.
+
 =head1 POE::Component::Client::HTTP AND DECODED CONTENTS
 
 Since version 0.80, POE::Component::Client::HTTP silently decodes the content 
