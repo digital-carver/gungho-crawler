@@ -73,6 +73,8 @@ Gungho::Plugin::RequestTimer - Keep Track Of Time To Finish Request
 
 =head1 DESCRIPTION
 
+NOTICE This module has been deprecated. Please use RequestLog instead.
+
 Gungho::Plugin::RequestTimer allows you to keep track of the time it took to
 finish fetching a particular request. The time when the request started,
 the time when the request was handed to handle_response(), and the total
