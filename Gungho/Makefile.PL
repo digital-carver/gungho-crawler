@@ -19,7 +19,6 @@ requires("HTTP::Response");
 requires("Log::Dispatch");
 requires("Path::Class");
 requires("Pod::Usage");
-requires("Regexp::Common");
 requires("Storable");
 requires("URI");
 requires("UNIVERSAL::isa");
