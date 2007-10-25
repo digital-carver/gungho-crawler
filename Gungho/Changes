@@ -3,7 +3,7 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.09000_01 Thu Oct 25 2007 [rev 213]
+0.09000_01 Thu Oct 25 2007 [rev 217]
   [General]
   * Backwards Incompatible Change *
   - Gungho inheritance has been reimplemented. Components are now called
