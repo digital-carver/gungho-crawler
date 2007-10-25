@@ -18,8 +18,6 @@ sub new
     return $self;
 }
 
-sub setup {}
-
 1;
 
 __END__
