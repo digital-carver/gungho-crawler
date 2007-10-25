@@ -25,9 +25,10 @@ sub setup
 
     $self->next::method($c);
 
-    my $config = $c->config || {};
+    my $config = $self->config || {};
     my $list = $config->{logs};
-    if (ref $list ne 'ARRAY') {
+
+    if ($list && ref $list ne 'ARRAY') {
         $list = [ $list ];
     }
 

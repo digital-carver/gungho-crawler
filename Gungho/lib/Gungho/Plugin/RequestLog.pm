@@ -23,8 +23,7 @@ sub setup
 {
     my ($self, $c) = @_;
 
-    my $log = Gungho::Log::Dispatch->new();
-    $log->setup($c, {
+    my $log = Gungho::Log::Dispatch->new(config => {
         logs      => $self->config,
         callbacks => sub {
             my %args = @_;
@@ -35,6 +34,7 @@ sub setup
             return $message;
         },
     });
+    $log->setup($c);
     $self->log($log);
 
     $c->register_hook(
