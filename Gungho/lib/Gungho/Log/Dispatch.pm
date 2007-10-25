@@ -75,8 +75,6 @@ sub setup
         } else {
             $config->{min_level} ||= $args{min_level};
         }
-use Data::Dump;
-        warn "$module->new " . Data::Dump::dump($config);
         $dispatch->add( $module->new(%$config) );
     }
     $self->dispatch($dispatch);
