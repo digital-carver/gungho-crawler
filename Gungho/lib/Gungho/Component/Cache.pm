@@ -13,24 +13,24 @@ __PACKAGE__->mk_classdata( 'default_backend' );
 
 sub setup
 {
-    my $self = shift;
-    $self->next::method(@_);
-    $self->setup_cache_backends();
+    my $c = shift;
+    $c->next::method(@_);
+    $c->setup_cache_backends();
 }
 
 sub setup_cache_backends
 {
-    my $self = shift;
-    my $config = $self->config->{cache};
+    my $c = shift;
+    my $config = $c->config->{cache};
 
     if ($config->{default_backend}) {
-        $self->default_backend($config->{default_backend});
+        $c->default_backend($config->{default_backend});
     }
 
-    my $backends = $self->_backends();
+    my $backends = $c->_backends();
     while (my($name, $config) = each %{ $config->{backends} } ) {
         die "No class specified for cache backend" unless $config->{class};
-        my $pkg = $self->load_gungho_module(delete $config->{class}, __PACKAGE__);
+        my $pkg = $c->load_gungho_module(delete $config->{class}, __PACKAGE__);
 
         $backends->{$name} = $pkg->new(%$config);
     }
@@ -38,17 +38,17 @@ sub setup_cache_backends
 
 sub cache
 {
-    my ($self, $name) = @_;
+    my ($c, $name) = @_;
     my $cache;
 
     if ($name) {
-        $cache = $self->_backends->{$name} ;
+        $cache = $c->_backends->{$name} ;
         if (! $cache) {
             Carp::croak("No cache backend by name $name specified");
         }
     } else {
-        if ($self->default_backend) {
-            $cache = $self->_backends->{$self->default_backend};
+        if ($c->default_backend) {
+            $cache = $c->_backends->{$c->default_backend};
         }
         if (! $cache) {
             Carp::croak("No default backend specified");

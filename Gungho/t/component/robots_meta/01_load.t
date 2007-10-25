@@ -18,7 +18,7 @@ BEGIN
     }
 }
 
-Gungho->setup({ 
+Gungho->bootstrap({ 
     components => [
         'RobotsMETA'
     ],

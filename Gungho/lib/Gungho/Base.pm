@@ -6,11 +6,10 @@
 package Gungho::Base;
 use strict;
 use warnings;
-use base qw(Class::Accessor::Fast Class::Data::Inheritable);
-use Class::C3;
-INIT { Class::C3::initialize() }
+use Gungho::Base::Class;
+use base qw(Gungho::Base::Class Class::Accessor::Fast);
 
-__PACKAGE__->mk_classdata(config => {});
+__PACKAGE__->mk_accessors($_) for qw(config);
 
 sub new
 {

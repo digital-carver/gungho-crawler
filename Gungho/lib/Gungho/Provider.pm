@@ -19,7 +19,10 @@ sub dispatch_request
     $c->send_request($req);
 }
 
-sub pushback_request {}
+sub pushback_request {
+    my ($self, $c, $req) = @_;
+    $self->add_request($req);
+}
 
 1;
 

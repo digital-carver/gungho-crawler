@@ -140,7 +140,7 @@ sub _poe_session_loop
     if (! $alarm_id) {
         my $delay = $self->loop_delay;
         if (! defined $delay || $delay <= 0) {
-            $delay = 5;
+            $delay = 1;
         }
         $self->loop_alarm($kernel->delay_set('session_loop', $delay));
     }
@@ -174,8 +174,10 @@ sub _poe_start_request
     $request->uri->host($request->notes('resolved_ip'))
         if $request->notes('resolved_ip');
 
-    # block private IP addreses
-    return if $c->engine->block_private_ip_address($c, $request, $request->uri);
+    if (! $c->request_is_allowed($request)) {
+        # For whatever reason, the request was not allowed
+        return;
+    }
 
     $c->run_hook('engine.send_request', { request => $request });
     POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);

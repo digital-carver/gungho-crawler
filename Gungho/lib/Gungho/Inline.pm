@@ -19,7 +19,7 @@ BEGIN
     }
 }
 
-sub setup
+sub bootstrap
 {
     my $class = shift;
     if (&OLD_PARAMETER_LIST) {
@@ -62,7 +62,7 @@ sub _setup_old_parameters
 }
 
 package Gungho::Provider::Inline;
-
+use strict;
 use base qw(Gungho::Provider);
 use Gungho::Request;
 
@@ -88,11 +88,6 @@ sub add_request {
     my ($self, $req) = @_;
     push @{$self->requests}, $req;
     $self->has_requests(1);
-}
-
-sub pushback_request {
-    my ($self, $c, $req) = @_;
-    $self->add_request($req);
 }
 
 sub dispatch {

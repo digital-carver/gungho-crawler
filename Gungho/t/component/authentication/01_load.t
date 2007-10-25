@@ -28,7 +28,7 @@ BEGIN
     }
 }
 
-Gungho->setup({ 
+Gungho->bootstrap({ 
     components => [
         'Authentication::Basic'
     ],

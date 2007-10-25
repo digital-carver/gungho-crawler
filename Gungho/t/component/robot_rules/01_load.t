@@ -27,7 +27,7 @@ BEGIN
     }
 }
 
-Gungho->setup({ 
+Gungho->bootstrap({ 
     components => [
         'RobotRules'
     ],

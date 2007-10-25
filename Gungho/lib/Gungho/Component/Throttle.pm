@@ -17,9 +17,9 @@ sub send_request
     if (! $request->notes('original_host') && ! $c->throttle($request)) {
         $c->log->debug("Request " . $request->url . " (" . $request->id . ") was throttled");
         $c->provider->pushback_request($c, $request);
-        Gungho::Exception::SendRequest::Handled->throw();
+    } else {
+        $c->next::method($request);
     }
-    $c->maybe::next::method($request);
 }
 
 1;

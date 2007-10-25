@@ -5,6 +5,9 @@ BEGIN
 {
     my @modules = qw(
         Gungho::Base
+        Gungho::Base::Class
+        Gungho::Component::Setup
+        Gungho::Component::Core
         Gungho::Engine
         Gungho::Exception
         Gungho::Handler

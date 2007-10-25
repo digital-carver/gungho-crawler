@@ -6,16 +6,7 @@
 package Gungho::Component;
 use strict;
 use warnings;
-use base qw(Gungho::Base);
-
-sub inject_base
-{
-    my $class = shift;
-    my $c     = shift;
-
-    push @Gungho::ISA, $class;
-    $c->features->{ $class->feature_name }++;
-}
+use base qw(Gungho::Base::Class);
 
 sub feature_name
 {

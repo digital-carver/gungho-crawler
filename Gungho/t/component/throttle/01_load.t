@@ -18,14 +18,13 @@ BEGIN
     }
 }
 
-eval {
-    Gungho->setup({ 
-        components => [
-            'Throttle::Domain'
-        ],
-        provider => {
-            module => 'Simple'
-        }
-    });
-};
-ok(!$@);
+Gungho->bootstrap({ 
+    components => [
+        'Throttle::Domain'
+    ],
+    provider => {
+        module => 'Simple'
+    }
+});
+
+can_ok('Gungho', 'throttle');

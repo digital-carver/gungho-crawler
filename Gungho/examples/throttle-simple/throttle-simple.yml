@@ -11,4 +11,5 @@ throttle:
     simple:
         max_items: 1
         interval: 5
-
+logs:
+    min_level: debug

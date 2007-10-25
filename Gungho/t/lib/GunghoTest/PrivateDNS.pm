@@ -16,7 +16,9 @@ sub run
             engine => {
                 module => $engine,
             },
-            block_private_ip_address => 1,
+            components => [
+                'BlockPrivateIP'
+            ]
         },
         {
             provider => sub {

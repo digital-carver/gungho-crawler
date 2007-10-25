@@ -3,6 +3,36 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09000_01
+  [General]
+  * Backwards Incompatible Change *
+  - Gungho inheritance has been reimplemented. Components are now called
+    before Gungho::Component::Core, so things work a bit more like normal
+    inheritance.
+  - Gungho now uses Class::C3::Componentised and does Gungho->load_components()
+  - Previously, Gungho->setup was the only thing required to setup the
+    framework, but from now both Gungho->bootstrap and Gungho->setup needs
+    to be called
+  - Private IP blocking has been factored out to Component::BlockPrivateIP.
+    You no longer specify block_private_ip_address setting, but instead
+    you load BlockPrivateIP in the component list. See the documentation
+    for BlockPrivateIP POD
+  - Refactor Gungho::Base and separate out Gungho:Base::Class
+
+  [Engine]
+  - Change Gungho::Engine::POE's default loop_delay to 1
+
+  [Scraper]
+  - Add new Scraper component, which allows you to use Web::Scraper from
+    within Gungho
+
+  [Log]
+  - Fix calling syntax for Gungho::Log::*::setup
+
+  [Tests]
+  - A few bogus tests have been fixed
+  - POD coverage now ignores RequestTimer
+
 0.08016 Sun Oct 21 2007 [rev 206]
   [Tests]
   - Be more paranoid about testing.

@@ -22,7 +22,6 @@ sub new
 sub setup
 {
     my $self = shift;
-
     my $url = $self->config->{url};
     if ($url && ! ref($url) ) {
         $url = [ $url ];

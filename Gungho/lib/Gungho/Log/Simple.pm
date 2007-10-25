@@ -8,19 +8,19 @@ use strict;
 use warnings;
 use base qw(Gungho::Log::Dispatch);
 
-sub setup {
+sub setup
+{
     my $self   = shift;
     my $c      = shift;
-    my $config = shift;
 
-    $config ||= {};
+    my $config = $c->config || {};
     if (ref $config->{logs} ne 'HASH') {
         $config->{logs} = {};
     }
 
     $config->{logs}{module} = 'Screen';
     $config->{logs}{name}   = 'simple';
-    $self->next::method($c, $config);
+    $self->next::method($c);
 }
 
 1;

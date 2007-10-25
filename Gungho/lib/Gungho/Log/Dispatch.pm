@@ -22,9 +22,10 @@ sub setup
 {
     my $self   = shift;
     my $c      = shift;
-    my $config = shift;
-    $self->next::method($c, @_);
 
+    $self->next::method($c);
+
+    my $config = $c->config || {};
     my $list = $config->{logs};
     if (ref $list ne 'ARRAY') {
         $list = [ $list ];
@@ -74,6 +75,8 @@ sub setup
         } else {
             $config->{min_level} ||= $args{min_level};
         }
+use Data::Dump;
+        warn "$module->new " . Data::Dump::dump($config);
         $dispatch->add( $module->new(%$config) );
     }
     $self->dispatch($dispatch);
