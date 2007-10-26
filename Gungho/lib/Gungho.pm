@@ -75,6 +75,49 @@ However, do note that if you plan on customizing stuff, you should be aware
 that Gungho uses Class::C3 extensively, and hence you may see warnings about
 the code you use.
 
+=head1 RUNNING IN DISTRIBUTED ENVIRONMENT
+
+Gungho has experimental support for running in distributed environments.
+
+Strictly speaking, each crawler needs to have its own strategy to enable
+itself to to run in a distribued environment. What Gungho offers is a
+"good enough" solution that I<may> work for your. If what Gungho offers
+isn't enough, at least what comes with it might help to show you what
+needs to be tweaked for your particular environment.
+
+Roughly speaking, there are three components you need to worry about in order
+to make a well bahaved and distributed crawler. Check out the below list
+and documentation for each component. 
+
+=over 4
+
+=item Distributed Throttling
+
+As of version 0.08010, Throttle::Domain and Throttle::Simple can be configured
+to use whatever Data::Throttler-based throttling object as its engine.
+
+Download Data::Throttler::Memcached, and specify it as the engine behind
+your throttling for Gungho. Using Data::Throttler::Memcached  will make
+Gungho store throttling information in a shared Memcached server, which will 
+allow separate Gungho instances to share that information.
+
+=item Distributed robots.txt Handling
+
+As of version 0.08013, RobotRules can be configured to use a cache in the
+backend. You can specify your choice of distributed cache (e.g. Memcached)
+and use that as the storage for robots.txt data.
+
+Of course, this means that robots.txt data isn't persitent, but you should be
+expiring robots.txt once in while to reflect new data, anyways.
+
+=item Distributed Provider
+
+This is actually the simplest aspect, as it's usually done by hooking the
+provider with a database. However, if you prefer, you may use some sort of
+Message Queue as your backend.
+
+=back
+
 =head1 CONFIGURATION OPTIONS
 
 =over 4
@@ -109,42 +152,38 @@ before starting the engine.
 Here are some available components. Checkout the distribution for a current,
 complete list:
 
-=over 4
-
-=item Authentication::Basic
+=head2 Authentication::Basic
 
 Handles basic HTTP auth automatically.
 
-=item BlockPrivateIP
+=head2 BlockPrivateIP
 
 Block hostnames that resolve to private IP addresses.
 
-=item Cache
+=head2 Cache
 
 Adds cache supports to Gungho.
 
-=item RobotRules
+=head2 RobotRules
 
 Handles collecting, parsing robots.txt, as well rejecting requests based on 
 the rules provided from it.
 
-=item RobotsMETA
+=head2 RobotsMETA
 
 Handles parsing Robots META information embedded in HTML E<lt>metaE<gt> tags
 
-=item Scraper
+=head2 Scraper
 
 Allows you to use Web::Scraper from within Gungho.
 
-=item Throttle::Domain
+=head2 Throttle::Domain
 
 Throttles requests based on the number of requests sent to a domain.
 
-=item Throttle::Simple
+=head2 Throttle::Simple
 
 Throttles requests based on the total number of requests being sent 
-
-=back
 
 =head1 INLINE
 
