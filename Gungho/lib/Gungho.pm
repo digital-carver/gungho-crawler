@@ -60,6 +60,21 @@ if you encounter any problems.
 
 WARNING: *ALL* APIs are still subject to change.
 
+=head1 PLEASE READ BEFORE USE
+
+Gungho is designed to so that it can handle massive amount of traffic.
+If you're careful enough with your Provider and Handler implementation, you
+can in fact hit millions of URL with this crawler.
+
+So PLEASE DO NOT LET IT LOOSE. DO NOT OVERLOAD your crawl targets.
+You are STRONGLY advised to use Gungho::Component::Throttle to throttle your 
+fetches. 
+
+Also PLEASE CHANGE THE USER AGENT NAME OF YOUR CRAWLER. If you hit your targets
+hard with the default name (Gungho/VERSION X.XXXX), it will look as though a
+service called Gungho is hitting their site, which really isn't the case.
+Whatever it is, please specify at least a simple user agent in your config
+
 =head1 STRUCTURE
 
 Gungho is comprised of three parts. A Provider, which provides Gungho with
