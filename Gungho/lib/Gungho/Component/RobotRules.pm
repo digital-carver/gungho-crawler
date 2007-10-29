@@ -30,15 +30,12 @@ sub send_request
     ;
     if ($allowed == -2) {
         $c->log->debug("Fetch for /robots.txt already scheduled for " . $request->original_uri->host_port);
-        Gungho::Exception::SendRequest::Handled->throw;
     } elsif ($allowed == -1) {
         $c->log->debug("No robot rules found for " . $request->original_uri->host_port . ", going to fetch one");
-        Gungho::Exception::SendRequest::Handled->throw;
     } elsif ($allowed) {
-        $c->maybe::next::method($request);
+        $c->next::method($request);
     } else {
         $c->log->debug($request->uri . " is disallowed by robot rules");
-        Gungho::Exception::SendRequest::Handled->throw;
     }
 }
 
@@ -74,7 +71,7 @@ sub handle_response
         $c->log->debug("Handling robots.txt response for " . $request->uri);
         $c->parse_robot_rules($request, $response);
         $c->dispatch_pending_robots_txt($request);
-        Gungho::Exception::HandleResponse::Handled->throw;
+        return;
     }
 
     $c->next::method(@_);
