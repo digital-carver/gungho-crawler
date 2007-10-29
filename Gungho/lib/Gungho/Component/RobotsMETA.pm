@@ -28,7 +28,7 @@ sub handle_response
             $res->notes( robots_meta => $rules );
         };
         if ($@) {
-            $self->log->debug("Failed to parse " . $res->uri . " for robots META information: $@");
+            $self->log->debug("Failed to parse " . $res->request->uri . " for robots META information: $@");
         }
     }
     $self->next::method($req, $res);
