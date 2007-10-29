@@ -154,6 +154,7 @@ sub dispatch_requests
     my $c = shift;
     if ($c->is_running) {
         $c->provider->dispatch($c, @_);
+        $c->run_hook('dispatch.dispatch_requests');
     }
 }
 

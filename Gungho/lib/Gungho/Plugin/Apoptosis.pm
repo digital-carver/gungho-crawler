@@ -17,7 +17,7 @@ sub setup
     $self->next::method(@_);
     $self->strategy( Gungho::Plugin::Apoptosis::Time->new($self->config) );
     $c->register_hook(
-        'engine.handle_response' => sub { $self->check_apoptosis(@_) },
+        'dispatch.dispatch_requests' => sub { $self->check_apoptosis(@_) },
     );
 }
 
