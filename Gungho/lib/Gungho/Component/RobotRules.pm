@@ -77,7 +77,7 @@ sub handle_response
         Gungho::Exception::HandleResponse::Handled->throw;
     }
 
-    $c->maybe::next::method(@_);
+    $c->next::method(@_);
 }
 
 sub push_pending_robots_txt
