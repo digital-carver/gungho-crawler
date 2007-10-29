@@ -22,7 +22,7 @@ sub handle_response
 {
     my ($self, $req, $res) = @_;
 
-    if ($res->content_type =~ m{^text/html}i) {
+    if ($res->is_success && $res->content_type =~ m{^text/html}i) {
         eval {
             my $rules = $self->robots_meta->parse_rules( $res->content );
             $res->notes( robots_meta => $rules );
