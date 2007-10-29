@@ -3,7 +3,21 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.09000_02 Mon Oct 29 2007 [rev 224]
+0.09000_03 Tue Oct 30 2007 [rev 238]
+  [General]
+  - Add a new dispatch.dispatch_requests hook
+  - Add a new engine.end_loop hook
+  - Add prepare_response() to make sure response objects are Gungho::Response
+
+  [Plugins]
+  - Change when the apoptosis check runs.
+  - Add Statistics Plugin. It's still not really useful.
+
+  [RobotsMETA]
+  - Only parse Robots META if the request is a success
+  - Don't call $res->uri.
+
+0.09000_02 Mon Oct 29 2007 [rev 225]
   [General]
   - Fix POD errors
   - Fix dependency errors
