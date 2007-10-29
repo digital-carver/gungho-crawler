@@ -191,7 +191,8 @@ sub handle_response
         $request->uri->host($host);
     }
 
-    $self->context->handle_response($request, $c->prepare_response($response) );
+    my $c = $self->context;
+    $c->handle_response($request, $c->prepare_response($response) );
 }
 
 1;
