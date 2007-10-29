@@ -332,6 +332,10 @@ Calls provider->dispatch
 
 Given a request, preps it before sending it to the engine
 
+=head2 prepare_response($req)
+
+Given a response, preps it before sending it to handle_response()
+
 =head2 send_request
 
 Delegates to engine's send_request
