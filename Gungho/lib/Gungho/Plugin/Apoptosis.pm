@@ -61,7 +61,7 @@ sub new
 sub is_time_to_die
 {
     my $self = shift;
-    return $self->timeout >= time();
+    return $self->timeout <= time();
 }
 
 1;
