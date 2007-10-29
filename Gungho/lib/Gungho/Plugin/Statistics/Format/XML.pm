@@ -32,3 +32,16 @@ sub format
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Gungho::Plugin::Statistics::Format::XML - Format Statistics As XML
+
+=head1 METHODS
+
+=head2 format
+
+=cut
+

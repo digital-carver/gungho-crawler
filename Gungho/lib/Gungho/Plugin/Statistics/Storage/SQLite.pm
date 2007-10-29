@@ -50,7 +50,6 @@ EOSQL
         }
 
         $self->_dbh( $dbh );
-$self->_dump;
     }
     return $dbh;
 }
@@ -63,21 +62,20 @@ sub incr
     my $sth  = $dbh->prepare_cached("UPDATE counters SET value = value + 1 WHERE name = ?");
     $sth->execute($action);
     $sth->finish();
-    $self->_dump();
 }
 
-sub _dump
-{
-    my ($self, $action) = @_;
-
-    my $dbh  = $self->dbh();
-    my $sth = $dbh->prepare("SELECT value FROM counters");
-$sth->execute();
-use Data::Dump;
-    while (my $h = $sth->fetchrow_hashref) {
-        print STDERR Data::Dump::dump($h);
-    }
-}
+#sub _dump
+#{
+#    my ($self, $action) = @_;
+#
+#    my $dbh  = $self->dbh();
+#    my $sth = $dbh->prepare("SELECT value FROM counters");
+#    $sth->execute();
+#    use Data::Dump;
+#    while (my $h = $sth->fetchrow_hashref) {
+#        print STDERR Data::Dump::dump($h);
+#    }
+#}
 
 sub decr
 {
@@ -108,3 +106,25 @@ sub DESTROY
 }
 
 1;
+
+__END__
+
+=head1 NAME 
+
+Gungho::Plugin::Statistics::Storage::SQLite
+
+=head1 METHODS
+
+=head2 setup
+
+=head2 dbh
+
+=head2 incr
+
+=head2 decr
+
+=head2 get
+
+=head2 DESTROY
+
+=cut

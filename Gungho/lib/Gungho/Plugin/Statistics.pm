@@ -21,8 +21,8 @@ sub setup
 
     $c->register_hook(
 #        'engine.end_loop'        => sub { $self->dump_statistics(@_) },
-        'engine.send_request'    => sub { $self->log_start(@_) },
-        'engine.handle_response' => sub { $self->log_end(@_) },
+        'engine.send_request'    => sub { $self->log_start_request(@_) },
+        'engine.handle_response' => sub { $self->log_end_request(@_) },
     );
 }
 
@@ -38,7 +38,7 @@ sub _setup_storage
     $self->storage($storage);
 }
 
-sub log_start
+sub log_start_request
 {
     my ($self, $c, $data) = @_;
     $self->storage->incr("active_requests");
@@ -48,10 +48,9 @@ sub log_start
     }
 }
 
-sub log_end
+sub log_end_request
 {
     my ($self, $c, $data) = @_;
-warn $self->storage;
     $self->storage->decr("active_requests");
     $self->storage->incr("finished_requests");
 
@@ -84,7 +83,6 @@ Gungho::Plugin::Statistics - Gather Crawler Statistics
   plugins:
     - module: Statistics
       config:
-        dump_interval: 20
         storage:
             module: SQLite
 
@@ -94,6 +92,14 @@ This plugin collects statistics from gungho.
 
 At this point it's still just a toy that doesn't do anything. 
 If you have suggestions or patches, please let me know!
+
+=head1 METHODS
+
+=head2 setup
+
+=head2 log_start_request
+
+=head2 log_end_request
 
 =cut
 
