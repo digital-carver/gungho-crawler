@@ -8,19 +8,18 @@ use strict;
 use warnings;
 use base qw(Gungho::Log::Dispatch);
 
-sub setup
+sub new
 {
     my $self   = shift;
-    my $c      = shift;
-
-    my $config = $c->config || {};
+    my %args   = @_;
+    my $config = $args{config};
     if (ref $config->{logs} ne 'HASH') {
         $config->{logs} = {};
     }
 
     $config->{logs}{module} = 'Screen';
     $config->{logs}{name}   = 'simple';
-    $self->next::method($c);
+    $self->next::method(%args);
 }
 
 1;
@@ -44,8 +43,6 @@ This is a simple logger, which only logs to stderr.
 
 =head1 METHODS
 
-=head2 setup
-
-Sets up the log
+=head2 new
 
 =cut
