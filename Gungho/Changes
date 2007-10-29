@@ -3,6 +3,15 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09000_02 Mon Oct 29 2007 [rev 224]
+  [General]
+  - Fix POD errors
+  - Fix dependency errors
+  - Fix Gungho::Log::Simple 
+
+  [Plugins]
+  - Add Gungho::Plugin::Apoptosis
+
 0.09000_01 Thu Oct 25 2007 [rev 217]
   [General]
   * Backwards Incompatible Change *
