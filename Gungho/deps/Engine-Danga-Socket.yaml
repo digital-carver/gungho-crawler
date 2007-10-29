@@ -1,6 +1,6 @@
 ---
 name: 'Danga::Socket Engine'
-default: 1
+default: 0
 depends:
     'Danga::Socket': '1.57'
     'Danga::Socket::Callback': 0
