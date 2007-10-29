@@ -3,7 +3,7 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.09000_03 Tue Oct 30 2007 [rev 238]
+0.09000_03 Tue Oct 30 2007 [rev 240]
   [General]
   - Add a new dispatch.dispatch_requests hook
   - Add a new engine.end_loop hook
