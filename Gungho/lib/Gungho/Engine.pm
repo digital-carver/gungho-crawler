@@ -7,7 +7,6 @@ package Gungho::Engine;
 use strict;
 use warnings;
 use base qw(Gungho::Base);
-use HTTP::Status qw(status_message);
 
 sub run {}
 
