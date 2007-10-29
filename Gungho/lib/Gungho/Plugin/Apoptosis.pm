@@ -101,4 +101,12 @@ finish, eventually leading it to stop.
 
 At this point you can re-dispatch your crawler proceses the way you want to.
 
+=head1 METHODS
+
+=head2 setup
+
+=head2 check_apoptosis
+
+=head2 is_time_to_die
+
 =cut
