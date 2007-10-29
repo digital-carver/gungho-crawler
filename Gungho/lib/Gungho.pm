@@ -211,6 +211,22 @@ If you're looking into simple crawlers, you may want to look at Gungho::Inline,
 
 See the manual for Gungho::Inline for details.
 
+=head1 PLUGINS
+
+Plugins are different from components in that, whereas components require the
+developer to explicitly call the methods, plugins are loaded and are not
+touched afterwards.
+
+Currently the following plugins are available
+
+=head2 RequestLog
+
+Logs the requests to a log
+
+=head2 Statistics
+
+Gathers request statistics (currently this is just a toy)
+
 =head1 HOOKS
 
 Currently available hooks are:
