@@ -34,7 +34,7 @@ sub setup_log
 {
     my $c = shift;
 
-    my $log_config = { %{$c->config->{log} || {}} };
+    my $log_config = { %{$c->config->{log} || { logs => [] }} };
     my $module     = delete $log_config->{module} || 'Simple';
     my $pkg        = $c->load_gungho_module($module, 'Log');
     my $log        = $pkg->new(config => $log_config);
@@ -152,7 +152,9 @@ sub load_gungho_module
 sub dispatch_requests
 {
     my $c = shift;
-    $c->provider->dispatch($c, @_);
+    if ($c->is_running) {
+        $c->provider->dispatch($c, @_);
+    }
 }
 
 sub prepare_request
@@ -166,18 +168,9 @@ sub prepare_request
 sub send_request
 {
     my $c = shift;
-    my $e;
-=head1
-    eval {
-        $c->maybe::next::method(@_);
-    };
-    if ($e = Gungho::Exception->caught('Gungho::Exception::SendRequest::Handled')) {
-        return;
-    } elsif ($e = Gungho::Exception->caught()) {
-        die $e;
-    }
-=cut
-    $c->engine->send_request($c, @_);
+    my $request = shift;
+    $request = $c->prepare_request($request);
+    $c->engine->send_request($c, $request);
 }
 
 sub request_is_allowed { 1 }
