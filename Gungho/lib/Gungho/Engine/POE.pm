@@ -144,6 +144,7 @@ sub _poe_session_loop
         }
         $self->loop_alarm($kernel->delay_set('session_loop', $delay));
     }
+    $c->run_hook('engine.end_loop');
 }
 
 sub send_request
