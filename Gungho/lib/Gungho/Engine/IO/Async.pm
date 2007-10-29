@@ -79,7 +79,7 @@ sub handle_response
         # Put it back
         $req->uri->host($host);
     }
-    $c->handle_response($req, $res);
+    $c->handle_response($req, $c->prepare_response($res) );
 }
 
 sub lookup_host

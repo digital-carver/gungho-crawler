@@ -166,6 +166,23 @@ sub prepare_request
     return $req;
 }
 
+sub prepare_response
+{
+    my ($c, $res) = @_;
+
+    {
+        my $old = $res;
+        $res = Gungho::Response->new(
+            $res->code,
+            $res->message,
+            $res->headers,
+            $res->content
+        );
+        $res->request( $old->request );
+    }
+    return $res;
+}
+
 sub send_request
 {
     my $c = shift;
@@ -180,17 +197,6 @@ sub handle_response
 {
     my $c = shift;
     my ($req, $res) = @_;
-
-    {
-        my $old = $res;
-        $res = Gungho::Response->new(
-            $res->code,
-            $res->message,
-            $res->headers,
-            $res->content
-        );
-        $res->request( $old->request );
-    }
 
     my $e;
     eval {
@@ -235,7 +241,7 @@ sub _http_error
     my ($self, $code, $message, $request) = @_;
 
     my $nl = "\n";
-    my $r = HTTP::Response->new($code);
+    my $r = Gungho::Response->new($code);
     my $http_msg = status_message($code);
     my $m = (
       "<html>$nl"

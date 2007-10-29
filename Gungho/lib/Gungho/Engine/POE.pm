@@ -234,8 +234,8 @@ sub _poe_handle_response
         # return if auth has taken care of the response
         return if $code->($c, $req, $res);
     }
-        
-    $c->handle_response($req, $res);
+
+    $c->handle_response($req, $c->prepare_response($res) );
 }
 
 1;
