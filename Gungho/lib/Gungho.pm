@@ -29,36 +29,87 @@ Gungho - Yet Another High Performance Web Crawler Framework
 
 =head1 DESCRIPTION
 
-What, another crawler? 
+Gungho provides a complete out-of-the-box web crawler framework with
+high performance and great felxibility.
 
-YES. Gungho is Yet Another Web Crawler Framework, aimed to be extensible and
-fast. It is a culmination of lessons learned while building another
-crawler named Xango -- Xango was *fast*, but it was horribly hard to debug or
-to extend (Gungho even works right out of the box ;)
+Please note that Gungho is in beta.
 
-Therefore, Gungho's main aim is to make it as easy as possible to write
-complex crawlers, while still keeping crawling *fast*. You can simply specify
-the urls to fetch and some code to handle the responses -- we do the rest.
+Gungho comes with many features that solve recurring problems when building
+a spider:
 
-Gungho tries to build from clean structures, based upon principles from the
-likes of Catalyst, DBIx::Class, and Plagger, so that you can easily extend 
-it to your liking.
+=over 4
 
-Features such as robot rules handling (robots.txt) and request throttling
-can be removed/added on the fly, just by specifying the components that
-you want to load. You can easily create additional functionality by writing
-your own component.
+=item Event-Based, Asynchronous Engine
 
-Gungho is still very fast -- it uses event driven frameworks such as
-POE, Danga::Socket, and IO::Async as the main engine to drive requests.
-Choose the best engine for your needs: For example, if you plan on creating
-a POE-based handler to process the response, you might choose the POE engine -
-it will fit nicely into the request cycle. However, do note that the most
-heavily excercised engine is POE. Danga::Socket and IO::Async works, but
-haven't been tested too vigorously. Please send in requests and bug reports
-if you encounter any problems.
+Gungho uses event-based dispatch via POE, Danga::Socket, or IO::Async.
+Choose the best engine that fits your needs.
 
-WARNING: *ALL* APIs are still subject to change.
+=item Asynchronous DNS lookups
+
+HTTP connections are handled asynchronously, why not DNS lookups?
+Gungho doesn't block while hostnames are being resolved, so other jobs can
+continue.
+
+=item Automatic robots.txt Handling
+
+Every crawler needs to respect robots.txt. Gungho offers automatic handling
+of robots.txt. If you use it in conjunction with memcached, you can even
+do this in a distributed environment, where farms of Gungho crawler hosts
+are all fetching pages.
+
+=item Robots META Directives
+
+Robots META directives embedded in HTML text can also be parsed automatically.
+You can then access this resulting structure to decide if you can process
+the fetched URL.
+
+=item Throttling
+
+You don't want your crawl targets to go under just because you let loose a
+crawler against it and did a million fetches per hour. With Gungho's 
+throttling component, you can throttle the amount of requests that are sent
+against a domain.
+
+=item Private IP Blocking
+
+Malicious sites may embed hostnames that resolve to internal IP address ranges
+such as 192.168.11.*, which may lead to a DoS attack to your private servers.
+Gungho has an automatic option to block such IP addresses via BlockPrivateIP
+component.
+
+=item Caching
+
+Whatever you want to cache, Gungho offers a generic cache interface a-la
+Catalyst via Gungho::Component::Cache
+
+=item Web::Scraper Integration
+
+(Note: This is not quite production ready) Gungho has Web::Scraper integration
+that allows you to easily call Web::Scraper sripts defined in your config files.
+
+=item Request Logging
+
+Requests can be automatically logged to a file, a database, to screen, via
+Gungho::Plugin::RequestLog, which gives you the full power of Log::Dispatch
+for your logging needs.
+
+=back
+
+=head1 HISTORY
+
+First there were a bunch of scripts that used scrape a bunch of RSS feeds.
+Then I got tired of writing scripts, so I decided a framework is the way to
+go, and Xango was born.
+
+Xango was my first attempt at trying to harness the full power of event-based
+framework. It was fast. It wasn't fun to extend. It had a nightmare-ish
+way to deal with robots.txt. 
+
+Couple of more attempts later, more inspirations and lessons learned from
+Catalyst, Plagger, DBIx::Class, Gungho was born. 
+
+Since its inception, Gungho has been in successfully used as crawlers that
+fetch hundreds of thousands of urls to a few million urls per day. 
 
 =head1 PLEASE READ BEFORE USE
 
@@ -89,6 +140,19 @@ All components (engine, provider, handler) are overridable and switcheable.
 However, do note that if you plan on customizing stuff, you should be aware
 that Gungho uses Class::C3 extensively, and hence you may see warnings about
 the code you use.
+
+=head1 HOW *NOT* TO USE Gungho
+
+One note about Gungho - Don't use it if you are planning on accessing
+a single url -- It's usually not worth it, so you might as well use
+LWP::UserAgent or an equivalent module.
+
+Gungho's event driven engine works best when you are accessing hundreds,
+if not thousands of urls. It may in fact be slower than using LWP::UserAgent
+if you are accessing just a single url.
+
+Of course, you may wish to utilize features other than speed that Gungho 
+provides, so at that point, it's simply up to you.
 
 =head1 RUNNING IN DISTRIBUTED ENVIRONMENT
 
@@ -133,7 +197,7 @@ Message Queue as your backend.
 
 =back
 
-=head1 CONFIGURATION OPTIONS
+=head1 GLOBAL CONFIGURATION OPTIONS
 
 =over 4
 
@@ -164,41 +228,27 @@ Components modify Gungho's inheritance structure at run time to add
 extra functionality to Gungho, and therefore should only be loaded
 before starting the engine.
 
-Here are some available components. Checkout the distribution for a current,
-complete list:
+Please refer to each component's document for details
 
-=head2 Authentication::Basic
+=over 4
 
-Handles basic HTTP auth automatically.
+=item Gungho::Component::Authentication::Basic
 
-=head2 BlockPrivateIP
+=item Gungho::Component::BlockPrivateIP
 
-Block hostnames that resolve to private IP addresses.
+=item Gungho::Component::Cache
 
-=head2 Cache
+=item Gungho::Component::RobotRules
 
-Adds cache supports to Gungho.
+=item Gungho::Component::RobotsMETA
 
-=head2 RobotRules
+=item Gungho::Component::Scraper
 
-Handles collecting, parsing robots.txt, as well rejecting requests based on 
-the rules provided from it.
+=item Gungho::Component::Throttle::Domain
 
-=head2 RobotsMETA
+=item Gungho::Component::Throttle::Simple
 
-Handles parsing Robots META information embedded in HTML E<lt>metaE<gt> tags
-
-=head2 Scraper
-
-Allows you to use Web::Scraper from within Gungho.
-
-=head2 Throttle::Domain
-
-Throttles requests based on the number of requests sent to a domain.
-
-=head2 Throttle::Simple
-
-Throttles requests based on the total number of requests being sent 
+=back
 
 =head1 INLINE
 
@@ -217,15 +267,15 @@ Plugins are different from components in that, whereas components require the
 developer to explicitly call the methods, plugins are loaded and are not
 touched afterwards.
 
-Currently the following plugins are available
+Please refer to the documentation of each plugin for details.
 
-=head2 RequestLog
+=over 4
 
-Logs the requests to a log
+=item RequestLog
 
-=head2 Statistics
+=item Statistics
 
-Gathers request statistics (currently this is just a toy)
+=back
 
 =head1 HOOKS
 
@@ -241,24 +291,25 @@ Currently available hooks are:
 
 Used for Class::C3::Componentised
 
-=head1 HOW *NOT* TO USE Gungho
-
-One last note about Gungho - Don't use it if you are planning on accessing
-a single url -- It's usually not worth it, so you might as well use
-LWP::UserAgent or an equivalent module.
-
-Gungho's event driven engine works best when you are accessing hundreds,
-if not thousands of urls. It may in fact be slower than using LWP::UserAgent
-if you are accessing just a single url.
-
-Of course, you may wish to utilize features other than speed that Gungho 
-provides, so at that point, it's simply up to you.
-
 =head1 CODE
 
 You can obtain the current code base from
 
   http://gungho-crawler.googlecode.com/svn/trunk
+
+=head1 TODO
+
+=head2 1. Thorough re-evaluation of the internal API
+
+Names like send_request(), handle_response() are fine, but those are names
+that I tacked on to the code just because I could.
+
+To allow a more flexible interface for component/plugin writers, we really
+need to make the namings more uniform.
+
+Still open to ideas. I haven't made up my mind yet.
+
+# This needs to be done before we can call ourselves production ready
 
 =head1 AUTHOR
 
@@ -273,11 +324,6 @@ Copyright (c) 2007 Daisuke Maki E<lt>daisuke@endeworks.jpE<gt>
 =item Keiichi Okabe
 
 =back
-
-=head1 SEE ALSO
-
-L<Gungho::Inline|Gungho::Inline>
-L<Gungho::Component::RobotRules|Gungho::Component::RobotRules>
 
 =head1 LICENSE
 
