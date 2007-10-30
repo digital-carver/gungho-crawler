@@ -32,7 +32,8 @@ Gungho - Yet Another High Performance Web Crawler Framework
 Gungho provides a complete out-of-the-box web crawler framework with
 high performance and great felxibility.
 
-Please note that Gungho is in beta.
+Please note that Gungho is in beta. It has been stable for some time, but
+its internals may still change, including the API.
 
 Gungho comes with many features that solve recurring problems when building
 a spider:
@@ -309,7 +310,11 @@ need to make the namings more uniform.
 
 Still open to ideas. I haven't made up my mind yet.
 
-# This needs to be done before we can call ourselves production ready
+# This needs to be done before we can call ourselves *really* production ready
+
+=head2 2. Add manuals
+
+Volunteers welcome!
 
 =head1 AUTHOR
 
