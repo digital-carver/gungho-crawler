@@ -161,7 +161,7 @@ sub start_request
             if (! $success) {
                 $self->handle_response(
                     $req,
-                    $self->_http_error(400, "incomplete response", $req)
+                    $c->_http_error(400, "incomplete response", $req)
                 );
                 return;
             }
