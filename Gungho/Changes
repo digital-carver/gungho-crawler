@@ -3,6 +3,16 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09000 Tue Oct 30 2007 [rev 247]
+  [General]
+  - We shall call this the beta release.
+  - Redo main doc
+  - Change defaults for Engine feature
+  - Fix calls where $engine->_http_error() was happening to $c->_http_error()
+
+  [RobotRules]
+  - Fix spurfulous exception
+
 0.09000_03 Tue Oct 30 2007 [rev 240]
   [General]
   - Add a new dispatch.dispatch_requests hook
