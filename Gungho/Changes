@@ -3,6 +3,11 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09001 Fri Nov 02 2007 [rev 248]
+  [General]
+  - No code changes
+  - Update to Module::Install 0.68
+
 0.09000 Tue Oct 30 2007 [rev 247]
   [General]
   - We shall call this the beta release.
