@@ -14,6 +14,15 @@ sub plan_or_skip
             return;
         }
     }
+    if ($args{check_env}) {
+        my @env = ref($args{check_env}) eq 'ARRAY' ? @{ $args{check_env} } : ($args{check_env});
+        foreach my $env (@env) {
+            my $v = $ENV{ $env };
+            if (! defined $v || length $v < 1) {
+                Test::More::plan(skip_all => "Environment variable $env is not specified");
+            }
+        }
+    }
 
     Test::More::plan(tests => $args{test_count});
     return 1;
