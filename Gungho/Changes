@@ -3,6 +3,16 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09002_01 Thu Nov 08 2007 [rev 253]
+  [General]
+  - DNS will not be resolved by Gungho if you do one of the following:
+    * specify dns => { disable => 1 } in your config
+    * specify client => { proxy => ... } in your config (POE engine only)
+    * specify HTTP_PROXY in the environment (POE engine only)
+
+  [Tests]
+  - Add more tests
+
 0.09001 Fri Nov 02 2007 [rev 248]
   [General]
   - No code changes

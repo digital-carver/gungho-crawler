@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use 5.008;
 use base qw(Class::C3::Componentised);
-our $VERSION = '0.09001';
+our $VERSION = '0.09002';
 
 __PACKAGE__->load_components('Setup');
 
