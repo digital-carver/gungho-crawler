@@ -72,8 +72,17 @@ sub run
         }
     }
 
-    unless ($client_config->{Proxy} || $ENV{HTTP_PROXY}) {
-        my $dns_config = delete $config{dns} || {};
+    # Starting from 0.09002, we accept that there are environments where
+    # DNS resolution is NOT necessary. This turns out to be a problem when
+    # going through, for example, a misconfigured proxy.
+    #
+    # Here, we detect if one of the following is true:
+    #   1) The user has explicitly disable DNS resolution via dns.disable = 1
+    #   2) The user has requested the use of a proxy via engine.client.proxy
+    #   3) The user has implicitly requested the use of a proxy via
+    #      $ENV{HTTP_PROXY}
+    my $dns_config = delete $config{dns} || {};
+    unless ($dns_config->{disable} || $client_config->{Proxy} || $client_config->{proxy} || $ENV{HTTP_PROXY}) {
         foreach my $key (keys %$dns_config) {
             if ($key =~ /^[a-z]/) { # ah, need to make this CamelCase
                 my $camel = ucfirst($key);
@@ -160,7 +169,7 @@ sub _poe_start_request
     my $c = $heap->{CONTEXT};
 
     # check if this request requires a DNS resolution
-    if ($c->engine->resolver and $request->requires_name_lookup()) {
+    if ($c->engine->resolver && $request->requires_name_lookup()) {
         my $dns_response = $c->engine->resolver->resolve(
             event => "got_dns_response",
             host  => $request->uri->host,
@@ -266,6 +275,8 @@ Gungho::Engine::POE - POE Engine For Gungho
         max_open: 200
         max_per_host: 20
         timeout: 10
+      dns:
+        # disable: 1 If you want to disable DNS resolution by Gungho
 
 
 =head1 DESCRIPTION

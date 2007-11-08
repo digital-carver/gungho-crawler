@@ -27,7 +27,9 @@ sub setup
     $self->setup_impl_class($c);
 
     $self->loop_delay( $self->config->{loop_delay} ) if $self->config->{loop_delay};
-
+    if (! $self->config->{dns}{disable}) {
+        $self->resolver(Net::DNS::Resolver->new);
+    }
 }
 
 sub setup_impl_class
@@ -52,7 +54,6 @@ sub setup_impl_class
 sub run
 {
     my ($self, $c) = @_;
-    $self->resolver(Net::DNS::Resolver->new);
     $self->impl->run($c);
 }
 
@@ -60,12 +61,12 @@ sub send_request
 {
     my ($self, $c, $request) = @_;
 
-    if ($request->requires_name_lookup) {
+    if ($self->resolver && $request->requires_name_lookup) {
         $self->lookup_host($c, $request);
     } else {
         $request->uri->host( $request->notes('resolved_ip') )
             if $request->notes('resolved_ip');
-        if ( $c->block_private_ip_address($request, $request->uri)) {
+        if ( ! $c->request_is_allowed($request)) {
             return;
         }
         $self->start_request($c, $request);
@@ -201,6 +202,16 @@ __END__
 =head1 NAME
 
 Gungho::Engine::IO::Async - IO::Async Engine
+
+=head1 SYNOPSIS
+
+  engine:
+    module: IO::Async
+    config:
+        loop_delay: 0.01
+        dns:
+            disable: 1 # Only if you don't want Gungho to resolve DNS
+
 
 =head1 DESCRIPTION
 
