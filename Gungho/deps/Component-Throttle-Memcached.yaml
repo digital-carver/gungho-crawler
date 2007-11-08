@@ -2,4 +2,4 @@
 name: 'Throttling with Memcached'
 default: 0
 depends:
-    'Data::Throttler::Memcached': 0
+    'Data::Throttler::Memcached': 0.00003
