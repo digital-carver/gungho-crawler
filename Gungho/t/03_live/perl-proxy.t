@@ -5,10 +5,9 @@ BEGIN
 {
     if (! $ENV{GUNGHO_TEST_PROXY}) {
         plan skip_all => "Set proxy URI to GUNGHO_TEST_PROXY to run these tests";
+    } elsif (! eval "use POE" || $@ ) {
+        plan skip_all => "POE Engine not available. Skipping";
     } else {
-        # Check which engine we're checking
-
-
         plan tests => 5;
         use_ok "Gungho::Inline";
     }
