@@ -3,6 +3,12 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09003_02 
+  [Throttle]
+  - Fix Throttling to delegate throttling decisions. This allows you to
+    stack throttlers.
+  - Update prerequisite for Data::Throttler::Memcached
+
 0.09003_01 Thu Nov 08 2007 [rev 254]
   [General]
   - Upload blunder. I meant to upload this as 0.09002_01, but I forgot to
