@@ -3,7 +3,7 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.09003_02 
+0.09003_02 Thu Nov 08 2007 [rev 258]
   [Throttle]
   - Fix Throttling to delegate throttling decisions. This allows you to
     stack throttlers.
