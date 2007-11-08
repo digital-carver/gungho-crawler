@@ -3,6 +3,12 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09003_01 Thu Nov 08 2007 [rev 254]
+  [General]
+  - Upload blunder. I meant to upload this as 0.09002_01, but I forgot to
+    rename the file. I don't wish for 0.09002 to be a general release, so
+    heres' 0.09003_01 with no code changes.
+
 0.09002_01 Thu Nov 08 2007 [rev 253]
   [General]
   - DNS will not be resolved by Gungho if you do one of the following:
