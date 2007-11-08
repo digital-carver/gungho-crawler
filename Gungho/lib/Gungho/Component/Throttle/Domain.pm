@@ -49,19 +49,23 @@ EOSUB
 
 sub throttle
 {
-    my $self = shift;
+    my $c = shift;
     my $request = shift;
 
     my $do_throttle = 1;
-    my $code = $self->matcher;
+    my $code = $c->matcher;
     if ($code) {
         $do_throttle = $code->($request);
     }
 
     if ($do_throttle) {
-        return $self->throttler->try_push(key => $request->url->host);
+        my $t = $c->throttler;
+        if (! $t->try_push(key => $request->notes('original_host') || $request->url->host)) {
+            $c->log->debug( $request->url . " throttled by Throttle::Domain" );
+            return ();
+        }
     }
-    return 1;
+    return $c->next::method($request);
 }
 
 1;

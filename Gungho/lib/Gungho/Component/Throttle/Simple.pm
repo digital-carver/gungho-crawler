@@ -23,10 +23,16 @@ sub setup
 
 sub throttle
 {
-    my $self = shift;
+    my $c = shift;
     my $request = shift;
-    my $t = $self->throttler;
-    return $t->try_push();
+    my $t = $c->throttler;
+
+    if ( ! $t->try_push() ) {
+        $c->log->debug($request->uri . " throttled by Throttle::Simple");
+        return ();
+    }
+
+    return $c->next::method($request);
 }
 
 1;
