@@ -11,7 +11,7 @@ use POE;
 use POE::Component::Client::Keepalive;
 use POE::Component::Client::HTTP;
 
-__PACKAGE__->mk_accessors($_) for qw(alias loop_alarm loop_delay resolver);
+__PACKAGE__->mk_accessors($_) for qw(alias loop_alarm loop_delay resolver clients);
 
 use constant UserAgentAlias => 'Gungho_Engine_POE_UserAgent_Alias';
 use constant DnsResolverAlias => 'Gungho_Engine_POE_DnsResolver_Alias';
@@ -107,14 +107,25 @@ sub run
         $self->resolver($resolver);
     }
 
-    POE::Component::Client::HTTP->spawn(
-        FollowRedirects   => 1,
-        Agent             => $c->user_agent,
-        Timeout           => 60,
-        %$client_config,
-        Alias             => &UserAgentAlias,
-        ConnectionManager => $keepalive,
-    );
+    # Oh, guess what. We will create as many clients as we were requested,
+    # just so that PoCo::Client::HTTP doesn't stall on us (as of 
+    # PoCo::Client::HTTP 0.82, PoCo::Client::HTTP tended to get filled up
+    # pretty quickcly)
+    $self->clients( [] );
+    my $spawn = $client_config->{spawn} || 2;
+    if ($spawn < 1) { $spawn = 2 }
+    for my $i ( 1 .. $spawn ) {
+        my $alias = join('-', &UserAgentAlias, $i);
+        push @{ $self->clients }, $alias;
+        POE::Component::Client::HTTP->spawn(
+            FollowRedirects   => 1,
+            Agent             => $c->user_agent,
+            Timeout           => 60,
+            %$client_config,
+            Alias             => $alias,
+            ConnectionManager => $keepalive,
+        );
+    }
 
     POE::Session->create(
         heap => { CONTEXT => $c },
@@ -140,6 +151,9 @@ sub _poe_session_start
 sub _poe_session_stop
 {
     $_[KERNEL]->alias_remove( $_[OBJECT]->alias );
+    eval {
+        $_[KERNEL]->post($_, 'shutdown') for @{ $_[OBJECT]->clients }
+    };
 }
 
 sub _poe_session_loop
@@ -177,7 +191,7 @@ sub send_request
 
 sub _poe_start_request
 {
-    my ($kernel, $heap, $request) = @_[KERNEL, HEAP, ARG0];
+    my ($kernel, $self, $heap, $request) = @_[KERNEL, OBJECT, HEAP, ARG0];
     my $c = $heap->{CONTEXT};
 
     # check if this request requires a DNS resolution
@@ -209,7 +223,11 @@ sub _poe_start_request
         $uri->host( $request->notes('original_host') ) if $request->notes('original_host');
         $c->log->info("Going to fetch $uri");
     }
-    POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
+
+    # Choose a random client
+    my @clients = @{ $self->clients };
+    my $client  = $clients[ rand @clients ];
+    POE::Kernel->post($client, 'request', 'handle_response', $request);
 }
 
 sub _poe_got_dns_response
@@ -285,8 +303,9 @@ Gungho::Engine::POE - POE Engine For Gungho
   engine:
     module: POE
     config:
-      loop_delay: 0.5
+      loop_delay: 5 
       client:
+        spawn: 2
         agent:
           - AgentName1
           - AgentName2
@@ -306,11 +325,62 @@ Gungho::Engine::POE - POE Engine For Gungho
 
 Gunghog::Engine::POE gives you the full power of POE to Gungho.
 
-=head1 CHOOSING THE RIGHT loop_delay
+=head1 CONFIGURATION PARAMETERS
+
+You can configure the POE engine in many ways. For convenience, all second 
+level parameter names below are written as 'parent.child'. For example,
+'client.agent' will actually mean
+
+  engine:
+    module: POE
+    config:
+      client:
+        agent: XXXXX
+
+Or in perl,
+
+  engine => {
+    module => 'POE',
+    config => {
+      client => {
+        agent => "XXXX"
+      }
+    }
+  }
+
+=head2 client.loop_delay
 
 C<loop_delay> specifies the number of seconds to wait until calling C<dispatch>
 again. If you feel like Gungho is running slow, try setting this parameter to
-a smaller amount. Things will run much smoother.
+a smaller amount. 
+
+Settings this too low will cause your crawler to be constantly looking up for
+URLs to dispatch instead of fetching the URLs. Alays try to time the requests
+before going to extremes with this setting.
+
+=head2 client.spawn
+
+C<spawn> specifies the number of POE::Component::Client::HTTP sessions to start.
+This will greatly affect your fetching speed, as PoCo::Client::HTTP tends to
+start jamming up after a certain number of requests have been pushed onto
+its queue.
+
+If you feel like all of your other settings are correct but the actual
+HTTP fetch is taking too long, try setting this number to something higher.
+
+By default this is set to 2. 
+
+=head2 keepalive.keep_alive
+
+Specifies the number of seconds to keep a connection in the Keepalive
+connection manager. 
+
+This is an important option to tweak if you're using proxies. Even though
+you might be accessing thousands of different URLs, POE will think that
+you are in fact trying to connect to the same host because you're
+accessing the same proxy.
+
+Turn this to 0 if you are using a proxy.
 
 =head1 POE::Component::Client::HTTP AND DECODED CONTENTS
 
