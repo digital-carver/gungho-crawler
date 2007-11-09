@@ -34,6 +34,13 @@ sub run
     my $c = shift;
     $c->bootstrap(@_);
     $c->is_running(1);
+
+    my $banner = sprintf(<<EOBANNER, $Gungho::VERSION, join(', ', map { my $name = $_; $name =~ s/Gungho::Component:://; $name } @Gungho::ISA ) );
+Starting $c 
+Gungho Version: %s
+Components: %s
+EOBANNER
+    $c->log->info($_) for split(/\n/, $banner);
     $c->engine->run($c);
 }
 
