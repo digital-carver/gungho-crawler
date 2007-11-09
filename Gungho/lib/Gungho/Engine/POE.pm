@@ -56,10 +56,20 @@ sub run
     my %config = %{ $self->config || {} };
 
     my $keepalive_config = delete $config{keepalive} || {};
-    $keepalive_config->{keep_alive}   ||= 10;
-    $keepalive_config->{max_open}     ||= 200;
-    $keepalive_config->{max_per_host} ||= 5;
-    $keepalive_config->{timeout}      ||= 10;
+
+    {
+        my %defaults = (
+            keep_alive   => 10,
+            max_open     => 200,
+            max_per_host => 5,
+            timeout      => 10
+        );
+        while (my($key, $value) = each %defaults) {
+            if (! defined $keepalive_config->{$key}) {
+                $keepalive_config->{$key} = $value;
+            }
+        }
+    }
 
     my $keepalive = POE::Component::Client::Keepalive->new(%$keepalive_config);
 
@@ -135,7 +145,6 @@ sub _poe_session_stop
 sub _poe_session_loop
 {
     my ($self, $kernel, $heap) = @_[OBJECT, KERNEL, HEAP];
-    $self->loop_alarm(undef);
 
     my $c = $heap->{CONTEXT};
 
@@ -147,13 +156,16 @@ sub _poe_session_loop
     $c->dispatch_requests();
 
     my $alarm_id = $self->loop_alarm;
-    if (! $alarm_id) {
-        my $delay = $self->loop_delay;
-        if (! defined $delay || $delay <= 0) {
-            $delay = 1;
-        }
-        $self->loop_alarm($kernel->delay_set('session_loop', $delay));
+    if ($alarm_id) {
+        $kernel->alarm_remove( $alarm_id );
     }
+    my $delay = $self->loop_delay;
+    if (! defined $delay || $delay <= 0) {
+        $delay = 1;
+        $self->loop_delay($delay);
+    }
+    $self->loop_alarm($kernel->alarm_set('session_loop', time() + $delay));
+
     $c->run_hook('engine.end_loop');
 }
 
@@ -191,6 +203,12 @@ sub _poe_start_request
     }
 
     $c->run_hook('engine.send_request', { request => $request });
+
+    { # XXX - for debug only...
+        my $uri = $request->uri->clone;
+        $uri->host( $request->notes('original_host') ) if $request->notes('original_host');
+        $c->log->info("Going to fetch $uri");
+    }
     POE::Kernel->post(&UserAgentAlias, 'request', 'handle_response', $request);
 }
 
@@ -207,7 +225,7 @@ sub _poe_got_dns_response
 
 sub _poe_handle_response
 {
-    my ($heap, $req_packet, $res_packet) = @_[ HEAP, ARG0, ARG1 ];
+    my ($kernel, $heap, $req_packet, $res_packet) = @_[ KERNEL, HEAP, ARG0, ARG1 ];
 
     my $c = $heap->{CONTEXT};
 
@@ -217,6 +235,9 @@ sub _poe_handle_response
     if (my $host = $req->notes('original_host')) {
         # Put it back
         $req->uri->host($host);
+    }
+    { # XXX - for debug only...
+        $c->log->info("Received " . $req->uri);
     }
 
     # Work around POE doing too much for us. 
@@ -247,6 +268,8 @@ sub _poe_handle_response
     }
 
     $c->handle_response($req, $c->prepare_response($res) );
+
+    $kernel->yield('session_loop');
 }
 
 1;
