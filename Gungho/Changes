@@ -3,6 +3,24 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09003_03 Fri Nov 09 2007 [rev 258]
+  [POE]
+  - Note: Changes for POE engine contained in this release are relatively
+    critical. If you were having problems before, you probably should check
+    this release out.
+  - Be smarter how dispatch() gets called. Now we do a more effective
+    invocation of the dispatch state so that we don't waste cycles just
+    trying to dispatch requests.
+  - Allow "0" setting in keepalive.keep_alive. This is a very important
+    parameter if you're using Gungho through a proxy. If you enable this
+    while under a proxy, PoCo::Client::Keepalive will think that you should
+    be using the cached connection to the proxy and so Gungho will lose all
+    parallism.
+  - Allow setting the number of PoCo::Client::HTTP to be spawned via
+    client.spawn parameter. This is required if you're dealing with 
+    relatively large amounts of URLs at once. Otherwise, PoCo::Client::HTTP
+    will tend to jam up after a while.
+
 0.09003_02 Thu Nov 08 2007 [rev 258]
   [Throttle]
   - Fix Throttling to delegate throttling decisions. This allows you to
