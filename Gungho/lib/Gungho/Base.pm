@@ -6,7 +6,6 @@
 package Gungho::Base;
 use strict;
 use warnings;
-use Gungho::Base::Class;
 use base qw(Gungho::Base::Class Class::Accessor::Fast);
 
 __PACKAGE__->mk_accessors($_) for qw(config);

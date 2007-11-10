@@ -6,6 +6,7 @@
 package Gungho::Base::Class;
 use strict;
 use base qw(Class::Data::Inheritable);
+use Class::C3;
 
 sub setup {}
 
