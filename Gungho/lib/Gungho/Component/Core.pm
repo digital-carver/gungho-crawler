@@ -344,6 +344,10 @@ Given a response, preps it before sending it to handle_response()
 
 Delegates to engine's send_request
 
+=head2 pushback_request
+
+Push back a request
+
 =head2 load_config($config)
 
 Loads the config from $config via Config::Any.
