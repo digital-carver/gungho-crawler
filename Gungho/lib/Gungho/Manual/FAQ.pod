@@ -3,7 +3,11 @@
 
 Gungho::Manual::FAQ - Gungho FAQ
 
-=head1 Q. I don't understand the notation of the config 
+=head1 Q. "Why Did You Call It Gungho"?
+
+It rhymes with Xango, which is its predecessor.
+
+=head1 Q. "I don't understand the notation of the config"
 
 To make the notation concise, we use a notation like engine.module = POE.
 Each level is a key in the hash, so the previous example translates to a
@@ -24,6 +28,16 @@ Or, in YAML:
 
 There are actually a number of things that may affect fetch speed.
 
+=head2 Is Gungho The Right Crawler For Your Data Set?
+
+Gungho uses an asynchronous engine, and with POE::Component::Client::Keepalive
+it reuses the connections to the same host. 
+
+This kind of setup works great if you are accessing a lot of diffferent hosts,
+but could easily jam up if you are accessing, for example, a single host.
+For such datasets, Gungho will be no more effective than a simple script
+repeated calls to LWP::UserAgent-E<gt>get().
+
 =head2 Choosing The Right loop_delay With Gungho::Engine::POE
 
 C<engine.config.loop_delay> specifies the number of seconds to wait between
@@ -43,6 +57,19 @@ There's no general "right" value for this configuration parameter, because
 it largely depends on what kind of dataset you're working with. As a general
 rule of thumb, set it to something sane like 5 seconds, and check out your 
 logs to see if that value is an acceptable value.
+
+=head2 Workaround For Jamming Up PoCo::Client::HTTP
+
+When using Gungho::Engine::POE, POE::Component::Client::HTTP is used internally
+to do the actual fetching. Its performance is usually great, but when you
+reach a certain number of requests, it start to jam up and all of the sudden
+your requests will be served very slowly.
+
+This limitation is per-session limit, so Gungho tries to workaround this
+problem by spawning multiple sessions of POE::Component::Client::HTTP.
+
+If you believe this is the cause of the problem, try setting the 
+engine.config.spawn to a higher value (the default is 2)
 
 =head2 Considerations When Using A Proxy With Gungho::Engine::POE
 
