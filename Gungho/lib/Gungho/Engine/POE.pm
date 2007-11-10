@@ -13,6 +13,7 @@ use POE::Component::Client::HTTP;
 
 __PACKAGE__->mk_accessors($_) for qw(alias loop_alarm loop_delay resolver clients);
 
+use constant DEBUG => 0;
 use constant UserAgentAlias => 'Gungho_Engine_POE_UserAgent_Alias';
 use constant DnsResolverAlias => 'Gungho_Engine_POE_DnsResolver_Alias';
 use constant SKIP_DECODE_CONTENT  =>
@@ -218,7 +219,7 @@ sub _poe_start_request
 
     $c->run_hook('engine.send_request', { request => $request });
 
-    { # XXX - for debug only...
+    if (DEBUG) {
         my $uri = $request->uri->clone;
         $uri->host( $request->notes('original_host') ) if $request->notes('original_host');
         $c->log->info("Going to fetch $uri");
@@ -254,7 +255,7 @@ sub _poe_handle_response
         # Put it back
         $req->uri->host($host);
     }
-    { # XXX - for debug only...
+    if (DEBUG) {
         $c->log->info("Received " . $req->uri);
     }
 
