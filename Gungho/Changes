@@ -3,6 +3,12 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09003_04 Sun Nov 11 2007 [rev 270]
+  [General]
+  - Add $c->pushback_request. Don't use $c->provider->pushback_request anymore!
+  - Add Gungho::Util
+  - Add Gungho::Manual::FAQ
+
 0.09003_03 Fri Nov 09 2007 [rev 258]
   [POE]
   - Note: Changes for POE engine contained in this release are relatively
