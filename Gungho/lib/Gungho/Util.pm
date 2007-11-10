@@ -15,7 +15,7 @@ sub load_module
     my $prefix = shift;
 
     unless ($pkg =~ s/^\+//) {
-        $pkg = ($prefix ? "${prefix}::${pkg}" : $pkg;
+        $pkg = ($prefix ? "${prefix}::${pkg}" : $pkg);
     }
 
     Class::Inspector->loaded($pkg) or $pkg->require or die;
