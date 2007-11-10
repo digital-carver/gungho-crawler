@@ -16,6 +16,7 @@ use HTTP::Status qw(status_message);
 use Gungho::Exception;
 use Gungho::Request;
 use Gungho::Response;
+use Gungho::Util;
 
 sub setup
 {
@@ -137,14 +138,11 @@ sub has_feature
 
 sub load_gungho_module
 {
-    my $c   = shift;
-    my $pkg    = shift;
-    my $prefix = shift;
-
-    unless ($pkg =~ s/^\+//) {
-        $pkg = ($prefix ? "Gungho::${prefix}::" : "Gungho::") . $pkg;
-    }
-
+    my ($c, $pkg, $prefix) = @_;
+    return Gungho::Util::load_module( 
+        $pkg,
+        $prefix ? "Gungho::${prefix}" : "Gunho"
+    );
     Class::Inspector->loaded($pkg) or $pkg->require or die;
     return $pkg;
 }
@@ -189,6 +187,12 @@ sub send_request
     my $request = shift;
     $request = $c->prepare_request($request);
     $c->engine->send_request($c, $request);
+}
+
+sub pushback_request
+{
+    my ($c, $request) = @_;
+    $c->provider->pushback_request( $c, $request );
 }
 
 sub request_is_allowed { 1 }
