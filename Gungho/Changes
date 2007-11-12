@@ -3,6 +3,10 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09004 Mon Nov 12 2007 [rev 276]
+  [General]
+  - Fix bug in detecting provider/handler
+
 0.09003 Mon Nov 12 2007 [rev 276]
   [General]
   - Refactor Gungho::Inline into Gungho::Provider::Inline and 

@@ -64,9 +64,7 @@ sub setup_provider
                 callback => $code
             }
         }
-    }
-
-    if ( $ref ne 'HASH') {
+    } elsif ( $ref ne 'HASH') {
         Carp::croak("Gungho requires a provider");
     }
 
@@ -117,9 +115,7 @@ sub setup_handler
                 callback => $code
             }
         }
-    }
-
-    if ( $ref ne 'HASH') {
+    } elsif ( $ref ne 'HASH') {
         Carp::croak("Gungho requires a handler");
     }
 
