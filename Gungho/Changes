@@ -3,6 +3,13 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09003 Sun Nov 12 2007 [rev 275]
+  [General]
+  - Refactor Gungho::Inline into Gungho::Provider::Inline and 
+    Gungho::Handler::Inline.
+  - Add support for coderefs in provider/handler config parameters
+  - Release 0.09003
+
 0.09003_04 Sun Nov 11 2007 [rev 270]
   [General]
   - Add $c->pushback_request. Don't use $c->provider->pushback_request anymore!
