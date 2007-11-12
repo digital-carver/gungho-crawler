@@ -47,12 +47,6 @@ it in your config. Gungho will ensure that it is loaded and setup.
 
 =head1 METHODS
 
-=head2 inject_base($c)
-
-Inject the component to Gungho. It also sets a flag in the features() hash
-so that other components in the system can query Gungho if it supprots
-a certain feature X
-
 =head2 feature_name()
 
 Returns the name of the feature that this component provides. By default
