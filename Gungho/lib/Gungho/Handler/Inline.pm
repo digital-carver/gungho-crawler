@@ -24,7 +24,12 @@ sub setup {
 sub handle_response {
     my ($self, $c, $req, $res) = @_;
     
-    my @args = (&Gungho::Inline::OLD_PARAMETER_LIST ? ($req, $res, $c, $self) : ($self, $c, $req, $res));
+    my @args = (
+        Class::Inspector->loaded('Gungho::Inline') &&
+            &Gungho::Inline::OLD_PARAMETER_LIST ?
+        ($req, $res, $c, $self) :
+        ($self, $c, $req, $res)
+    );
     $self->callback->(@args);
 }
 
@@ -54,5 +59,11 @@ And it will be called via Gungho::Handler::Inline.
 
 The code reference you specified will be called as if it were a method
 in the Gungho::Handler::Inline package.
+
+=head1 METHODS
+
+=head2 setup
+
+=head2 handle_response
 
 =cut

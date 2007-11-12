@@ -37,7 +37,12 @@ sub dispatch {
     my ($self, $c) = @_;
     
     if ($self->callback) {
-        my @args = (&Gungho::Inline::OLD_PARAMETER_LIST ? ($c, $self) : ($self, $c));
+        my @args = (
+            Class::Inspector->loaded('Gungho::Inline') &&
+                &Gungho::Inline::OLD_PARAMETER_LIST ?
+            ($c, $self) :
+            ($self, $c)
+        );
         unless ($self->callback->(@args)) {
             $self->callback(undef);
         }
@@ -81,5 +86,15 @@ And it will be called via Gungho::Provider::Inline.
 
 The code reference you specified will be called as if it were a method
 in the Gungho::Provider::Inline package.
+
+=head1 METHODS
+
+=head2 new
+
+=head2 setup
+
+=head2 add_request
+
+=head2 dispatch
 
 =cut
