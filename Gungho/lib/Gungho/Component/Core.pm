@@ -49,7 +49,24 @@ sub setup_provider
     my $c = shift;
 
     my $config = $c->config->{provider};
-    if (! $config || ref $config ne 'HASH') {
+
+    my $ref = ref $config;
+    if (! $config || ! defined $ref) {
+        Carp::croak("Gungho requires a provider");
+    }
+
+    if ($ref eq 'CODE') {
+        # Smells like an inlined provider
+        my $code = $config;
+        $config = {
+            module => "Inline",
+            config => {
+                callback => $code
+            }
+        }
+    }
+
+    if ( $ref ne 'HASH') {
         Carp::croak("Gungho requires a provider");
     }
 
@@ -86,6 +103,26 @@ sub setup_handler
         module => 'Null',
         config => {}
     };
+    my $ref = ref $config;
+    if (! $config || ! defined $ref) {
+        Carp::croak("Gungho requires a handler");
+    }
+
+    if ($ref eq 'CODE') {
+        # Smells like an inlined handler
+        my $code = $config;
+        $config = {
+            module => "Inline",
+            config => {
+                callback => $code
+            }
+        }
+    }
+
+    if ( $ref ne 'HASH') {
+        Carp::croak("Gungho requires a handler");
+    }
+
     my $pkg = $c->load_gungho_module($config->{module}, 'Handler');
     $pkg->isa('Gungho::Handler') or die "$pkg is not a Gungho::Handler subclass";
     my $obj = $pkg->new( config => $config->{config} || {});

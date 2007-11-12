@@ -61,88 +61,13 @@ sub _setup_old_parameters
     }
 }
 
-package Gungho::Provider::Inline;
-use strict;
-use base qw(Gungho::Provider);
-use Gungho::Request;
-
-__PACKAGE__->mk_accessors($_) for qw(requests callback);
-
-sub new {
-    my $class = shift;
-    my $self = $class->next::method(@_);
-    $self->has_requests(1);
-    $self->requests([]);
-    $self;
-}
-
-sub setup {
-    my $self = shift;
-    my $callback = $self->config->{callback};
-    die "``callback'' not supplied\n" unless ref $callback eq 'CODE';
-    $self->callback($callback);
-    $self->next::method(@_);
-}
-
-sub add_request {
-    my ($self, $req) = @_;
-    push @{$self->requests}, $req;
-    $self->has_requests(1);
-}
-
-sub dispatch {
-    my ($self, $c) = @_;
-    
-    if ($self->callback) {
-        my @args = (&Gungho::Inline::OLD_PARAMETER_LIST ? ($c, $self) : ($self, $c));
-        unless ($self->callback->(@args)) {
-            $self->callback(undef);
-        }
-    }
-    
-    my $reqs = $self->requests;
-    $self->requests([]);
-    while (@$reqs) {
-        $self->dispatch_request($c, shift @$reqs);
-    }
-    
-    if (! $self->callback && @{$self->requests} == 0) {
-        $self->has_requests(0);
-        $c->is_running(0);
-    }
-}
-
-package Gungho::Handler::Inline;
-
-use base qw(Gungho::Handler);
-use Gungho::Request;
-
-__PACKAGE__->mk_accessors($_) for qw(callback);
-
-
-sub setup {
-    my $self = shift;
-    my $callback = $self->config->{callback};
-    die "``callback'' not supplied\n" unless ref $callback eq 'CODE';
-    $self->callback($callback);
-    $self->next::method(@_);
-}
-
-sub handle_response {
-    my ($self, $c, $req, $res) = @_;
-    
-    my @args = (&Gungho::Inline::OLD_PARAMETER_LIST ? ($req, $res, $c, $self) : ($self, $c, $req, $res));
-    $self->callback->(@args);
-}
-
 1;
-
 
 __END__
 
 =head1 NAME
 
-Gungho::Inline - Inline Your Providers And Handlers
+Gungho::Inline - Inline Your Providers And Handlers (Deprecated)
 
 =head1 SYNOPSIS
 
@@ -173,6 +98,12 @@ Gungho::Inline - Inline Your Providers And Handlers
 Sometimes you don't need the full power of an independent Gungho Provider
 and or Handler. In those cases, Gungho::Inline saves you from creating 
 separate packages
+
+This module is a thin wrapper around Gungho that allows you to specify
+subroutine references instead of a full config.
+
+As of Gungho 0.09003, inlined handlers and providers are supported natively.
+The only reason to use this module is for you to use the old parameter list.
 
 This module is still experimental. Feedback welcome
 
