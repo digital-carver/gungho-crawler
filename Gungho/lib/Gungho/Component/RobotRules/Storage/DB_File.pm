@@ -16,7 +16,12 @@ sub setup
     $config->{filename} ||= File::Spec->catfile(File::Spec->tmpdir, 'robots.db');
 
     my %o;
-    $self->storage( tie %o, 'DB_File', $config->{filename} );
+    my $dbm = tie %o, 'DB_File', $config->{filename};
+    if (! $dbm) {
+        die "Failed to tie $config->{filename} to hash: $!";
+    }
+
+    $self->storage( $dbm );
     $self->next::method(@_);
 }
 
