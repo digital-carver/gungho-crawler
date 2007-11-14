@@ -6,6 +6,7 @@
 package Gungho::Component::Core;
 use strict;
 use warnings;
+use base qw(Gungho::Component);
 use Carp ();
 use Config::Any;
 use Class::Inspector;
