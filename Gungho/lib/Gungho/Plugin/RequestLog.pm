@@ -37,10 +37,8 @@ sub setup
     $log->setup($c);
     $self->log($log);
 
-    $c->register_hook(
-        'engine.send_request'    => sub { $self->log_request(@_) },
-        'engine.handle_response' => sub { $self->log_response(@_) },
-    );
+    $c->register_event('engine.send_request' => sub { $self->log_request(@_) } );
+    $c->register_event('engine.handle_response' => sub { $self->log_response(@_) } );
 }
 
 sub log_request
