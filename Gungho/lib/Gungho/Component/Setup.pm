@@ -16,7 +16,7 @@ my %CONFIGURABLE_PARAM_DEFAULTS = (
 );
 
 __PACKAGE__->mk_classdata($_) for (
-    qw(log provider handler engine is_running hooks features),
+    qw(log provider handler engine is_running hooks features observer),
     @INTERNAL_PARAMS,
     @CONFIGURABLE_PARAMS,
 );
@@ -35,7 +35,7 @@ sub run
     $c->bootstrap(@_);
     $c->is_running(1);
 
-    my $banner = sprintf(<<EOBANNER, $Gungho::VERSION, join(', ', map { my $name = $_; $name =~ s/Gungho::Component:://; $name } @Gungho::ISA ) );
+    my $banner = sprintf(<<EOBANNER, eval('$Gungho' . '::VERSION'), join(', ', map { my $name = $_; $name =~ s/Gungho::Component:://; $name } @Gungho::ISA ) );
 Starting $c 
 Gungho Version: %s
 Components: %s
@@ -61,7 +61,10 @@ sub bootstrap
         $c->$key( $config->{$key} || $CONFIGURABLE_PARAM_DEFAULTS{$key} );
     }
 
-    $c->user_agent("Gungho/$Gungho::VERSION (http://code.google.com/p/gungho-crawler/wiki/Index)") unless $config->{user_agent};
+    if (! $config->{user_agent}) {
+        warn "No user agent specified. You should specify one today!";
+        $c->user_agent( "Gungho/$Gungho::VERSION (http://code.google.com/p/gungho-crawler/wiki/Index)");
+    }
     $c->hooks({});
     $c->features({});
 
@@ -115,7 +118,7 @@ Gungho::Component::Setup - Routines To Setup Gungho
 
 =head2 new
 
-Only here to annoce its deprecation. Don't use. Use run()
+Only here to announce its deprecation. Don't use. Use run()
 
 =head2 bootstrap
 
