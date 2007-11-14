@@ -19,6 +19,7 @@ my %dns_params = (
 
 Gungho::Inline->run(
     {
+        user_agent => "Install Test For Gungho $Gungho::VERSION",
         engine => {
             module => q(POE),
             config => {

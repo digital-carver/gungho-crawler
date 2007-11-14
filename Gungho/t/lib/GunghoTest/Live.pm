@@ -9,6 +9,7 @@ sub run
     my $class  = shift;
     my $config = shift;
 
+    $config->{user_agent} ||= "Install Test For Gungho $Gungho::VERSION";
     Gungho::Inline->run(
         $config,
         {

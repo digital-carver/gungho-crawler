@@ -5,7 +5,9 @@ use GunghoTest;
 
 BEGIN
 {
-    if (! GunghoTest::assert_engine()) {
+    if (! $ENV{GUNGHO_TEST_LIVE}) {
+        plan skip_all => "Enable GUNGHO_TEST_LIVE to run these tests";
+    } elsif (! GunghoTest::assert_engine()) {
         plan(skip_all => "No engine available");
     } else {
         eval "use IO::Scalar";

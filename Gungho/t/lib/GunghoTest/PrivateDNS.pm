@@ -13,6 +13,7 @@ sub run
 
     Gungho::Inline->run(
         {
+            user_agent => "Install Test For Gungho $Gungho::VERSION",
             engine => {
                 module => $engine,
             },

@@ -28,6 +28,7 @@ BEGIN
 }
 
 Gungho->bootstrap({ 
+    user_agent => "Install Test For Gungho $Gungho::VERSION",
     components => [
         'RobotRules'
     ],
