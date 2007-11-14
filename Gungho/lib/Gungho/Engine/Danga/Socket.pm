@@ -132,7 +132,7 @@ sub start_request
             }
             my $c = $ds->{context}{context};
 
-            $c->run_hook('engine.send_request', { request => $req });
+            $c->notify('engine.send_request', { request => $req });
             my $req_str = $req->format();
             if ($ds->write($req_str)) {
                 $ds->watch_write(0);

@@ -9,6 +9,7 @@ use warnings;
 use Carp ();
 use Config::Any;
 use Class::Inspector;
+use Event::Notify;
 use UNIVERSAL::isa;
 use UNIVERSAL::require;
 use HTTP::Status qw(status_message);
@@ -18,10 +19,13 @@ use Gungho::Request;
 use Gungho::Response;
 use Gungho::Util;
 
+__PACKAGE__->mk_classdata('notify_hub');
+
 sub setup
 {
     my $c = shift;
 
+    $c->notify_hub( Event::Notify->new );
     $c->setup_log();
     $c->setup_provider();
     $c->setup_handler();
@@ -138,31 +142,6 @@ sub setup_plugins
     }
 }
 
-sub register_hook
-{
-    my $c = shift;
-    my $hooks = $c->hooks;
-    while(@_) {
-        my($name, $hook) = splice(@_, 0, 2);
-        $hooks->{$name} ||= [];
-        push @{ $hooks->{$name} }, $hook;
-    }
-}
-
-sub run_hook
-{
-    my $c = shift;
-    my $name = shift;
-    my $hooks = $c->hooks->{$name} || [];
-    foreach my $hook (@{ $hooks }) {
-        if (ref($hook) eq 'CODE') {
-            $hook->($c, @_);
-        } else {
-            $hook->execute($c, @_);
-        }
-    }
-}
-
 sub has_feature
 {
     my ($c, $name) = @_;
@@ -185,7 +164,7 @@ sub dispatch_requests
     my $c = shift;
     if ($c->is_running) {
         $c->provider->dispatch($c, @_);
-        $c->run_hook('dispatch.dispatch_requests');
+        $c->notify('dispatch.dispatch_requests');
     }
 }
 
@@ -193,7 +172,7 @@ sub prepare_request
 {
     my $c = shift;
     my $req  = shift;
-    $c->run_hook('dispatch.prepare_request', $req);
+    $c->notify('dispatch.prepare_request', $req);
     return $req;
 }
 
@@ -295,6 +274,27 @@ sub _http_error
     return $r;
 }
 
+sub register_event
+{
+    my $c = shift;
+    $c->notify_hub->register_event(@_);
+}
+*register_hook = \&register_event;
+
+sub unregister_event
+{
+    my $c = shift;
+    $c->notify_hub->unregister_event(@_);
+}
+
+sub notify
+{
+    my $c = shift;
+    $c->notify_hub->notify($c, @_);
+}
+*run_hook = \&notify;
+
+
 1;
 
 __END__
@@ -339,11 +339,21 @@ Sets up the various components.
 
 =head2 register_hook($hook_name => $coderef[, $hook_name => $coderef])
 
-Registers a hook to be run under the specified $hook_name
+Is deprecated. Use register_event instead.
 
-=head2 run_hook($hook_name)
+=head2 register_event($event, $observer)
 
-Runs all the hooks under the hook $hook_name
+Registers an observer that gets notified when $event happens. The $observer
+argument can be either an object implementing notify(), or a subroutine
+reference.
+
+=head2 run_hook($hook_name, @args)
+
+Is deprecated. Use notify() instead.
+
+=head2 notify($event, @args)
+
+Notifies observers of an event.
 
 =head2 has_requests
 

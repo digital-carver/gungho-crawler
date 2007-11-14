@@ -10,6 +10,7 @@ requires("Class::C3::Componentised");
 requires("Class::Data::Inheritable");
 requires("Class::Inspector");
 requires("Config::Any");
+requires("Event::Notify", '0.00003');
 requires("Exception::Class");
 requires("FindBin");
 requires("Getopt::Long");

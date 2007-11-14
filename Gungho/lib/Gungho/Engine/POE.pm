@@ -181,7 +181,7 @@ sub _poe_session_loop
     }
     $self->loop_alarm($kernel->alarm_set('session_loop', time() + $delay));
 
-    $c->run_hook('engine.end_loop');
+    $c->notify('engine.end_loop');
 }
 
 sub send_request
@@ -217,7 +217,7 @@ sub _poe_start_request
         return;
     }
 
-    $c->run_hook('engine.send_request', { request => $request });
+    $c->notify('engine.send_request', { request => $request });
 
     if (DEBUG) {
         my $uri = $request->uri->clone;
@@ -277,7 +277,7 @@ sub _poe_handle_response
         }
     }
 
-    $c->run_hook('engine.handle_response', { request => $req, response => $res });
+    $c->notify('engine.handle_response', { request => $req, response => $res });
 
     # Do we support auth challenge ?
     my $code = $c->can('check_authentication_challenge');

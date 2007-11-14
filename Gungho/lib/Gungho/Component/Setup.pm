@@ -16,7 +16,7 @@ my %CONFIGURABLE_PARAM_DEFAULTS = (
 );
 
 __PACKAGE__->mk_classdata($_) for (
-    qw(log provider handler engine is_running hooks features observer),
+    qw(log provider handler engine is_running features observer),
     @INTERNAL_PARAMS,
     @CONFIGURABLE_PARAMS,
 );
@@ -65,7 +65,6 @@ sub bootstrap
         warn "No user agent specified. You should specify one today!";
         $c->user_agent( "Gungho/$Gungho::VERSION (http://code.google.com/p/gungho-crawler/wiki/Index)");
     }
-    $c->hooks({});
     $c->features({});
 
     my $components = $c->config->{components} || [];
