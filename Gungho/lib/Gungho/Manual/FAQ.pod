@@ -71,6 +71,10 @@ problem by spawning multiple sessions of POE::Component::Client::HTTP.
 If you believe this is the cause of the problem, try setting the 
 engine.config.spawn to a higher value (the default is 2)
 
+Do note, however, that excessive enqueueing of requests is going to e a
+problem regardless. You should at least keep a mental note of how many requests
+you're sending to the POE queue, and throttle as necessary.
+
 =head2 Considerations When Using A Proxy With Gungho::Engine::POE
 
 Proxies are great, and could be used in crawler applications, but by default
