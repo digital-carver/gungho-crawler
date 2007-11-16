@@ -151,11 +151,13 @@ sub stop
 
 sub _poe_session_shutdown
 {
-    my ($self, $kernel) = @_[OBJECT, KERNEL];
+    my ($self, $kernel, $heap) = @_[OBJECT, KERNEL, HEAP];
     my $clients = $self->clients;
     foreach my $client (@$clients) {
         $kernel->post($client, 'shutdown');
     }
+    my $c = $heap->{CONTEXT};
+    $c->is_running(0);
 }
 
 sub _poe_session_start
