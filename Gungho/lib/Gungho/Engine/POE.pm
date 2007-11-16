@@ -135,12 +135,27 @@ sub run
                 _start => '_poe_session_start',
                 _stop  => '_poe_session_stop',
                 map { ($_ => "_poe_$_") }
-                    qw(session_loop start_request handle_response got_dns_response)
+                    qw(session_loop start_request handle_response got_dns_response shutdown)
             }
         ]
     );
     
     POE::Kernel->run();
+}
+
+sub stop
+{
+    my ($self, $c) = @_;
+    POE::Kernel->post($self->alias, 'shutdown');
+}
+
+sub _poe_session_shutdown
+{
+    my ($self, $kernel) = @_[OBJECT, KERNEL];
+    my $clients = $self->clients;
+    foreach my $client (@$clients) {
+        $kernel->post($client, 'shutdown');
+    }
 }
 
 sub _poe_session_start
