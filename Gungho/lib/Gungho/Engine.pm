@@ -10,6 +10,8 @@ use base qw(Gungho::Base);
 
 sub run {}
 
+sub stop {}
+
 sub handle_dns_response
 {
     my ($self, $c, $request, $dns_response) = @_;
@@ -51,12 +53,12 @@ Gungho::Engine - Base Class For Gungho Engine
 
 Handles the response from DNS lookups.
 
-=head2 block_private_ip_address()
-
-Checks if the given DNS response contains a private IP address to be blocked
-
 =head2 run()
 
-Starts the engine. The exact behavior differs between each engine
+Starts the engine. The exact behavior differs between each engines
+
+=head2 stop()
+
+Stops the engine.  The exact behavior differs between each engines
 
 =cut
