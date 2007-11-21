@@ -149,7 +149,7 @@ sub stop
     POE::Kernel->post($self->alias, 'shutdown');
 }
 
-sub _poe_session_shutdown
+sub _poe_shutdown
 {
     my ($self, $kernel, $heap) = @_[OBJECT, KERNEL, HEAP];
     my $clients = $self->clients;
@@ -205,6 +205,7 @@ sub send_request
 {
     my ($self, $c, $request) = @_;
     POE::Kernel->post($self->alias, 'start_request', $request);
+    return 1;
 }
 
 sub _poe_start_request
