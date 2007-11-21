@@ -4,8 +4,18 @@ Changes
 All changes by Daisuke Maki unless otherwise noted.
 
 0.09005
+  [General]
+  - Migrate hooks to Event::Notify
+  - Add a TODO.pod
+
+  [POE]
+  - Implement a shutdown
+
   [Throttle]
   - Changed send_request() to return 1 on success, 0 otherwise.
+
+  [RobotRules]
+  - DB_File storage now dies if the call to tie() fails
 
 0.09004 Mon Nov 12 2007 [rev 276]
   [General]
