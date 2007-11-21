@@ -23,8 +23,9 @@ sub send_request
     if (! $request->notes('original_host') && ! $c->throttle($request)) {
         $c->log->debug("Request " . $request->url . " (" . $request->id . ") was throttled");
         $c->provider->pushback_request($c, $request);
+        return 0;
     } else {
-        $c->next::method($request);
+        return $c->next::method($request);
     }
 }
 

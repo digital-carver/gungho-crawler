@@ -3,6 +3,10 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09005
+  [Throttle]
+  - Changed send_request() to return 1 on success, 0 otherwise.
+
 0.09004 Mon Nov 12 2007 [rev 276]
   [General]
   - Fix bug in detecting provider/handler

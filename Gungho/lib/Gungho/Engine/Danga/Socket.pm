@@ -70,6 +70,7 @@ sub send_request
         }
         $self->start_request($c, $req);
     }
+    return 1;
 }
 
 sub lookup_name

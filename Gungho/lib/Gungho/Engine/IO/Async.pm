@@ -71,6 +71,7 @@ sub send_request
         }
         $self->start_request($c, $request);
     }
+    return 1;
 }
 
 sub handle_response

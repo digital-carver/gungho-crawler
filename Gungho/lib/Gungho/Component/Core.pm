@@ -199,7 +199,7 @@ sub send_request
     my $c = shift;
     my $request = shift;
     $request = $c->prepare_request($request);
-    $c->engine->send_request($c, $request);
+    return $c->engine->send_request($c, $request);
 }
 
 sub pushback_request
