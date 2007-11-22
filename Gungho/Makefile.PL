@@ -31,6 +31,7 @@ recommends('Digest::MD5');
 build_requires('YAML');
 build_requires('DirHandle');
 build_requires('File::Spec');
+build_requires('Test::More');
 
 # Hey, stolen right off of Plagger
 eval {
