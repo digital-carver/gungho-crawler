@@ -28,6 +28,7 @@ requires("UNIVERSAL::require");
 
 recommends('Digest::MD5');
 
+build_requires('Test::More');
 build_requires('YAML');
 build_requires('DirHandle');
 build_requires('File::Spec');
