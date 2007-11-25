@@ -12,6 +12,19 @@ sub run {}
 
 sub stop {}
 
+sub finish_request {}
+
+sub handle_response
+{
+    my ($self, $c, $request, $response) = @_;
+    if (my $host = $req->notes('original_host')) {
+        # Put it back
+        $req->uri->host($host);
+    }
+    $self->finish_request($request);
+    $c->handle_response($request, $response);
+}
+
 sub handle_dns_response
 {
     my ($self, $c, $request, $dns_response) = @_;
