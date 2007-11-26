@@ -43,7 +43,7 @@ sub setup
 
 sub log_request
 {
-    my ($self, $c, $data) = @_;
+    my ($self, $event, $c, $data) = @_;
 
     # Only log this if we've been asked to do soA
     my $request = $data->{request};
@@ -55,7 +55,7 @@ sub log_request
 
 sub log_response
 {
-    my ($self, $c, $data) = @_;
+    my ($self, $event, $c, $data) = @_;
 
     my( $request, $response ) = ($data->{request}, $data->{response});
     my $time = time();
