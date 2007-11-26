@@ -91,6 +91,21 @@ Gungho::Log::Dispatch - Log::Dispatch-Based Log For Gungho
 
 =head1 SYNOPSIS
 
+  # in your Gungho config
+  log:
+    module: Dispatch
+    config:
+      logs:
+        - module: Screen
+          min_level: debug
+          name: stderr
+          stderr: 1
+        - module: File
+          min_level: info
+          filename: /path/tofilename
+          mode: append
+
+  # ... or somewhere in your code ..
   use Gungho::Log::Dispatch;
 
   my $log = Gungho::Log::Dispatch->new();
@@ -113,6 +128,30 @@ Gungho::Log::Dispatch - Log::Dispatch-Based Log For Gungho
 
 This is the main log class for Gungho. It gives you the full power of
 Log::Dispatch for your needs.
+
+To use, specify something like this in your config:
+
+  log:
+    module: Dispatch
+    config:
+      logs:
+        - module: File
+          min_level: info
+          filename: /path/to/filename
+          name: logfile
+
+Each entry in the C<logs> section specifies one Log::Dispatch type. The
+C<module> parameter is taken as the Log::Dispatch subclass name, and it will
+be prefixed with the string "Log::Dispatch::". All other parameters are
+passed directly to the constructor.
+
+You may specify multiple logs to be added to the Log::Dispatch object.
+See the documentation for Log::Dispatch for details.
+
+To log, access the log object from $c:
+
+  $c->log->debug("This is a debug message");
+  $c->log->emergency("This is an emergency message");
 
 =head1 CAVEATS
 
