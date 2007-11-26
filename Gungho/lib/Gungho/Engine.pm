@@ -17,9 +17,9 @@ sub finish_request {}
 sub handle_response
 {
     my ($self, $c, $request, $response) = @_;
-    if (my $host = $req->notes('original_host')) {
+    if (my $host = $request->notes('original_host')) {
         # Put it back
-        $req->uri->host($host);
+        $request->uri->host($host);
     }
     $self->finish_request($request);
     $c->handle_response($request, $response);
