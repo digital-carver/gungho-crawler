@@ -3,19 +3,30 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.09005
+0.09005_01 Mon Nov 26 2007 [rev 328]
   [General]
-  - Migrate hooks to Event::Notify
+  - Migrate hooks to Event::Notify. This breaks the input parameter list.
+    Now you receive the event name as the first argument
   - Add a TODO.pod
 
-  [POE]
-  - Implement a shutdown
+  [Engine::POE]
+  - Implement a shutdown state.
+  - Make it callable from stop()
+
+  [Engine]
+  - Refactor handle_response to Engine.pm
 
   [Throttle]
   - Changed send_request() to return 1 on success, 0 otherwise.
 
   [RobotRules]
   - DB_File storage now dies if the call to tie() fails
+
+  [Log::Dispatch]
+  - Clarify in document that log config should be specified with "config"
+    key.
+  − Backport changes from ja docs
+
 
 0.09004 Mon Nov 12 2007 [rev 276]
   [General]
