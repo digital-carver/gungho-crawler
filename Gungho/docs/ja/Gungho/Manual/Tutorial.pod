@@ -9,6 +9,10 @@ Gungho::Manual::Tutorial - Gunghoチュートリアル
 というのはなかなか難しいのですが、ここでは以下の環境があると仮定して
 Gunghoでクローラーを実装するまでを追って行きたいと思います。
 
+なお、ただ単純にリスト等からページを取得するだけでしたらexamples/ ディレクトリ
+内のsimple等の例をお手本とすれば良いでしょう。こちらではもう少し手間は
+かかりますが、実際にクローラーを作成する時に近い形での例を示します。
+
 まずこれから取得したいURLのデータベースが存在すると仮定します。今回のクローラー
 では、このデータベースに存在する全てのURLを一回ずつ取得し、その結果得られる
 HTMLページからリンクを抜き出し、さらに他のデータベースに格納する、というところ
@@ -120,5 +124,81 @@ C<has_requests()>フラグですでにリクエスト済みかどうかテスト
 C<dispatch()>はエンジンモジュールにより定期的に呼ばれますので、一切にURLを
 リクエストするのではなく、少しずつリクエストしたい場合はこのメソッドの中で
 コントロールしてください。
+
+=head2 Handler
+
+=head2 設定ファイル
+
+ようやくProviderとHandlerができました。今度このProviderとHandlerを使用して
+gunghoを走らせるために設定ファイルを作成します。Gunghoではほとんどの設定を
+YAML等の設定ファイルから行えるように設計されています。
+
+まずはUserAgentを設定します。この値は必ずつけるようにしてください。
+
+  user_agent: 'SimpleCrawler Demo 0.01'
+
+次にProviderとHandlerの設定を行います。今回は特に設定が必要な形には
+しませんでしたので、どのモジュールを使うのかだけ指定します：
+
+  provider:
+    module: '+SimpleCrawler::Provider'
+  handler:
+    module: '+SimpleCrawler::Handler'
+
+C<provider>とC<handler>それぞれでC<module>項目を指定します。この際モジュール名の先頭に'+'をつけるのを忘れないでください。'+'をつけないとC<Gungho::Provider>等の
+文字列が先頭に追加され評価されますのでご注意ください。
+
+さらにエンジンを指定します。エンジンはPOEエンジンを使います。POEエンジンは
+様々なオプションが存在しますので細やかな設定が可能なのですが、今回はデフォルト
+設定で運用しますのでモジュール名のみ指定します。
+
+  engine:
+    module: POE
+
+あとはログモジュールを指定します。今回はdata/crawler.logというファイルと、
+標準エラーにwarning以上のログを送るようにします。
+
+  log:
+    module: Dispatch
+    config:
+      logs:
+        - module: Screen
+          min_level: warning
+          name: stderr
+          stderr: 1
+        - module: File
+          min_level: warning
+          name: logfile
+          filename: data/crawler.log
+
+基本設定はここまでで、これだけでもGunghoは稼働しますがそれだけでは行儀の良い
+クローラーは作れませんので、Gunghoにデフォルトでついてくるコンポーネントを
+読み込みます。
+
+  components:
+    - RobotRules
+    - RobotsMETA
+    - Throttle::Simple
+    - BlockPrivateIP
+
+これらのコンポーネントは一般的なクローラーが必要とする主な機能のうちの
+数個です。RobotRulesはrobots.txtを適用し、リクエストが取得できるかどうかを
+調節します。 RobotsMETAはページ内のMETAタグ内のディレクティブを解析します。
+Throttle::Simpleは最大リクエスト数の絞り込み（スロットリング）を行い、
+BlockPrivateIPはプライベートアドレスに解決されるURLへの接続を拒否するように
+します。
+
+これらを書いた設定ファイルをdata/crawler.ymlに保存します。
+
+=head2 実行
+
+いよいよ実行です。
+
+  env PERL5LIB=lib gungho -c data/crawler.yml
+
+今回はlibディレクトリーにいくつかのモジュールを置いてあるのでPERL5LIBを
+設定してgunghoスクリプトを実行します。全てうまくいっていればこれでもう
+クローラーが動き始めるはずです！
+
 
 =cut
