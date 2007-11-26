@@ -56,6 +56,14 @@ directies embedded in the document.
 
 =head2 setup
 
+Initializes the component.
+
 =head2 handle_response
+
+Overrides Gungho::Component::Core::handle_response()
+
+=head1 SEE ALSO 
+
+L<HTML::RobotsMETA|HTML::RobotsMETA>
 
 =cut

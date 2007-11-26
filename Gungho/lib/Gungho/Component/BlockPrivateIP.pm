@@ -111,4 +111,8 @@ error HTTP Response/
 
 Given an address, returns true if the address looks like a private IP
 
+=head1 SEE ALSO
+
+L<Regexp::Common|Regexp::Common>
+
 =cut
