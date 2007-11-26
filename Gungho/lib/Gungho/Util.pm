@@ -38,8 +38,10 @@ Gungho::Util - Gungho General Utilities
 
 =head1 METHODS
 
-=head2 load_module
+=head2 load_module($module, $prefix)
 
-Loads a module
+Loads a module. If the module name starts with a '+', then the module name
+is taken as-is without the '+'. Otherwise, the module name is prefixed with
+the second argument $prefix
 
 =cut
