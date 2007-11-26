@@ -4,6 +4,9 @@ Gungho - 高性能クローラーフレームワーク
 
 =head1 SYNOPSIS
 
+  use Gungho;
+  Gungho->run(\%config);
+
 =head1 DESCRIPTION
 
 =head2 Gunghoとは
