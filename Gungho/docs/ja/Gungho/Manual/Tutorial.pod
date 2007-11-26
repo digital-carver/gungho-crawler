@@ -97,11 +97,11 @@ lib/SimpleCrawler/Provider.pmをエディタで開いてください。
   {
     my ($self, $c) = @_;
 
-    $self->next::method($c);
-
     if (! $self->has_requests) {
       return;
     }
+
+    $self->next::method($c);
 
     my $dbh = $self->dbh;
     my $sth = $dbh->prepare("SELECT url FROM urls");
@@ -126,6 +126,77 @@ C<dispatch()>はエンジンモジュールにより定期的に呼ばれます�
 コントロールしてください。
 
 =head2 Handler
+
+Handlerは取得されてきたレスポンスを処理する場所です。URLが取得されてくる
+度にHandler内で定義されているC<handle_response()>メソッドが呼び出されます。
+
+  package SimpleCrawler::Handler;
+  use strict;
+  use warnings;
+  use base qw(Gungho::Handler);
+  use HTML::LinkExtor;
+
+今回のHandlerは返ってきたレスポンス内のHTMLを解析し、リンクを抜き出します。
+HTML::LinkExtorはそのために先に読み込んでおきます。
+
+C<handle_response()>はまず返ってきたレスポンスが正常かどうか、また
+Content-Typeはtext/htmlかどうかを確認します
+
+  sub handle_response
+  {
+    my($self, $c, $request, $response) = @_;
+
+    return unless $response->is_success;
+    return unless $response->content_type eq 'text/html';
+
+次に折角なのでレスポンスの返ってきた時間を記録します。
+
+    my $dbh = DBI->connect(
+      'dbi:SQLite:dbname=data/crawler.db',
+      undef,
+      undef,
+      { RaiseError => 1, AutoCommit => 1 }
+    );
+
+    my $sth;
+    $sth = $dbh->prepare_cached("UPDATE urls SET fetched_on = ?");
+    eval {
+      $sth->execute( time() );
+    };
+    if ($@) {
+      print $@, "\n";
+    }
+
+ここからリンクの取得をします。HTML::LinkExtorはコードリファレンスをほしがる
+のでそれを用意し、パースします。
+
+    my @links;
+    my $code = sub {
+      my($tag, %attrs) = @_;
+      return unless $tag eq 'a';
+
+      push @links, $attrs{href};
+    };
+
+    my $p = HTML::LinkExtor->new($code);
+    $p->parse( $response->content );
+    $p->eof;
+
+そうして最後に今抜き出してきたリンクをデータベースに挿入します。
+
+    my $sth = $dbh->prepare("INSERT INTO urls (url) VALUES (?)");
+    foreach my $link (@links) {
+      eval {
+        $sth->execute($link);
+      };
+      if ($@) {
+        print $@, "\n";
+      }
+    }
+  }
+
+本来ならもっとエラー処理を行ったり、 リンクを解決して無効なリンク等がないかを
+確認したりする必要がありますが、今回はこちらは割愛しました。
 
 =head2 設定ファイル
 
@@ -199,6 +270,5 @@ BlockPrivateIPはプライベートアドレスに解決されるURLへの接続
 今回はlibディレクトリーにいくつかのモジュールを置いてあるのでPERL5LIBを
 設定してgunghoスクリプトを実行します。全てうまくいっていればこれでもう
 クローラーが動き始めるはずです！
-
 
 =cut
