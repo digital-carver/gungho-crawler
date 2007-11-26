@@ -44,6 +44,22 @@ EngineはPOE等、イベントベースの非同期エンジンを介してHTTP�
 このようにGunghoの中のコンポーネント同士は必ずこのメディエーターを通して
 連絡を取り合います。
 
-=head1 
+=head1 Gunghoの拡張
+
+Gunghoの拡張はPluginとComponentを追加する事によって実現します。
+
+現在PluginとComponentは混在していますが
+
+=over 4
+
+=item Component
+
+ComponentはGunghoの実行内容そのものを変更するものです。
+
+=item Plugin
+
+Pluginは
+
+=cut
 
 
