@@ -298,24 +298,6 @@ You can obtain the current code base from
 
   http://gungho-crawler.googlecode.com/svn/trunk
 
-=head1 TODO
-
-=head2 1. Thorough re-evaluation of the internal API
-
-Names like send_request(), handle_response() are fine, but those are names
-that I tacked on to the code just because I could.
-
-To allow a more flexible interface for component/plugin writers, we really
-need to make the namings more uniform.
-
-Still open to ideas. I haven't made up my mind yet.
-
-# This needs to be done before we can call ourselves *really* production ready
-
-=head2 2. Add manuals
-
-Volunteers welcome!
-
 =head1 AUTHOR
 
 Copyright (c) 2007 Daisuke Maki E<lt>daisuke@endeworks.jpE<gt>
