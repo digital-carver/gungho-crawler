@@ -1,0 +1,254 @@
+=head1 NAME
+
+Gungho - 高性能Webクローラーフレームワーク
+
+=head1 SYNOPSIS
+
+  use Gungho;
+  Gungho->run($config);
+
+=head1 DESCRIPTION
+
+Gunghoは高性能Webクローラーフレームワークです。高速なHTTP処理を行いつつ、
+機能拡張をしやすいようフレキシブルな構造を目指して開発されています。
+
+現在Gunghoはβ版です。機能的／仕様的にも比較的安定しつつありますが、まだ
+内部的なAPI等は大幅な変更が加わる可能性がありますのでご注意ください。
+
+Gunghoをインストールすると自動的に以下の機能が使えるようになります：
+
+=over 4
+
+=item イベント型非同期エンジン
+
+GunghoはPOE、Danga::Socket、IO::Async等をベースにした非同期エンジンを使い
+クロールを行います。あなたのニーズにあったエンジンを選んでください。
+
+=item 非同期DNS解決
+
+HTTP通信は非同期で行われるならもちろんDNS通信も非同期で行えます。
+GunghoはDNS解決をしている間もブロックせずに他の処理を進められます。
+
+=item 自動robots.txt処理
+
+全てのクローラーはrobots.txtを正しく処理し、禁止されているURLにはアクセス
+しないようにするべきです。Gunghoはこのrobots.txt処理という比較的面倒な
+処理を自動的に行います。memcachedとともに使用すれば分散環境でも使用可能です。
+
+=item メタタグ内のロボットディレクティブ処理
+
+ロボットディレクティブはHTMLのMETAタグ内に埋め込まれたロボット用の制御構文
+です。Gunghoではこのディレクティブを自動的にパースし、ユーザーが扱えるように
+します。
+
+=item スロットリング
+
+クロール対象となっているサイトに過度の負荷をかけてサイトを落としては元も子も
+ありません。スロットリングモジュールを使う事によってGunghoではリクエスト数を
+絞り込む事が可能です。
+
+=item 内部向けIP禁止
+
+クロールしているサイトのDNSの設定が間違っていたり、意図的にそのようなURLを
+埋め込んであった場合リクエストが自分の内部ネットワークのIPアドレスに向いてしまい
+DoSを引き起こす可能性があります。このセキュリティリスクをGunghoを監視します。
+
+=item キャッシュ
+
+Catalystキャッシュのようなキャッシュを使いたい場合はCacheコンポーネントを
+使用するだけでプログラム内からキャッシュを扱えるようになります。
+
+=item Web::Scraperサポート
+
+Web::ScraperをGungho内から簡単に扱えるようにしています
+(この機能は現在まだ安定稼働していません）
+
+=item リクエストログ
+
+RequestLogプラグインを使用することによって自動的に取得されていくURLを
+ログして行く事ができます。
+
+=back
+
+=head1 歴史
+
+First there were a bunch of scripts that used scrape a bunch of RSS feeds.
+Then I got tired of writing scripts, so I decided a framework is the way to
+go, and Xango was born.
+
+Xango was my first attempt at trying to harness the full power of event-based
+framework. It was fast. It wasn't fun to extend. It had a nightmare-ish
+way to deal with robots.txt. 
+
+Couple of more attempts later, more inspirations and lessons learned from
+Catalyst, Plagger, DBIx::Class, Gungho was born. 
+
+Since its inception, Gungho has been in successfully used as crawlers that
+fetch hundreds of thousands of urls to a few million urls per day. 
+
+=head1 PLEASE READ BEFORE USE
+
+Gungho is designed to so that it can handle massive amount of traffic.
+If you're careful enough with your Provider and Handler implementation, you
+can in fact hit millions of URL with this crawler.
+
+So PLEASE DO NOT LET IT LOOSE. DO NOT OVERLOAD your crawl targets.
+You are STRONGLY advised to use Gungho::Component::Throttle to throttle your 
+fetches. 
+
+Also PLEASE CHANGE THE USER AGENT NAME OF YOUR CRAWLER. If you hit your targets
+hard with the default name (Gungho/VERSION X.XXXX), it will look as though a
+service called Gungho is hitting their site, which really isn't the case.
+Whatever it is, please specify at least a simple user agent in your config
+
+=head1 STRUCTURE
+
+Gungho is comprised of three parts. A Provider, which provides Gungho with
+requests to process, a Handler, which handles the fetched page, and an
+Engine, which controls the entire process.
+
+There are also "hooks". These hooks can be registered from anywhere by
+invoking the register_hook() method. They are run at particular points,
+which are specified when you call register_hook().
+
+All components (engine, provider, handler) are overridable and switcheable.
+However, do note that if you plan on customizing stuff, you should be aware
+that Gungho uses Class::C3 extensively, and hence you may see warnings about
+the code you use.
+
+=head1 Gunghoの間違った使い方
+
+Gunghoは膨大な数のURLを恒常的に取得するために設計されています。もし
+GunghoをひとつのURL、もしくはひとつのホストに対して扱うのであれば注意を
+要します。
+
+上記のような環境でGunghoを動かす場合は十分なパフォーマンスが出せない可能性が
+高く、ひょっとするとLWP::UserAgentのようなモジュールを使ったほうが良いかも
+しれません。
+
+もちろんLWP::UserAgentには存在しないGunghoの機能を使用するためにGunghoを
+使うのもよいかも知れませんが、チューニングが必要であることを認識していて
+ください
+
+=head1 GLOBAL CONFIGURATION OPTIONS
+
+=over 4
+
+=item debug
+
+   ---
+   debug: 1
+
+Setting debug to a non-zero value will trigger debug messages to be displayed.
+
+=back
+
+=head1 COMPONENTS
+
+Components add new functionality to Gungho. Components are loaded at
+startup time from the config file / hash given to Gungho constructor.
+
+  Gungho->run({
+    components => [
+      'Throttle::Simple'
+    ],
+    throttle => {
+      max_interval => ...,
+    }
+  });
+
+Components modify Gungho's inheritance structure at run time to add
+extra functionality to Gungho, and therefore should only be loaded
+before starting the engine.
+
+Please refer to each component's document for details
+
+=over 4
+
+=item Gungho::Component::Authentication::Basic
+
+=item Gungho::Component::BlockPrivateIP
+
+=item Gungho::Component::Cache
+
+=item Gungho::Component::RobotRules
+
+=item Gungho::Component::RobotsMETA
+
+=item Gungho::Component::Scraper
+
+=item Gungho::Component::Throttle::Domain
+
+=item Gungho::Component::Throttle::Simple
+
+=back
+
+=head1 INLINE
+
+If you're looking into simple crawlers, you may want to look at Gungho::Inline,
+
+  Gungho::Inline->run({
+    provider => sub { ... },
+    handler  => sub { ... }
+  });
+
+See the manual for Gungho::Inline for details.
+
+=head1 PLUGINS
+
+Plugins are different from components in that, whereas components require the
+developer to explicitly call the methods, plugins are loaded and are not
+touched afterwards.
+
+Please refer to the documentation of each plugin for details.
+
+=over 4
+
+=item RequestLog
+
+=item Statistics
+
+=back
+
+=head1 HOOKS
+
+Currently available hooks are:
+
+=head2 engine.send_request
+
+=head2 engine.handle_response
+
+=head1 METHODS
+
+=head2 component_base_class
+
+Used for Class::C3::Componentised
+
+=head1 CODE
+
+コードはGoogle Codeで管理されています。レポジトリは以下URLに保管されています
+
+  http://gungho-crawler.googlecode.com/svn/trunk
+
+=head1 AUTHOR
+
+Copyright (c) 2007 Daisuke Maki E<lt>daisuke@endeworks.jpE<gt>
+
+=head1 CONTRIBUTORS
+
+=over 4
+
+=item Kazuho Oku
+
+=item Keiichi Okabe
+
+=back
+
+=head1 LICENSE
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See http://www.perl.com/perl/misc/Artistic.html
+
+=cut
