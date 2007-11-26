@@ -12,16 +12,19 @@ sub run {}
 
 sub stop {}
 
-sub finish_request {}
-
-sub handle_response
+sub finish_request
 {
-    my ($self, $c, $request, $response) = @_;
+    my ($self, $c, $request) = @_;
     if (my $host = $request->notes('original_host')) {
         # Put it back
         $request->uri->host($host);
     }
-    $self->finish_request($request);
+}
+
+sub handle_response
+{
+    my ($self, $c, $request, $response) = @_;
+    $self->finish_request($c, $request);
     $c->handle_response($request, $response);
 }
 
@@ -65,6 +68,15 @@ Gungho::Engine - Base Class For Gungho Engine
 =head2 handle_dns_response()
 
 Handles the response from DNS lookups.
+
+=head2 handle_response
+
+Call finish_request() on the request, and delegates to Gungho's
+hnalde_response()
+
+=head2 finish_request
+
+Perform whatever cleanup required on the request
 
 =head2 run()
 
