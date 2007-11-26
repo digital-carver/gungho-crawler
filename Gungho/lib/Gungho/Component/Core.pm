@@ -290,8 +290,8 @@ sub unregister_event
 
 sub notify
 {
-    my $c = shift;
-    $c->notify_hub->notify($c, @_);
+    my ($c, $event, @args) = @_;
+    $c->notify_hub->notify($event, $c, @args);
 }
 *run_hook = \&notify;
 
@@ -347,6 +347,10 @@ Is deprecated. Use register_event instead.
 Registers an observer that gets notified when $event happens. The $observer
 argument can be either an object implementing notify(), or a subroutine
 reference.
+
+=head2 unregister_event($event, $observer)
+
+Unregisters an observer from the specified event
 
 =head2 run_hook($hook_name, @args)
 
