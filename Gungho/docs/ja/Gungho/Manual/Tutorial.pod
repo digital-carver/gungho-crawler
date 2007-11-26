@@ -1,0 +1,124 @@
+
+=head1 NAME
+
+Gungho::Manual::Tutorial - Gunghoチュートリアル
+
+=head1 初めてのGungho
+
+クローラーというのは実際に様々な因子が関係するので簡単なクローラーを作る、
+というのはなかなか難しいのですが、ここでは以下の環境があると仮定して
+Gunghoでクローラーを実装するまでを追って行きたいと思います。
+
+まずこれから取得したいURLのデータベースが存在すると仮定します。今回のクローラー
+では、このデータベースに存在する全てのURLを一回ずつ取得し、その結果得られる
+HTMLページからリンクを抜き出し、さらに他のデータベースに格納する、というところ
+までを作ります。
+
+=head2 必要なもの
+
+  Gungho 0.09005
+  sqlite 3
+  DBI
+
+=head2 はじめに
+
+まずはGunghoの基本を理解するためにGungho::Manual::Basicsを読んでください。
+
+それが終わったらまず作業用のディレクトリを作成します。とりいそぎSimpleCrawler
+という名前で作業をすることにします。以下のディレクトリを作成してください：
+
+  SimpleCrawler
+  SimpleCrawler/lib
+  SimpleCrawler/lib/SimpleCrawler
+  SimpleCrawler/data
+
+これから先は全てSimpleCrawlerディレクトリの中から作業するものとします。
+"lib"という表記があったら実際にはSimpleCrawler/libの事を指しています。
+
+=head2 Provider
+
+まずはURLを格納するためのデータベースをsqliteで作成します。
+
+  shell> sqlite3 data/crawler.db   
+  SQLite version 3.4.0
+  Enter ".help" for instructions
+  sqlite> create table urls (url text primary key, fetched_on integer);
+
+これで"url"というカラムと"fetched_on"というカラムが存在するテーブルが
+作られました。
+
+このテーブルに好きなURLを挿入してください。クローラーを向ける先ですので
+なるたけ迷惑のかからなそうなURLを使用してください。ここでは架空の
+simplecrawler.comというサイトを指定してみます。
+
+  sqlite> insert into urls(url) values('http://simplecrawler.com');
+  sqlite> .quit
+
+以上でとりあえずデータベースは完了です。
+
+今度はこのデータベースからURLを取り出すProviderを作成します。
+lib/SimpleCrawler/Provider.pmをエディタで開いてください。
+
+まずは名前空間の定義と、継承の定義を行います。
+
+  package SimpleCrawler::Provider;
+  use strict;
+  use warnings;
+  use base qw(Gungho::Provider::Simple);
+
+次はコンストラクタを作成します。今回は特に設定を変更する予定はありませんので、
+データベースへの接続情報もそのままnew()に書き込んでしまいます。実際には
+このような設定は設定ファイルから読み込むようにすると良いでしょう。
+
+  __PACKAGE__->mk_accessors($_) for qw(dbh);
+
+  sub new
+  {
+    my $class = shift;
+    my $dbh = DBI->connect(
+      'dbi:SQLite:dbname=data/crawler.db',
+      undef,
+      undef,
+      { RaiseError => 1, AutoCommit => 1 }
+    );
+    $class->next::method(dbh => $dbh, has_requests => 1);
+  }
+
+ここではC<mk_accessors()>でdbhというアクセッサーを作成し、C<new()>でそれを
+親クラスのnew()に渡します。
+
+次にエンジンにリクエストを渡すC<dispatch()>メソッドを作成します。
+
+  sub dispatch
+  {
+    my ($self, $c) = @_;
+
+    $self->next::method($c);
+
+    if (! $self->has_requests) {
+      return;
+    }
+
+    my $dbh = $self->dbh;
+    my $sth = $dbh->prepare("SELECT url FROM urls");
+    $sth->execute();
+    my $url;
+    $sth->bind_columns(\$url);
+    while ($sth->fetchrow_arrayref) {
+      my $r = Gungho::Request->new(GET => $url);
+      $c->send_request($r);
+    }
+  }
+
+ここでは１回しかデータベースからの読み込みを行いたくないので、まず
+C<has_requests()>フラグですでにリクエスト済みかどうかテストします。
+
+その後データベースからURLを読み込みます。それぞれのURLに対してC<Gungho::Request>
+を作成し、それをC<send_request()>に投げるとその後でHTTP通信が始まり、取得が
+始まります。
+
+C<dispatch()>はエンジンモジュールにより定期的に呼ばれますので、一切にURLを
+リクエストするのではなく、少しずつリクエストしたい場合はこのメソッドの中で
+コントロールしてください。
+
+=cut
