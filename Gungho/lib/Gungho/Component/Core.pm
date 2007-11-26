@@ -43,7 +43,7 @@ sub setup_log
     my $log_config = { %{$c->config->{log} || { logs => [] }} };
     my $module     = delete $log_config->{module} || 'Simple';
     my $pkg        = $c->load_gungho_module($module, 'Log');
-    my $log        = $pkg->new(config => $log_config);
+    my $log        = $pkg->new(config => $log_config->{config} || $log_config);
 
     $log->setup($c);
     $c->log($log);
