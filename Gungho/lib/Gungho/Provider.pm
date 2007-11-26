@@ -21,7 +21,7 @@ sub dispatch_request
 
 sub pushback_request {
     my ($self, $c, $req) = @_;
-    $self->add_request($req);
+    die ref($self) . '::pushback_request is not implemented';
 }
 
 1;
