@@ -459,6 +459,10 @@ sets up the engine.
 Instantiates a PoCo::Client::HTTP session and a main session that handles the
 main control.
 
+=head2 stop
+
+Shutsdown the engine
+
 =head2 send_request($request)
 
 Sends a request to the http client
