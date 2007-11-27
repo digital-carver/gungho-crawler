@@ -470,13 +470,15 @@ Sends a request to the http client
 =head1 CAVEATS
 
 The POE engine supports multiple values in the user-agent header, but this
-is an exception. To be portable with other engines, and if you are using only
-one user-agent, set it at the top level:
+is an exception that other engines don't support. Please use define your
+agent strings in the top level config:
 
   user_agent: my_user_agent
   engine:
     module: POE
     ...
+
+If you don't do this, components such as RobotRules won't work properly
 
 =head1 TODO
 
