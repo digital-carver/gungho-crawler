@@ -30,7 +30,7 @@ Gungho::Component::Authentication::Basic - GunghoでBasic認証を行う
 
 =head2 setup($c)
 
-コンポーネントを初期化します
+コンポーネントを初期化します。
 
 =head2 authenticate($is_proxy, $realm, $request, $response)
 

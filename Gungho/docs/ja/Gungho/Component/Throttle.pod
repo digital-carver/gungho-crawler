@@ -15,7 +15,7 @@ Gungho::Component::Throttle - スロットリング用ベースクラス
 このコンポーネントはスロットリングの親クラスとして機能します。実際の
 スロットリングはThrottle::SimpleやThrottle::Domainのような子クラスが行います。
 
-Gungho::Component::Throttle::Simpleは単純に時間当たりのリクエスト総数を
+Gungho::Component::Throttle::Simpleは単純に時間あたりのリクエスト総数を
 ベースにスロットリングを行います。どんなリクエストであっても時間あたりの
 リクエスト総数が規定値を上回った時点でスロットリングされます。
 
@@ -28,7 +28,7 @@ Gungho::Component::Throttle::Simpleは単純に時間当たりのリクエスト
       interval: 3600
 
 Gungho::Component::Throttle::Domainはホストネーム毎にスロットリングを行います。
-ホスト毎に時間当たりのリクエスト総数が規定値を上回った時点でスロットリング
+ホスト毎に時間あたりのリクエスト総数が規定値を上回った時点でスロットリング
 されるようになります。
 
   # throttle down to 100 requests / host / hour

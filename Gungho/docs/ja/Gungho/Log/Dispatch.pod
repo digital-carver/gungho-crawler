@@ -68,7 +68,7 @@ Log::Dispatchオブジェクトが作成されます。
 詳しい設定方法はL<Log::Dispatch|Log::Dispatch>を参照してください。
 
 作成したログはGungho内で$c-E<gt>logからアクセス可能です。使用する場合は
-以下のようにすればよいでしょう：
+以下のようにするとよいでしょう：
 
   $c->log->debug("This is a debug message");
   $c->log->emergency("This is an emergency message");

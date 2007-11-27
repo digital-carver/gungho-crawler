@@ -8,22 +8,22 @@ Gungho::Component::RobotRules::Storage - robots.txtストレージ
 
 =head2 storage
 
-実際のストレージオブジェクトへのリファレンス
+実際のストレージオブジェクトへのリファレンス。
 
 =head2 get_rule
 
-特定のURLのルールセットを取得する
+特定のURLのルールセットを取得します。
 
 =head2 put_rule
 
-特定のURLのルールセットを保存する
+特定のURLのルールセットを保存します。
 
 =head2 get_pending_robots_txt
 
-特定のrobots.txt取得待ち状態のリクエストのリストを返す
+特定のrobots.txt取得待ち状態のリクエストのリストを返します。
 
 =head2 push_pending_robots_txt
 
-特定のrobots.txt取得待ち状態のリクエストのリストにリクエストを追加する
+特定のrobots.txt取得待ち状態のリクエストのリストにリクエストを追加します。
 
 =cut

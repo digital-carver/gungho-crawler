@@ -37,7 +37,7 @@ Gungho::RequestはHTTP::Requestの小クラスです。基本実装はHTTP::Requ
 
 =head2 notes($key[, $value])
 
-HTTP::Requestが提供するもの意外のメタデータ／付随データを格納します。
+HTTP::Requestが提供するもの以外のメタデータ／付随データを格納します。
 
 =head2 original_uri
 

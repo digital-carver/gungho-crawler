@@ -7,18 +7,18 @@ Gungho::Manual::Tutorial - Gunghoチュートリアル
 
 =head1 初めてのGungho
 
-クローラーというのは実際に様々な因子が関係するので簡単なクローラーを作る、
+クローラーというものは実際に様々な因子が関係するので簡単なクローラーを作る、
 というのはなかなか難しいのですが、ここでは以下の環境があると仮定して
 Gunghoでクローラーを実装するまでを追って行きたいと思います。
 
-なお、ただ単純にリスト等からページを取得するだけでしたらexamples/ ディレクトリ
+なお、ただ単純にリスト等からページを取得するだけであればexamples/ ディレクトリ
 内のsimple等の例をお手本とすれば良いでしょう。こちらではもう少し手間は
 かかりますが、実際にクローラーを作成する時に近い形での例を示します。
 
 まずこれから取得したいURLのデータベースが存在すると仮定します。今回のクローラー
 では、このデータベースに存在する全てのURLを一回ずつ取得し、その結果得られる
 HTMLページからリンクを抜き出し、さらに他のデータベースに格納する、というところ
-までを作ります。
+までを作成します。
 
 =head2 必要なもの
 
@@ -30,7 +30,7 @@ HTMLページからリンクを抜き出し、さらに他のデータベース�
 
 まずはGunghoの基本を理解するためにGungho::Manual::Basicsを読んでください。
 
-それが終わったらまず作業用のディレクトリを作成します。とりいそぎSimpleCrawler
+それが終わったらまず作業用のディレクトリを作成します。とり急ぎSimpleCrawler
 という名前で作業をすることにします。以下のディレクトリを作成してください：
 
   SimpleCrawler
@@ -51,10 +51,10 @@ HTMLページからリンクを抜き出し、さらに他のデータベース�
   sqlite> create table urls (url text primary key, fetched_on integer);
 
 これで"url"というカラムと"fetched_on"というカラムが存在するテーブルが
-作られました。
+作成されました。
 
 このテーブルに好きなURLを挿入してください。クローラーを向ける先ですので
-なるたけ迷惑のかからなそうなURLを使用してください。ここでは架空の
+なるべく迷惑のかからなそうなURLを使用してください。ここでは架空の
 simplecrawler.comというサイトを指定してみます。
 
   sqlite> insert into urls(url) values('http://simplecrawler.com');
@@ -123,14 +123,14 @@ C<has_requests()>フラグですでにリクエスト済みかどうかテスト
 を作成し、それをC<send_request()>に投げるとその後でHTTP通信が始まり、取得が
 始まります。
 
-C<dispatch()>はエンジンモジュールにより定期的に呼ばれますので、一切にURLを
+C<dispatch()>はエンジンモジュールにより定期的に呼ばれますので、一斉にURLを
 リクエストするのではなく、少しずつリクエストしたい場合はこのメソッドの中で
 コントロールしてください。
 
 =head2 Handler
 
 Handlerは取得されてきたレスポンスを処理する場所です。URLが取得されてくる
-度にHandler内で定義されているC<handle_response()>メソッドが呼び出されます。
+たびにHandler内で定義されているC<handle_response()>メソッドが呼び出されます。
 
   package SimpleCrawler::Handler;
   use strict;
@@ -142,7 +142,7 @@ Handlerは取得されてきたレスポンスを処理する場所です。URL�
 HTML::LinkExtorはそのために先に読み込んでおきます。
 
 C<handle_response()>はまず返ってきたレスポンスが正常かどうか、また
-Content-Typeはtext/htmlかどうかを確認します
+Content-Typeはtext/htmlかどうかを確認します。
 
   sub handle_response
   {
@@ -151,7 +151,7 @@ Content-Typeはtext/htmlかどうかを確認します
     return unless $response->is_success;
     return unless $response->content_type eq 'text/html';
 
-次に折角なのでレスポンスの返ってきた時間を記録します。
+次にせっかくなのでレスポンスの返ってきた時間を記録します。
 
     my $dbh = DBI->connect(
       'dbi:SQLite:dbname=data/crawler.db',
@@ -169,7 +169,7 @@ Content-Typeはtext/htmlかどうかを確認します
       print $@, "\n";
     }
 
-ここからリンクの取得をします。HTML::LinkExtorはコードリファレンスをほしがる
+ここからリンクの取得をします。HTML::LinkExtorはコードリファレンスを要求する
 のでそれを用意し、パースします。
 
     my @links;
@@ -211,7 +211,7 @@ YAML等の設定ファイルから行えるように設計されています。
   user_agent: 'SimpleCrawler Demo 0.01'
 
 次にProviderとHandlerの設定を行います。今回は特に設定が必要な形には
-しませんでしたので、どのモジュールを使うのかだけ指定します：
+しなかったので、どのモジュールを使うのかだけ指定します：
 
   provider:
     module: '+SimpleCrawler::Provider'
@@ -244,9 +244,10 @@ C<provider>とC<handler>それぞれでC<module>項目を指定します。こ�
           name: logfile
           filename: data/crawler.log
 
-基本設定はここまでで、これだけでもGunghoは稼働しますがそれだけでは行儀の良い
-クローラーは作れませんので、Gunghoにデフォルトでついてくるコンポーネントを
-読み込みます。
+基本設定はここまでで、これだけでもGunghoは稼働しますがここまでの行程だけでは
+サイト側が取得してほしくないデータまで取得しに行ってしまう行儀のよくない
+クローラーになってしまいます。これを改善するためにGunghoにデフォルトで
+ついてくるコンポーネントを読み込みます。
 
   components:
     - RobotRules

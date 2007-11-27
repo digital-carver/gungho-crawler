@@ -21,7 +21,7 @@ Gungho::ComponentはGunghoを拡張するための部品です。プラグイン
 Gungho::ComponentはGunghoのリクエストサイクル動作を継承により変更します。
 
 新規にComponentを作成する場合はGungho::Componentから継承するモジュールを
-作成し、C<components>項目にしていしてください。
+作成し、C<components>項目に指定してください。
 
 =cut
 
