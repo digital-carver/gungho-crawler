@@ -29,9 +29,9 @@ sub setup_cache_backends
 
     my $backends = $c->_backends();
     while (my($name, $config) = each %{ $config->{backends} } ) {
-        my $class = delete $config->{class} || delete $config->{module};
+        my $class = delete($config->{class}) || delete($config->{module});
         die "No class specified for cache backend" unless $class;
-        my $pkg = $c->load_gungho_module(delete $class, __PACKAGE__);
+        my $pkg = $c->load_gungho_module( $class, __PACKAGE__);
 
         $backends->{$name} = $pkg->new(%$config);
     }
