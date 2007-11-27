@@ -23,7 +23,7 @@ requires("Pod::Usage");
 requires("Regexp::Common");
 requires("Storable");
 requires("URI");
-requires("UNIVERSAL::isa");
+requires("UNIVERSAL::isa", "0.06");
 requires("UNIVERSAL::require");
 
 recommends('Digest::MD5');
@@ -33,6 +33,7 @@ build_requires('YAML');
 build_requires('DirHandle');
 build_requires('File::Spec');
 build_requires('Test::More');
+build_requires('Test::MockObject');
 
 no_index('directory' => 'docs');
 
