@@ -83,6 +83,26 @@ __END__
 
 Gungho::Component::RobotRules::Storage::DB_File - DB_File Storage For RobotRules
 
+=head1 SYNOPSIS
+
+  # In your config
+  components:
+    - RobotRules
+  robot_rules:
+    storage:
+      module: DB_File
+      config:
+        filename: '/path/to/storage.db'
+
+  # or elsewhere in your code
+  use Gungho::Component::RobotRules::Storage::DB_File;
+
+  my $storage = Gungho::Component::RobotRules::Storage::DB_File->new(
+    config => {
+      filename => '/path/to/storage.db'
+    }
+  );
+
 =head1 METHODS
 
 =head2 setup
