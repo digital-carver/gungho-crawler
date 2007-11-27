@@ -8,4 +8,4 @@ BEGIN
 
 my $config = Gungho->load_config("t/data/02_config/yaml.yml");
 
-is_deeply($config, { foo => 1 });
+is($config->{foo}, 1);
