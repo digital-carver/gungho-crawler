@@ -3,6 +3,19 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09005_02 Tue Nov 27 2007 [rev 348]
+  [General]
+  - Tweak deps
+  - Don't index Japanese documentation
+  - Fix 02_config.t to check for contents rather than entire structure.
+    Seems like some YAML versions reads in the '---' in the beginning of the
+    YAML document
+  - Add Gungho::Base::mk_virtual_methods()
+  - Fix a bunch of typos in Japanese docs
+
+  [RobotRules::Storage]
+  - Explicitly state methods that should be virtual methods.
+
 0.09005_01 Mon Nov 26 2007 [rev 328]
   [General]
   - Migrate hooks to Event::Notify. This breaks the input parameter list.
