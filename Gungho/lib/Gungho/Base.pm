@@ -17,6 +17,18 @@ sub new
     return $self;
 }
 
+sub mk_virtual_methods
+{
+    my $class = shift;
+    foreach my $method (@_) {
+        my $slot = "${class}::${method}";
+        {
+            no strict 'refs';
+            *{$slot} = sub { die(ref($_[0]) . "::${method} is not overridden") };
+        }
+    }
+}
+
 1;
 
 __END__
