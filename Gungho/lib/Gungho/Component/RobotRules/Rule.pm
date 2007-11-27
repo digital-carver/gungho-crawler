@@ -61,14 +61,37 @@ __END__
 
 Gungho::Component::RobotRules::Rule - A Rule Object
 
+=head1 SYNOPSIS
+
+  use Gungho::Component::RobotRules::Rule;
+  my $rule = Gungho::Component::RobotRules::Rule->new(
+    'UserAgent A' => [ '/foo', '/bar' ],
+    'UserAgent B' => [ '/baz', '/quux' ],
+  );
+
+=head1 DESCRIPTION
+
+This modules stores the RobotRules ruleset for a particular host.
+
 =head1 METHODS
 
 =head2 new
 
+Creates a new rule. A single rule is a set of subrules that represents
+an user-agent to a list of denied paths.
+
+No host information is stored.
+
 =head2 setup
 
-=head2 allowed
+Initializes the rule.
 
-=head2 is_me
+=head2 allowed($c, $uri)
+
+Returns true if the given URL is allowed within this ruleset
+
+=head2 is_me($c,$string)
+
+Returns true if $string matches our user agent string contained in $c->user_agent
 
 =cut
