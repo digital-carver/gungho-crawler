@@ -33,6 +33,8 @@ sub add_request {
     $self->has_requests(1);
 }
 
+*pushback_request = \&add_request;
+
 sub dispatch {
     my ($self, $c) = @_;
     

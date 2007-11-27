@@ -10,18 +10,13 @@ use base qw(Gungho::Base);
 use Gungho::Request;
 
 __PACKAGE__->mk_accessors($_) for qw(has_requests);
+__PACKAGE__->mk_virtual_methods($_) for qw(dispatch pushback_request);
 
-sub dispatch {}
-
+# XXX - Hmm, yank this method out?
 sub dispatch_request
 {
     my ($self, $c, $req) = @_;
     $c->send_request($req);
-}
-
-sub pushback_request {
-    my ($self, $c, $req) = @_;
-    die ref($self) . '::pushback_request is not implemented';
 }
 
 1;
