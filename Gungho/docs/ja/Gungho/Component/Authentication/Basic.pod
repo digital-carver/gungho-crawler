@@ -1,3 +1,5 @@
+=encoding UTF-8
+
 =head1 NAME
 
 Gungho::Component::Authentication::Basic - GunghoでBasic認証を行う
