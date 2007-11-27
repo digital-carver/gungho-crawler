@@ -59,4 +59,10 @@ Sets up the object. Use it like this in your object:
      $self->next::method(@_);
   }
 
+=head2 mk_virtual_methods
+
+Creates virtual methods (methods that must be overridden).
+These methods will C<die()> unless you provide an implementation in your
+subclass
+
 =cut
