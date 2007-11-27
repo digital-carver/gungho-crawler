@@ -16,14 +16,14 @@ sub setup
     my $c    = shift;
     $self->next::method(@_);
     $self->strategy( Gungho::Plugin::Apoptosis::Time->new($self->config) );
-    $c->register_hook(
+    $c->register_event(
         'dispatch.dispatch_requests' => sub { $self->check_apoptosis(@_) },
     );
 }
 
 sub check_apoptosis
 {
-    my ($self, $c) = @_;
+    my ($self, $event, $c) = @_;
 
     # Check apoptosis condition.
     if ($c->is_running && $self->is_time_to_die) {
