@@ -97,4 +97,6 @@ in the Gungho::Provider::Inline package.
 
 =head2 dispatch
 
+=head2 pushback_request
+
 =cut

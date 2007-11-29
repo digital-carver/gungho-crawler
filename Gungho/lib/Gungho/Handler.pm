@@ -32,4 +32,9 @@ Gungho::Handler - Base Class For Gungho Handlers
 
 This is where you want to process the response.
 
+=head2 stop($reason)
+
+Stop the Handler. Place code that needs to be executed to shutdown the
+handler here.
+
 =cut

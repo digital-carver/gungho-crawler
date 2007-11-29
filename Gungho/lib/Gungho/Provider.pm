@@ -49,4 +49,9 @@ Dispatch a single request
 Push back a request which couldn't be sent to the engine, for example
 because the request was throttled.
 
+=head2 stop($reason)
+
+Stop the Provider. Place code that needs to be executed to shutdown the
+provider here.
+
 =cut
