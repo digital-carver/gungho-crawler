@@ -139,7 +139,7 @@ Gungho::Component::RobotRules::Storage::Cache - Cache Storage For RobotRules
 
 =head1 SYNOPSIS
 
-  robotrules:
+  robot_rules:
     cache:
       module: 'Cache::Memcached'
       expiration: 86400
