@@ -21,8 +21,8 @@ sub send_request
     my ($c, $request) = @_;
 
     if (! $request->notes('original_host') && ! $c->throttle($request)) {
-        $c->log->debug("Request " . $request->url . " (" . $request->id . ") was throttled");
-        $c->provider->pushback_request($c, $request);
+        $c->log->debug("[THROTTLE] Request " . $request->url . " (" . $request->id . ") was throttled");
+        $c->pushback_request($request);
         return 0;
     } else {
         return $c->next::method($request);
