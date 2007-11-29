@@ -12,10 +12,13 @@ use Gungho::Request;
 __PACKAGE__->mk_accessors($_) for qw(has_requests);
 __PACKAGE__->mk_virtual_methods($_) for qw(dispatch pushback_request);
 
+sub stop { }
+
 # XXX - Hmm, yank this method out?
 sub dispatch_request
 {
     my ($self, $c, $req) = @_;
+    $c->log->debug("[PROVIDER]: Dispatch " . $req->uri);
     $c->send_request($req);
 }
 

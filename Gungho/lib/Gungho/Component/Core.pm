@@ -295,6 +295,19 @@ sub notify
 }
 *run_hook = \&notify;
 
+sub shutdown
+{
+    my ($c, $reason) = @_;
+
+    $reason ||= 'unknown reason';
+    $c->log->notice("Gungho received a shutdown request!: '$reason'");
+    $c->is_running(0);
+
+    # Tell everybody to shutdown
+    $c->provider->stop($reason);
+    $c->handler->stop($reason);
+    $c->engine->stop($reason);
+}
 
 1;
 
@@ -410,5 +423,11 @@ performed, and the module name is used as-is.
 
 Returns true if the given request is allowed to be fetched (this has nothing
 to do with authentication and such, and is purely internal)
+
+=head2 shutdown($reason)
+
+Shuts down Gungho. Call this if you want to tell the entire system to stop.
+This method in turn calls stop methods on the Engine, Provider, and Handler
+objects
 
 =cut
