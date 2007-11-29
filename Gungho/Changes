@@ -4,10 +4,22 @@ Changes
 All changes by Daisuke Maki unless otherwise noted.
 
 0.09005_03
+  [General]
+  - Implement a $c->shutdown, and Engnie/Provider/Handler->stop that will
+    stop the entire system
+
+  [Provider::Inline]
+  * Backwards Incompatible Change *
+    - Provider::Inline will no longer dispatch your requests merely by
+      placing them in $p->requests. You need to call send_request() yourself
+
   [RobotRules]
   - Deprecate usage of "module: RobotoRules::Storage::XXXX". Now you don't
     have to type that much. Just say "module: XXXX". This will break your
     old code! Beware!
+
+  [Apoptosis]
+  - Call shutdown() instead of setting is_running
 
 0.09005_02 Tue Nov 27 2007 [rev 348]
   [General]
