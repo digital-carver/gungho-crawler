@@ -7,6 +7,7 @@ All changes by Daisuke Maki unless otherwise noted.
   [General]
   - Implement a $c->shutdown, and Engnie/Provider/Handler->stop that will
     stop the entire system
+  - Ahem, *do* index the Japanese documentation (but change the names)
 
   [Provider::Inline]
   * Backwards Incompatible Change *
