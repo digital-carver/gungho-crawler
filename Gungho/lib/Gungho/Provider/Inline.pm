@@ -33,7 +33,11 @@ sub add_request {
     $self->has_requests(1);
 }
 
-*pushback_request = \&add_request;
+sub pushback_request {
+    my ($self, $c, $req) = @_;
+    $c->log->debug( "[PROVIDER]: Pushback request " . $req->uri );
+    $self->add_request($req);
+}
 
 sub dispatch {
     my ($self, $c) = @_;
