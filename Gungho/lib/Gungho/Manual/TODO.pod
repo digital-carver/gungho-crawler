@@ -1,6 +1,6 @@
 =head1 NAME
 
-Gungho::Manual::TOD - TODO Items
+Gungho::Manual::TODO - TODO Items
 
 =head1 TODO
 
@@ -16,6 +16,10 @@ This is a long term TODO. We want to make the internal structure a bit more
 concise, meaningful.
 
 Method renamings are bound to happen before we call it 1.00.
+
+=head2 Tightly integrate with MQ
+
+Message queue integration seems just natural. 
 
 =head2 Fix stacked throttling
 
@@ -36,11 +40,6 @@ This means that the overall capacity may be well within your throttling limits,
 but Gungho may not actually go fetch your requests. 
 
 At this point I have no particularly elegant solution to this
-
-=head2 Add a simple event listener type of mechanism
-
-Ditto. Will use for statistics gathering, among other things. Will
-probably use Event::Notify
 
 =head2 Add a throttled Provider
 
