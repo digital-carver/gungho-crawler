@@ -26,7 +26,7 @@ Gungho::Inline->run(
     {
         provider => sub {
             my($p, $c) = @_;
-            $p->add_request(Gungho::Request->new(GET => $_)) for qw(
+            $c->send_request(Gungho::Request->new(GET => $_)) for qw(
                 http://www.perl.com
                 http://search.cpan.org
             )

@@ -24,7 +24,8 @@ sub run
         {
             provider => sub {
                 my($p, $c) = @_;
-                $p->add_request(Gungho::Request->new(GET => $_)) for qw(
+
+                $c->send_request(Gungho::Request->new(GET => $_)) for qw(
                     http://10.0.0.1
                     http://10.255.255.254
                     http://127.0.0.1

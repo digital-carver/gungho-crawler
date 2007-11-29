@@ -17,7 +17,7 @@ sub run
                 my($p, $c) = @_;
 
                 foreach my $url qw(http://search.cpan.org http://www.perl.com) {
-                    $p->add_request(
+                    $c->send_request(
                         Gungho::Request->new( GET => $url )
                     );
                 }
