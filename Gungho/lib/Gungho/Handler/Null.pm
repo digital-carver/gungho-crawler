@@ -16,7 +16,6 @@ sub handle_response
     my $res  = shift;
 
     $c->log->info($req->uri . " responded with code " . $res->code);
-    $self->next::method($c, $res);
 }
 
 1;
