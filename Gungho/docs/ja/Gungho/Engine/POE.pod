@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Engine::POE - Gungho用POEエンジン
+Gungho::Engine::POE.ja - Gungho用POEエンジン
 
 =head1 SYNOPSIS
 

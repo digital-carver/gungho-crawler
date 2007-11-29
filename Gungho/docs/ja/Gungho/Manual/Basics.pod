@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Manual::Basics - Gunghoの基本
+Gungho::Manual::Basics.ja - Gunghoの基本
 
 =head1 Gunghoの由来
 

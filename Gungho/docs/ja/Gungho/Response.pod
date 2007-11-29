@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Response - Gunghoレスポンス オブジェクト
+Gungho::Response.ja - Gunghoレスポンス オブジェクト
 
 =head1 DESCRIPTION
 

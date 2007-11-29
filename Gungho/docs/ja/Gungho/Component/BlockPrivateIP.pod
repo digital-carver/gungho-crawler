@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Component::BlockPrivateIP - 内部IPアドレスに解決するリクエストを拒否する
+Gungho::Component::BlockPrivateIP.ja - 内部IPアドレスに解決するリクエストを拒否する
 
 =head1 SYNOPSIS
 

@@ -2,7 +2,7 @@
 
 =head1 NAME 
 
-Gungho::Component::Cache - キャッシュ機能を組み込む
+Gungho::Component::Cache.ja - キャッシュ機能を組み込む
 
 =head1 SYNOPSIS
 

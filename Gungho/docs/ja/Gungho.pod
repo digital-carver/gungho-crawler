@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho - 高性能Webクローラーフレームワーク
+Gungho.ja - 高性能Webクローラーフレームワーク
 
 =head1 SYNOPSIS
 

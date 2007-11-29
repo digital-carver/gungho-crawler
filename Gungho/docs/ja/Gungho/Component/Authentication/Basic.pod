@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Component::Authentication::Basic - GunghoでBasic認証を行う
+Gungho::Component::Authentication::Basic.ja - GunghoでBasic認証を行う
 
 =head1 SYNOPSIS
 

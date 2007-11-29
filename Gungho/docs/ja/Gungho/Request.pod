@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Request - Gunghoリクエストオブジェクト
+Gungho::Request.ja - Gunghoリクエストオブジェクト
 
 =head1 SYNOPSIS
 

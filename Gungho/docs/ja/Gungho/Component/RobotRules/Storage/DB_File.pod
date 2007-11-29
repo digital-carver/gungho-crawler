@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Component::RobotRules::Storage::DB_File - robots.txt情報をDB_Fileに格納する
+Gungho::Component::RobotRules::Storage::DB_File.ja - robots.txt情報をDB_Fileに格納する
 
 =head1 SYNOPSIS
 

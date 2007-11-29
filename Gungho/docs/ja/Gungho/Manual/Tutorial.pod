@@ -1,9 +1,8 @@
 =encoding UTF-8
 
-
 =head1 NAME
 
-Gungho::Manual::Tutorial - Gunghoチュートリアル
+Gungho::Manual::Tutorial.ja - Gunghoチュートリアル
 
 =head1 初めてのGungho
 

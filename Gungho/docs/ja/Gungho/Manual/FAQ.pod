@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Manual::FAQ - Gungho FAQ
+Gungho::Manual::FAQ.ja - Gungho FAQ
 
 =head1 Q. "なんでGungho?"
 

@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Component - Gunghoコンポーネント親クラス
+Gungho::Component.ja - Gunghoコンポーネント親クラス
 
 =head1 SYNOPSIS
 

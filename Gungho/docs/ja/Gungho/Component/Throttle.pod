@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Component::Throttle - スロットリング用ベースクラス
+Gungho::Component::Throttle.ja - スロットリング用ベースクラス
 
 =head1 SYNOPSIS
 

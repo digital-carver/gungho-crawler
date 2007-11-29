@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Manual::Intro - 高性能クローラーフレームワーク
+Gungho::Manual::Intro.ja - 高性能クローラーフレームワーク
 
 =head1 SYNOPSIS
 

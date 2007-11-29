@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Gungho::Component::RobotRules::Storage - robots.txtストレージ
+Gungho::Component::RobotRules::Storage.ja - robots.txtストレージ
 
 =head1 METHODS
 
