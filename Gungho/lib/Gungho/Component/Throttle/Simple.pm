@@ -28,7 +28,7 @@ sub throttle
     my $t = $c->throttler;
 
     if ( ! $t->try_push() ) {
-        $c->log->debug($request->uri . " throttled by Throttle::Simple");
+        $c->log->debug("[THROTTLE] " . $request->uri . " throttled by Throttle::Simple");
         return ();
     }
 
