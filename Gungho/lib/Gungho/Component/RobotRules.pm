@@ -30,14 +30,15 @@ sub send_request
         $c->allowed($request)
     ;
     if ($allowed == -2) {
-        $c->log->debug("Fetch for /robots.txt already scheduled for " . $request->original_uri->host_port);
+        $c->log->debug("[ROBOT RULES] Fetch for /robots.txt already scheduled for " . $request->original_uri->host_port);
     } elsif ($allowed == -1) {
-        $c->log->debug("No robot rules found for " . $request->original_uri->host_port . ", going to fetch one");
+        $c->log->debug("[ROBOT RULES] No robot rules found for " . $request->original_uri->host_port . ", going to fetch one");
     } elsif ($allowed) {
-        $c->next::method($request);
+        return $c->next::method($request);
     } else {
-        $c->log->debug($request->uri . " is disallowed by robot rules");
+        $c->log->debug("[ROBOT RULES] " . $request->uri . " is disallowed by robot rules");
     }
+    return 0;
 }
 
 sub allowed
