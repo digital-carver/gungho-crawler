@@ -3,7 +3,7 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.09005_03
+0.09005_03 Thu Nov 29 2007 [rev 371]
   [General]
   - Implement a $c->shutdown, and Engnie/Provider/Handler->stop that will
     stop the entire system
@@ -57,7 +57,7 @@ All changes by Daisuke Maki unless otherwise noted.
   [Log::Dispatch]
   - Clarify in document that log config should be specified with "config"
     key.
-  − Backport changes from ja docs
+  - Backport changes from ja docs
 
 
 0.09004 Mon Nov 12 2007 [rev 276]
