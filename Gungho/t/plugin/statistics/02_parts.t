@@ -5,7 +5,7 @@ BEGIN
 {
     eval "use DBD::SQLite; use IO::Stringl use XML::LibXML";
     if ($@) {
-        plan(skip_all => "IO::String or DBD::SQLite not installed");
+        plan(skip_all => "XML::LibXML, IO::String, or DBD::SQLite not installed");
     } else {
         plan(tests => 8);
     }
