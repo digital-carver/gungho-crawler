@@ -1,3 +1,5 @@
+=encoding UTF-8
+
 =head1 NAME
 
 Gungho::Plugin::Apoptosis.ja - プロセスが停止する時間を指定
