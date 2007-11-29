@@ -9,12 +9,13 @@ use base qw(Gungho::Component);
 use Gungho::Component::RobotRules::Rule;
 use WWW::RobotRules::Parser;
 
-__PACKAGE__->mk_classdata($_) for qw(pending_robots_txt robot_rules_parser robot_rules_storage);
+__PACKAGE__->mk_classdata($_) for qw(pending_robots_txt robot_rules_parser robot_rules_storage pending_count);
 
 sub setup
 {
     my $c = shift;
     $c->pending_robots_txt({});
+    $c->pending_count(0);
     $c->setup_robot_rules_storage();
     $c->setup_robot_rules_parser();
     $c->next::method(@_);
@@ -80,6 +81,10 @@ sub handle_response
 sub push_pending_robots_txt
 {
     my ($c, $request) = @_;
+    $c->pending_count( $c->pending_count + 1 );
+    $c->log->debug(
+        "[ROBOT RULES]: Requests still pending: " . $c->pending_count
+    );
     return $c->robot_rules_storage->push_pending_robots_txt( $c, $request );
 }
 
@@ -89,8 +94,14 @@ sub dispatch_pending_robots_txt
 
     my $pending = $c->robot_rules_storage->get_pending_robots_txt($c, $request);
     if ($pending && ref $pending eq 'HASH') {
-        $c->pushback_request( $_ ) for values %$pending;
+        foreach my $request (values %$pending) {
+            $c->pending_count( $c->pending_count - 1 );
+            $c->pushback_request( $request );
+        }
     }
+    $c->log->debug(
+        "[ROBOT RULES]: Requests still pending: " . $c->pending_count
+    );
 }
 
 sub setup_robot_rules_storage
@@ -99,9 +110,9 @@ sub setup_robot_rules_storage
 
     my $config = $c->config->{robotrules}{storage} || {};
 
-    my $pkg = $config->{module} || 'RobotRules::Storage::DB_File';
+    my $pkg = $config->{module} || 'DB_File';
     my $pkg_config = $config->{config} || {};
-    $pkg = $c->load_gungho_module($pkg, 'Component');
+    $pkg = $c->load_gungho_module($pkg, 'Component::RobotRules::Storage');
     my $storage = $pkg->new(%$config);
     $storage->setup($c);
     $c->robot_rules_storage( $storage );

@@ -3,6 +3,12 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09005_03
+  [RobotRules]
+  - Deprecate usage of "module: RobotoRules::Storage::XXXX". Now you don't
+    have to type that much. Just say "module: XXXX". This will break your
+    old code! Beware!
+
 0.09005_02 Tue Nov 27 2007 [rev 348]
   [General]
   - Tweak deps
