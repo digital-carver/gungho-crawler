@@ -1,6 +1,6 @@
 =head1 NAME
 
-Gungho::Component::Throttle::Domain - ドメイン／ホスト毎にスロットリング
+Gungho::Component::Throttle::Domain.ja - ドメイン／ホスト毎にスロットリング
 
 =head1 SYNOPSIS
 
