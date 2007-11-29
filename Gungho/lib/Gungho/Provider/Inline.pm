@@ -54,12 +54,6 @@ sub dispatch {
         }
     }
     
-    my $reqs = $self->requests;
-    $self->requests([]);
-    while (@$reqs) {
-        $self->dispatch_request($c, shift @$reqs);
-    }
-    
     if (! $self->callback && @{$self->requests} == 0) {
         $self->has_requests(0);
         $c->is_running(0);
