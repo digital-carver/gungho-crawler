@@ -26,7 +26,7 @@ sub check_apoptosis
     my ($self, $event, $c) = @_;
 
     # Check apoptosis condition.
-    if ($c->is_running && $self->is_time_to_die) {
+    if ($c->is_running && $self->is_time_to_die($c)) {
         $c->log->info("[APOPTOSIS] Apoptosis condition reached. Waiting for engine to stop");
         $c->shutdown("Apoptosis condition reached");
     }
@@ -34,8 +34,8 @@ sub check_apoptosis
 
 sub is_time_to_die
 {
-    my $c = shift;
-    $c->strategy->is_time_to_die($c);
+    my ($self, $c) = shift;
+    $self->strategy->is_time_to_die($c);
 }
 
 package Gungho::Plugin::Apoptosis::Time;
