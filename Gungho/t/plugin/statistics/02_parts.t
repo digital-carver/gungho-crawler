@@ -3,7 +3,7 @@ use Test::More;
 
 BEGIN
 {
-    eval "use DBD::SQLite; use IO::Stringl use XML::LibXML";
+    eval "use DBD::SQLite; use IO::String; use XML::LibXML";
     if ($@) {
         plan(skip_all => "XML::LibXML, IO::String, or DBD::SQLite not installed");
     } else {
