@@ -3,12 +3,12 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.09005_04
+0.09005_04 Sat Dec 01 2007 [rev 387]
   [General]
   - Add encoding to Japanese docs
 
   [Request]
-  - Fix cloning multiple notes. Patch by Jeff Kim
+  - Fix cloning multiple notes on the request. Patch by Jeff Kim
 
   [RobotRules]
   - Fix handling rules noted by '*'. Patch by Jeff Kim
