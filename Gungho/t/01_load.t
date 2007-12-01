@@ -21,6 +21,7 @@ BEGIN
         Gungho::Provider
         Gungho::Request
         Gungho::Request::http
+        Gungho::Response
         Gungho
     );
     
