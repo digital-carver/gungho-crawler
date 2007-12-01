@@ -8,9 +8,7 @@ use strict;
 use warnings;
 use base qw(Gungho::Base);
 
-sub run {}
-
-sub stop {}
+__PACKAGE__->mk_virtual_methods($_) for qw(run stop);
 
 sub finish_request
 {
