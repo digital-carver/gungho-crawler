@@ -3,6 +3,19 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09005_04
+  [General]
+  - Add encoding to Japanese docs
+
+  [Request]
+  - Fix cloning multiple notes. Patch by Jeff Kim
+
+  [RobotRules]
+  - Fix handling rules noted by '*'. Patch by Jeff Kim
+
+  [Plugin::Apoptosis]
+  - Fix calling methods
+
 0.09005_03 Thu Nov 29 2007 [rev 371]
   [General]
   - Implement a $c->shutdown, and Engnie/Provider/Handler->stop that will
@@ -21,6 +34,9 @@ All changes by Daisuke Maki unless otherwise noted.
 
   [Apoptosis]
   - Call shutdown() instead of setting is_running
+
+  [Tests]
+  - Fix a few failing tests
 
 0.09005_02 Tue Nov 27 2007 [rev 348]
   [General]
