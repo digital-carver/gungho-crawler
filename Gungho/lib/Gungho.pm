@@ -306,6 +306,8 @@ Copyright (c) 2007 Daisuke Maki E<lt>daisuke@endeworks.jpE<gt>
 
 =over 4
 
+=item Jeff Kim
+
 =item Kazuho Oku
 
 =item Keiichi Okabe
