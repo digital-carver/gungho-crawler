@@ -60,7 +60,11 @@ sub clone
 {
     my $self  = shift;
     my $clone = $self->SUPER::clone;
-    $clone->notes( %{ dclone $self->notes } );
+
+    my $cloned_notes = dclone $self->notes;
+    foreach my $note (keys %$cloned_notes) {
+        $clone->notes( $note => $cloned_notes->{$note} );
+    }
     return $clone;
 }
 
