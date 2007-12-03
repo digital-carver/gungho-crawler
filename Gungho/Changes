@@ -3,6 +3,11 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09005 Mon Dec 03 2007 [rev 391]
+  [General]
+  - Add site-crawler example
+  - Update docs/ja/Gungho.pod
+
 0.09005_04 Sat Dec 01 2007 [rev 387]
   [General]
   - Add encoding to Japanese docs
