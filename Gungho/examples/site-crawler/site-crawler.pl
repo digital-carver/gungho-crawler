@@ -4,6 +4,23 @@
 # Copyright (c) 2007 Daisuke Maki <daisuke@endeworks.jp>
 # All rights reserved.
 
+package Gungho::Example::SiteCrawler::Rule::Seen;
+use strict;
+use warnings;
+use GunghoX::FollowLinks::Rule qw(FOLLOW_DENY FOLLOW_ALLOW);
+use base qw(GunghoX::FollowLinks::Rule);
+my %SEEN;
+
+sub apply
+{
+    my ($self, $c, $response, $url, $attrs) = @_;
+    if ($SEEN{ $url }++) {
+        return FOLLOW_DENY;
+    }
+    return FOLLOW_ALLOW;
+}
+
+package main;
 use strict;
 use warnings;
 use Gungho;
@@ -15,7 +32,7 @@ main();
 
 sub main
 {
-    my $site   = $ARGV[0];
+    my $site   = $ARGV[0] or die "No site specified";
 
     $site = URI->new($site) unless eval { $site->isa('URI') } && !$@;
 
@@ -23,27 +40,45 @@ sub main
         provider => sub {
             my ($p, $c) = @_;
 
+            my $request;
             if (! $p->{started}) {
-                $c->send_request( Gungho::Request->new( GET => $site ) );
                 $p->{started} = 1;
+                $p->{pending} = 1;
+                $request = Gungho::Request->new( GET => $site );
             } else {
-                my $requests = $p->requests;
-                while (my $request = shift @$requests) {
-                    $request->uri->fragment(undef);
-                    # Make sure to use the original hostname
-                    my $original_uri = $request->original_uri;
-                    if ( $p->{seen}{$original_uri->as_string}++ ) {
-                        next;
-                    }
-                    $c->send_request( $request );
+                $request = shift @{ $p->requests };
+            }
+
+            print STDERR "Pending is $p->{pending}.\n";
+            if ( ! $request) {
+                if ($p->{pending} <= 0 && scalar keys %Gungho::Example::SiteCrawler::Seen::SEEN > 1) {
+                    print STDERR "Pending is $p->{pending}. Shutting down\n";
+                    $c->shutdown();
+                }
+                return 1;
+            }
+
+            $request->uri->fragment(undef);
+            if ($Gungho::Example::SiteCrawler::Seen::SEEN{$request->original_uri->as_string}) {
+                $p->{pending}--;
+            } else {
+                print STDERR "Sending ", $request->uri, "\n";
+                if ($c->send_request( $request ) && $request->notes('auto_robot_rules' => 1) ) {
+                   $p->{pending}++;
                 }
             }
             return 1;
         },
         handler  => sub {
             my ($h, $c, $req, $res) = @_;
-            $c->follow_links($res);
-            print STDERR "Fetched ", $res->request->uri->as_string, "\n";
+            my $provider = $c->provider;
+            print STDERR "Fetched ", $res->request->uri, ". Pending = $provider->{pending}\n";
+            $provider->{pending}--;
+            $provider->{pending} += $c->follow_links($res);
+
+            # Make sure to use the original hostname
+            my $original_uri = $req->original_uri;
+            $Gungho::Example::SiteCrawler::Seen::SEEN{$req->original_uri->as_string}++;
         },
         components => [
             '+GunghoX::FollowLinks',
@@ -83,6 +118,8 @@ sub main
                             unknown => "FOLLOW_ALLOW",
                           }
                         },
+                        { module => "+Gungho::Example::SiteCrawler::Rule::Seen"
+                        }
                       ]
                   }
                 }
