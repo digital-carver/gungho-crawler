@@ -74,49 +74,43 @@ RequestLogプラグインを使用することによって自動的に取得さ�
 
 =head1 歴史
 
-First there were a bunch of scripts that used scrape a bunch of RSS feeds.
-Then I got tired of writing scripts, so I decided a framework is the way to
-go, and Xango was born.
+最初はまずRSSフィードを読み込むスクリプトが数個存在しました。しかしクロールする
+サイトが増える度に同じような処理を行う必要があり、同様にメンテナンスも難しく
+なってきました。この時点でクローラーのフレームワーク化が構想としてうかびあがり
+ました。
 
-Xango was my first attempt at trying to harness the full power of event-based
-framework. It was fast. It wasn't fun to extend. It had a nightmare-ish
-way to deal with robots.txt. 
+その後Xangoというフレームワークを開発し、イベント型クローラーの骨組みを作り
+あげることができました。ただしこのフレームワークはPOEというイベントフレーム
+ワークを使用することにこだわってしまったため、拡張性の低いフレームワークと
+なってしまいました。
 
-Couple of more attempts later, more inspirations and lessons learned from
-Catalyst, Plagger, DBIx::Class, Gungho was born. 
+そして2007になって過去の教訓やCatalyst, Plagger, DBIx::Class等の事例を経て
+新たに手に入れた知識を素に開発されたのがGunghoです。Gunghoはイベント型
+クローラーの基本構造を崩さず、拡張性に主眼を置いた設計を目指しています。
 
-Since its inception, Gungho has been in successfully used as crawlers that
-fetch hundreds of thousands of urls to a few million urls per day. 
+Gunghoは現在日米数社のプロジェクトで採用されており、一日に数百万件の
+ページを取得するコンポーネントとして活躍しています。
 
-=head1 PLEASE READ BEFORE USE
+=head1 使用する際に注意する点
 
-Gungho is designed to so that it can handle massive amount of traffic.
-If you're careful enough with your Provider and Handler implementation, you
-can in fact hit millions of URL with this crawler.
+Gunghoは膨大な量のHTTP接続をすることを念頭に設計されています。Providerと
+Handlerの実装によってはDoS攻撃のような量のリクエストをサーバーに送信する事も
+容易です。
 
-So PLEASE DO NOT LET IT LOOSE. DO NOT OVERLOAD your crawl targets.
-You are STRONGLY advised to use Gungho::Component::Throttle to throttle your 
-fetches. 
+上記の理由から*必ず*発行するリクエスト数に注意してクローラーを動かして
+ください。Gungho::Component::ThrottleによるスロットリングyGungho::Component::RobotRules
+によるアクセス制御は必ず組み込むようにすると良いでしょう。
 
-Also PLEASE CHANGE THE USER AGENT NAME OF YOUR CRAWLER. If you hit your targets
-hard with the default name (Gungho/VERSION X.XXXX), it will look as though a
-service called Gungho is hitting their site, which really isn't the case.
-Whatever it is, please specify at least a simple user agent in your config
+また、User Agent名は必ず開発されているクローラーの適切なものに変更するよう
+お願いします。
 
-=head1 STRUCTURE
+=head1 構成
 
-Gungho is comprised of three parts. A Provider, which provides Gungho with
-requests to process, a Handler, which handles the fetched page, and an
-Engine, which controls the entire process.
+Gunghoは主に３つのコンポーネントで構成されています。Engineは全てのリクエスト
+サイクルを統括し、サーバーへの接続、リクエストの送信等を行います。
+Providerは取得すべきURLを指定し、Gungho::RequestをEngineに投げます。
+HandlerはEngineが取得したレスポンスを処理します。
 
-There are also "hooks". These hooks can be registered from anywhere by
-invoking the register_hook() method. They are run at particular points,
-which are specified when you call register_hook().
-
-All components (engine, provider, handler) are overridable and switcheable.
-However, do note that if you plan on customizing stuff, you should be aware
-that Gungho uses Class::C3 extensively, and hence you may see warnings about
-the code you use.
 
 =head1 Gunghoの間違った使い方
 
@@ -141,14 +135,15 @@ GunghoをひとつのURL、もしくはひとつのホストに対して扱う�
    ---
    debug: 1
 
-Setting debug to a non-zero value will trigger debug messages to be displayed.
+デバッグフラグを有効にするとログの出力が全てデバッグレベルまでの出力と
+なります。その他コンポーネント毎にデバッグ状態の挙動に変更するものもあります。
 
 =back
 
 =head1 COMPONENTS
 
-Components add new functionality to Gungho. Components are loaded at
-startup time from the config file / hash given to Gungho constructor.
+Gunghoの機能拡張を行うにはComponentを作成します。
+ComponentはGunghoを走らせる段階で指定します：
 
   Gungho->run({
     components => [
@@ -159,11 +154,10 @@ startup time from the config file / hash given to Gungho constructor.
     }
   });
 
-Components modify Gungho's inheritance structure at run time to add
-extra functionality to Gungho, and therefore should only be loaded
-before starting the engine.
+Componentを指定することによってGungho内部のクラス構造が書き換えられ、
+継承による機能拡張が行われます。
 
-Please refer to each component's document for details
+各コンポーネントの詳細についてはそれぞれのドキュメントを参照してください
 
 =over 4
 
@@ -185,40 +179,31 @@ Please refer to each component's document for details
 
 =back
 
-=head1 INLINE
+=head1 Gunghoのインライン化
 
-If you're looking into simple crawlers, you may want to look at Gungho::Inline,
+それほど複雑でないクローラーを実装する場合はGungho::ProviderやGungho::Handlerを
+わざわざ継承する必要はありません。単純にproviderとhandlerに関数を指定してください
 
-  Gungho::Inline->run({
+  Gungho->run({
     provider => sub { ... },
     handler  => sub { ... }
   });
 
-See the manual for Gungho::Inline for details.
+=head1 プラグイン
 
-=head1 PLUGINS
+GunghoプラグインはGunghoの継承ツリーに影響を及ぼさずに機能拡張を行います。
+ただし、プラグインはイベント発生時のコールバックにより実装されているので、
+呼び出し可能なタイミングが前もって決まっています。
 
-Plugins are different from components in that, whereas components require the
-developer to explicitly call the methods, plugins are loaded and are not
-touched afterwards.
-
-Please refer to the documentation of each plugin for details.
+詳細についてはプラグインのドキュメントを参照してください。
 
 =over 4
 
-=item RequestLog
+=item Gungho::Plugin::RequestLog
 
-=item Statistics
+=item Gungho::Plugin::Statistics
 
 =back
-
-=head1 HOOKS
-
-Currently available hooks are:
-
-=head2 engine.send_request
-
-=head2 engine.handle_response
 
 =head1 METHODS
 
@@ -239,6 +224,8 @@ Copyright (c) 2007 Daisuke Maki E<lt>daisuke@endeworks.jpE<gt>
 =head1 CONTRIBUTORS
 
 =over 4
+
+=item Jeff Kim
 
 =item Kazuho Oku
 
