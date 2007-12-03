@@ -25,7 +25,7 @@ use strict;
 use warnings;
 use Gungho;
 use Gungho::Request;
-use GunghoX::FollowLinks;
+use GunghoX::FollowLinks '0.00004';
 use URI;
 
 main();
