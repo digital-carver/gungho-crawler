@@ -85,6 +85,8 @@ Gungho::Component::Throttle::Provider - Throttle Calls To The Provider
 
 =head1 DESCRIPTION
 
+This module is still experimental. Use at your own peril.
+
 Often times it is more conveinient to throttle the number of times the Provider
 is invoked to fetch the next request than for the provider to keep tabs of
 how many requests it has sent so far.
@@ -92,5 +94,22 @@ how many requests it has sent so far.
 This component keeps track of how many URLs have gone through send_request()
 and back to handle_response(), and will prevent Gungho from calling the
 provider to fetch the next request.
+
+=head1 METHODS
+
+=head2 setup
+
+=head2 dispatch_requests
+
+Averts calling the actual C<dispatch_requests> when there are more requests
+than specified by C<max_requests> in the system.
+
+=head2 send_request
+
+=head2 handle_response
+
+=head2 increment_request_count
+
+=head2 decrement_request_count
 
 =cut
