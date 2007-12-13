@@ -5,7 +5,7 @@ BEGIN
 {
     if (! $ENV{GUNGHO_TEST_PROXY}) {
         plan skip_all => "Set proxy URI to GUNGHO_TEST_PROXY to run these tests";
-    } elsif (! eval "use POE" || $@ ) {
+    } elsif ((eval "use POE"), $@) {
         plan skip_all => "POE Engine not available. Skipping";
     } else {
         plan tests => 5;
@@ -28,7 +28,7 @@ Gungho::Inline->run(
     {
         provider => sub {
             my($p, $c) = @_;
-            $p->add_request(Gungho::Request->new(GET => $_)) for qw(
+            $c->send_request(Gungho::Request->new(GET => $_)) for qw(
                 http://www.perl.com
                 http://search.cpan.org
             )
