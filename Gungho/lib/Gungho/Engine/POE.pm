@@ -113,7 +113,7 @@ sub run
     # PoCo::Client::HTTP 0.82, PoCo::Client::HTTP tended to get filled up
     # pretty quickcly)
     $self->clients( [] );
-    my $spawn = $client_config->{spawn} || 2;
+    my $spawn = delete $client_config->{Spawn} || 2;
     if ($spawn < 1) { $spawn = 2 }
     for my $i ( 1 .. $spawn ) {
         my $alias = join('-', &UserAgentAlias, $i);
