@@ -3,7 +3,7 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
-0.09006_01 Thu Dec 13 2007 [rev 397]
+0.09006_01 Thu Dec 13 2007 [rev 399]
   [General]
   - Utilize the new META.yml stuff for search.cpan.org
 

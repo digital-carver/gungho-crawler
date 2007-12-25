@@ -4,6 +4,14 @@ use inc::Module::Install;
 name("Gungho");
 all_from("lib/Gungho.pm");
 
+# This used to be optional, but we're making it mandatory.
+# You're still free to use other engines, but we're forcing
+# you to install POE so we can go ahead with testing
+requires('POE', '0.9999');
+requires('POE::Component::Client::DNS');
+requires('POE::Component::Client::Keepalive');
+requires('POE::Component::Client::HTTP', '0.81');
+
 requires("Best");
 requires("Class::Accessor::Fast");
 requires("Class::C3::Componentised");
