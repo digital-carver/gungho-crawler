@@ -139,8 +139,9 @@ sub run
             }
         ]
     );
-    
-    POE::Kernel->run();
+
+    POE::Kernel->run() if
+        ! exists $config{ kernel_start } || $config{ kernel_start };
 }
 
 sub stop
