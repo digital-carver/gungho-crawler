@@ -3,6 +3,18 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09006_01 Thu Dec 13 2007 [rev 397]
+  [General]
+  - Utilize the new META.yml stuff for search.cpan.org
+
+  [Engine::POE]
+  - Fix how 'spawn' was being handled. Patch by Kazuho Oku
+  - Fix t/03_live/perl-proxy.t. Patch by Kazuho Oku
+
+  [Throttle::Provider]
+  - Added a new Throttle::Provider component, which can throttle the
+    number of calls to the provider's dispatch_requests() method.
+
 0.09005 Mon Dec 03 2007 [rev 391]
   [General]
   - Add site-crawler example
