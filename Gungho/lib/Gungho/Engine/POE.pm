@@ -368,6 +368,14 @@ Or in perl,
     }
   }
 
+=head2 kernel_start
+
+If you're embedding Gungho into another POE application, you probably don't
+want Gungho to call POE::Kernel->run(). This option can control that behavior.
+
+If you don't want to start the kernel, then specify 0 for this option.
+The default is 1.
+
 =head2 client.loop_delay
 
 C<loop_delay> specifies the number of seconds to wait until calling C<dispatch>
