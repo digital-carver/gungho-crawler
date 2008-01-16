@@ -105,8 +105,6 @@ subroutine references instead of a full config.
 As of Gungho 0.09003, inlined handlers and providers are supported natively.
 The only reason to use this module is for you to use the old parameter list.
 
-This module is still experimental. Feedback welcome
-
 =head1 BACKWARDS COMPATIBILITY WITH VERSIONS < 0.08
 
 From version 0.08 of Gungho::Inline, the parameter list passed to the
