@@ -40,9 +40,20 @@ sub send_request
         if (! $c->pending_requests->{ $request->id }) {
             $c->pending_requests->{ $request->id } = $request;
             $c->increment_request_count();
+            $c->log->debug("Incremented: " . $c->request_count);
         }
         $c->log->debug( $request->uri );
-        $c->log->debug( "count is " . $c->request_count );
+    }
+}
+
+sub pushback_request
+{
+    my ($c, $request) = @_;
+
+    $c->next::method($request);
+    if (delete $c->pending_requests->{ $request->id }) {
+        $c->decrement_request_count();
+        $c->log->debug("Decremented: " . $c->request_count);
     }
 }
 
@@ -51,8 +62,10 @@ sub handle_response
     my ($c, $request, $response) = @_;
 
     $c->next::method($request, $response);
-    delete $c->pending_requests->{ $request->id };
-    $c->decrement_request_count();
+    if (delete $c->pending_requests->{ $request->id }) {
+        $c->decrement_request_count();
+        $c->log->debug("Decremented: " . $c->request_count);
+    }
 }
 
 sub increment_request_count
