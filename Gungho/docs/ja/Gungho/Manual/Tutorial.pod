@@ -261,6 +261,18 @@ Throttle::Simpleは最大リクエスト数の絞り込み（スロットリン�
 BlockPrivateIPはプライベートアドレスに解決されるURLへの接続を拒否するように
 します。
 
+RobotRulesはデフォルトでDB_File.pmを使用しますのでファイルを書き出す事に
+なります。デフォルトでこのファイルは/tmp/robots.db が指定されますが、
+/tmpに書き込み権限がないなどの理由でファイルを作成できないとエラーが
+起こります。その場合はファイル名を書き込みができる場所に明示的に指定して
+ください：
+
+  robot_rules:
+    storage:
+      module: DB_File
+      config:
+        filename: '/path/to/storage.db'
+
 これらを書いた設定ファイルをdata/crawler.ymlに保存します。
 
 =head2 実行
