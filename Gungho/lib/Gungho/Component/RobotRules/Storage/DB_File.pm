@@ -14,9 +14,16 @@ sub setup
     my $self = shift;
     my $config = $self->{config};
     $config->{filename} ||= File::Spec->catfile(File::Spec->tmpdir, 'robots.db');
+    if (! exists $config->{flags}) {
+        $config->{flags} = O_CREAT|O_RDWR;
+    }
+
+    if (! exists $config->{mode}) {
+        $config->{mode} = 0666;
+    }
 
     my %o;
-    my $dbm = tie %o, 'DB_File', $config->{filename};
+    my $dbm = tie %o, 'DB_File', $config->{filename}, $config->{flags}, $config->{mode};
     if (! $dbm) {
         die "Failed to tie $config->{filename} to hash: $!";
     }
