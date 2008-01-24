@@ -44,6 +44,8 @@ build_requires('File::Spec');
 build_requires('Test::More');
 build_requires('Test::MockObject');
 
+install_script('script/gungho');
+
 # Hey, stolen right off of Plagger
 eval {
     require YAML;
