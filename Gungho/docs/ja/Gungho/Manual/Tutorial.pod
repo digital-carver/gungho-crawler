@@ -16,7 +16,7 @@ Gunghoでクローラーを実装するまでを追って行きたいと思い�
 
 まずこれから取得したいURLのデータベースが存在すると仮定します。今回のクローラー
 では、このデータベースに存在する全てのURLを一回ずつ取得し、その結果得られる
-HTMLページからリンクを抜き出し、さらに他のデータベースに格納する、というところ
+HTMLページからリンクを抜き出し、それを元のテーブルに追加する、というところ
 までを作成します。
 
 =head2 必要なもの
@@ -75,22 +75,34 @@ lib/SimpleCrawler/Provider.pmをエディタで開いてください。
 データベースへの接続情報もそのままnew()に書き込んでしまいます。実際には
 このような設定は設定ファイルから読み込むようにすると良いでしょう。
 
-  __PACKAGE__->mk_accessors($_) for qw(dbh);
+  __PACKAGE__->mk_accessors($_) for qw(dbh connect_info);
 
   sub new
   {
     my $class = shift;
-    my $dbh = DBI->connect(
-      'dbi:SQLite:dbname=data/crawler.db',
-      undef,
-      undef,
-      { RaiseError => 1, AutoCommit => 1 }
+    return $class->next::method(
+      connect_info => [
+        'dbi:SQLite:dbname=data/crawler.db',
+        undef,
+        undef,
+        { RaiseError => 1, AutoCommit => 1 }
+      ]
     );
-    $class->next::method(dbh => $dbh, has_requests => 1);
   }
 
-ここではC<mk_accessors()>でdbhというアクセッサーを作成し、C<new()>でそれを
-親クラスのnew()に渡します。
+ここではC<mk_accessors()>でdbhとconnect_infoというアクセッサーを作成し、
+C<new()>でconnect_infoを親クラスのnew()に渡します。
+
+後にsetup()というメソッドが呼び出されますので、このタイミングでDB接続等の
+初期化を行います。
+
+  sub setup
+  {
+    my ($self, $c) = @_;
+    my $dbh = DBI->connect(@{ $self->connect_info })
+        or die "Could not connect to database";
+    $self->dbh($dbh)
+  }
 
 次にエンジンにリクエストを渡すC<dispatch()>メソッドを作成します。
 
@@ -101,8 +113,6 @@ lib/SimpleCrawler/Provider.pmをエディタで開いてください。
     if (! $self->has_requests) {
       return;
     }
-
-    $self->next::method($c);
 
     my $dbh = $self->dbh;
     my $sth = $dbh->prepare("SELECT url FROM urls");
@@ -130,6 +140,8 @@ C<dispatch()>はエンジンモジュールにより定期的に呼ばれます�
 
 Handlerは取得されてきたレスポンスを処理する場所です。URLが取得されてくる
 たびにHandler内で定義されているC<handle_response()>メソッドが呼び出されます。
+
+先ほどのProviderとは別にSimpleCrawler/Handler.pmを作成します。
 
   package SimpleCrawler::Handler;
   use strict;
