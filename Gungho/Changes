@@ -3,6 +3,14 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09007 Tue Jan 29 2008 [rev 409]
+  [General]
+  - Properly install gungho script
+  - Update tutorial
+
+  [RobotRules::DB_File]
+  - Be more paranoid
+
 0.09006 Thu Jan 17 2008 [rev 403]
   - Check pending request before decrementing the count
 
