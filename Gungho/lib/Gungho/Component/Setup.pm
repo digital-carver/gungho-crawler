@@ -85,7 +85,11 @@ sub load_config
         my $filename = $config;
         # In the future, we may support multiple configs, but for now
         # just load a single file via Config::Any
-        my $list = Config::Any->load_files( { files => [ $filename ] } );
+    
+        my $list = Config::Any->load_files( {
+            files => [ $filename ],
+            use_ext => 1,
+        } );
         ($config) = $list->[0]->{$filename};
     }
 
