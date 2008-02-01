@@ -70,12 +70,15 @@ lib/SimpleCrawler/Provider.pmをエディタで開いてください。
   use strict;
   use warnings;
   use base qw(Gungho::Provider::Simple);
+  use DBI;
 
 次はコンストラクタを作成します。今回は特に設定を変更する予定はありませんので、
 データベースへの接続情報もそのままnew()に書き込んでしまいます。実際には
 このような設定は設定ファイルから読み込むようにすると良いでしょう。
 
   __PACKAGE__->mk_accessors($_) for qw(dbh connect_info);
+
+  # XXX - do DBI setup in setup(), and use Simple's 
 
   sub new
   {
@@ -93,48 +96,34 @@ lib/SimpleCrawler/Provider.pmをエディタで開いてください。
 ここではC<mk_accessors()>でdbhとconnect_infoというアクセッサーを作成し、
 C<new()>でconnect_infoを親クラスのnew()に渡します。
 
-後にsetup()というメソッドが呼び出されますので、このタイミングでDB接続等の
-初期化を行います。
+後にsetup()というメソッドが呼び出されますので、このタイミングでDBから
+取得するURLのリストの呼び出しを行います。ここで呼び出しを行うのは、
+DBからURLを取得するのをGungho動作中に１回だけにしたいからです。
 
   sub setup
   {
     my ($self, $c) = @_;
     my $dbh = DBI->connect(@{ $self->connect_info })
         or die "Could not connect to database";
-    $self->dbh($dbh)
-  }
-
-次にエンジンにリクエストを渡すC<dispatch()>メソッドを作成します。
-
-  sub dispatch
-  {
-    my ($self, $c) = @_;
-
-    if (! $self->has_requests) {
-      return;
-    }
 
     my $dbh = $self->dbh;
     my $sth = $dbh->prepare("SELECT url FROM urls");
-    $sth->execute();
+    my $rows = $sth->execute();
+
     my $url;
     $sth->bind_columns(\$url);
     while ($sth->fetchrow_arrayref) {
       my $r = Gungho::Request->new(GET => $url);
-      $c->send_request($r);
+      $self->add_request($r);
     }
   }
 
-ここでは１回しかデータベースからの読み込みを行いたくないので、まず
-C<has_requests()>フラグですでにリクエスト済みかどうかテストします。
+  1;
 
-その後データベースからURLを読み込みます。それぞれのURLに対してC<Gungho::Request>
-を作成し、それをC<send_request()>に投げるとその後でHTTP通信が始まり、取得が
-始まります。
-
-C<dispatch()>はエンジンモジュールにより定期的に呼ばれますので、一斉にURLを
-リクエストするのではなく、少しずつリクエストしたい場合はこのメソッドの中で
-コントロールしてください。
+C<add_request()>はGungho::Provider::Simpleのメソッドで、オブジェクト内の
+配列にリクエストオブジェクトを追加するメソッドです。後にC<dispatch()>
+というメソッドが呼ばれた時にこの配列からGunghoのC<send_request()>に
+渡され、HTTP通信が始まり、取得が始まります。
 
 =head2 Handler
 
@@ -148,6 +137,7 @@ Handlerは取得されてきたレスポンスを処理する場所です。URL�
   use warnings;
   use base qw(Gungho::Handler);
   use HTML::LinkExtor;
+  use DBI;
 
 今回のHandlerは返ってきたレスポンス内のHTMLを解析し、リンクを抜き出します。
 HTML::LinkExtorはそのために先に読み込んでおきます。
@@ -207,6 +197,8 @@ Content-Typeはtext/htmlかどうかを確認します。
       }
     }
   }
+
+  1;
 
 本来ならもっとエラー処理を行ったり、 リンクを解決して無効なリンク等がないかを
 確認したりする必要がありますが、今回はこちらは割愛しました。
@@ -279,7 +271,7 @@ RobotRulesはデフォルトでDB_File.pmを使用しますのでファイルを
 起こります。その場合はファイル名を書き込みができる場所に明示的に指定して
 ください：
 
-  robot_rules:
+  robotrules:
     storage:
       module: DB_File
       config:
