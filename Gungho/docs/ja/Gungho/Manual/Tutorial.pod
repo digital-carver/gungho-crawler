@@ -106,7 +106,6 @@ DBからURLを取得するのをGungho動作中に１回だけにしたいから
     my $dbh = DBI->connect(@{ $self->connect_info })
         or die "Could not connect to database";
 
-    my $dbh = $self->dbh;
     my $sth = $dbh->prepare("SELECT url FROM urls");
     my $rows = $sth->execute();
 
@@ -137,6 +136,7 @@ Handlerは取得されてきたレスポンスを処理する場所です。URL�
   use warnings;
   use base qw(Gungho::Handler);
   use HTML::LinkExtor;
+  use HTML::ResolveLink;
   use DBI;
 
 今回のHandlerは返ってきたレスポンス内のHTMLを解析し、リンクを抜き出します。
@@ -151,6 +151,7 @@ Content-Typeはtext/htmlかどうかを確認します。
 
     return unless $response->is_success;
     return unless $response->content_type eq 'text/html';
+    return if $request->uri =~ /robots\.txt$/;
 
 次にせっかくなのでレスポンスの返ってきた時間を記録します。
 
@@ -181,16 +182,19 @@ Content-Typeはtext/htmlかどうかを確認します。
       push @links, $attrs{href};
     };
 
+    my $resolver = HTML::ResolveLink->new(base => $request->uri);
     my $p = HTML::LinkExtor->new($code);
-    $p->parse( $response->content );
+    $p->parse( $resolver->resolve($response->content) );
     $p->eof;
 
 そうして最後に今抜き出してきたリンクをデータベースに挿入します。
 
-    my $sth = $dbh->prepare("INSERT INTO urls (url) VALUES (?)");
     foreach my $link (@links) {
+      next if $link !~ /^https?\b/i;
       eval {
+        my $sth = $dbh->prepare("INSERT INTO urls (url) VALUES (?)");
         $sth->execute($link);
+        $sth->finish;
       };
       if ($@) {
         print $@, "\n";

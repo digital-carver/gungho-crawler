@@ -1,0 +1,24 @@
+user_agent: 'SimpleCrawler Demo 0.01'
+provider:
+  module: '+SimpleCrawler::Provider'
+handler:
+  module: '+SimpleCrawler::Handler'
+engine:
+  module: POE
+log:
+  module: Dispatch
+  config:
+    logs:
+      - module: Screen
+        min_level: warning
+        name: stderr
+        stderr: 1
+      - module: File
+        min_level: warning
+        name: logfile
+        filename: data/crawler.log
+components:
+  - RobotRules
+  - RobotsMETA
+  - Throttle::Simple
+  - BlockPrivateIP
