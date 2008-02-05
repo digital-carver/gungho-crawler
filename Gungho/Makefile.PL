@@ -4,6 +4,8 @@ use inc::Module::Install;
 name("Gungho");
 all_from("lib/Gungho.pm");
 
+no_index( directory => 'examples' );
+
 # This used to be optional, but we're making it mandatory.
 # You're still free to use other engines, but we're forcing
 # you to install POE so we can go ahead with testing
