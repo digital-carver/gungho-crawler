@@ -1,5 +1,13 @@
 use strict;
 use inc::Module::Install;
+{
+    no warnings 'redefine';
+    *recommends_hack = $Module::Install::VERSION > 0.70 ?
+        sub { recommends(@_); $_[0] } :
+        \&recommends;
+}
+
+
 
 name("Gungho");
 all_from("lib/Gungho.pm");
@@ -70,7 +78,7 @@ eval {
         features(
             $meta->{name}, [
                 -default => $meta->{default},
-                map recommends($_ => $meta->{depends}->{$_}), keys %{$meta->{depends} || {}},
+                map recommends_hack($_ => $meta->{depends}->{$_}), keys %{$meta->{depends} || {}},
             ],
         );
     }
