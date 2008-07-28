@@ -3,6 +3,10 @@ Changes
 
 All changes by Daisuke Maki unless otherwise noted.
 
+0.09008 Mon Jul 28 2008 [418]
+  [Component::Throttle]
+  - Replace Data::Throttler with Data::Valve
+
 0.09007 Tue Jan 29 2008 [rev 409]
   [General]
   - Properly install gungho script
